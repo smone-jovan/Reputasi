@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Dashboard admin — Donaria. Kelola kampanye, transaksi, dan statistik donasi.">
+  <title>Admin Dashboard — Donaria</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+  <a href="#main-content" class="skip-link">Langsung ke konten utama</a>
+  <nav class="navbar" id="navbar">
+    <div class="container">
+      <a href="../index.html" class="navbar-brand"><span class="logo-icon"><i data-lucide="heart-handshake" style="color:white;width:20px;height:20px;"></i></span><span>Donaria <small style="color:#059669;font-size:0.7rem;font-weight:600;">ADMIN</small></span></a>
+      <div class="navbar-nav" id="navbarNav">
+        <a href="index.html" class="active">Dashboard</a><a href="campaigns.html">Kampanye</a><a href="transactions.html">Transaksi</a><a href="../index.html">Website</a>
+      </div>
+      <div class="navbar-actions" id="navbarActions">
+        <span class="badge badge-primary">Admin</span>
+        <button class="btn btn-sm btn-outline" onclick="Auth.logout()">Keluar</button>
+      </div>
+      <button class="navbar-toggle" id="navbarToggle" aria-label="Buka menu navigasi"><i data-lucide="menu" class="icon-lg"></i></button>
+    </div>
+  </nav>
+
+  <div class="dashboard" id="main-content">
+    <div class="container">
+      <div class="dashboard-header">
+        <h1>Dashboard Admin</h1>
+        <p>Selamat datang di Panel Kontrol Donaria.</p>
+      </div>
+      <div class="dashboard-stats">
+        <div class="dashboard-stat-card"><div class="stat-icon green"><i data-lucide="target" class="icon-lg"></i></div><div><div class="stat-value" id="totalCampaigns">...</div><div class="stat-label">Total Kampanye Aktif</div></div></div>
+        <div class="dashboard-stat-card"><div class="stat-icon blue"><i data-lucide="coins" class="icon-lg"></i></div><div><div class="stat-value" id="totalDonations">...</div><div class="stat-label">Total Donasi</div></div></div>
+        <div class="dashboard-stat-card"><div class="stat-icon amber"><i data-lucide="users" class="icon-lg"></i></div><div><div class="stat-value" id="totalDonors">...</div><div class="stat-label">Jumlah Donatur</div></div></div>
+        <div class="dashboard-stat-card"><div class="stat-icon red"><i data-lucide="check-circle" class="icon-lg"></i></div><div><div class="stat-value" id="totalTransactions">...</div><div class="stat-label">Transaksi Berhasil</div></div></div>
+      </div>
+      <div class="table-container" style="margin-bottom:60px;">
+        <div class="table-header"><h3>Menu Admin</h3></div>
+        <div style="padding:24px;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;">
+          <a href="campaigns.html" class="btn btn-primary" style="justify-content:flex-start;"><i data-lucide="clipboard-list" class="icon-md"></i> Kelola Kampanye</a>
+          <a href="transactions.html" class="btn btn-outline" style="justify-content:flex-start;"><i data-lucide="credit-card" class="icon-md"></i> Lihat Transaksi</a>
+          <a href="../index.html" class="btn btn-outline" style="justify-content:flex-start;"><i data-lucide="globe" class="icon-md"></i> Kunjungi Website</a>
+          <button onclick="openDemoModal()" class="btn btn-outline" style="justify-content:flex-start;border-color:#F59E0B;color:#D97706;"><i data-lucide="flask-conical" class="icon-md"></i> Demo Test</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Demo Test Modal -->
+  <div id="demoModal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.5);backdrop-filter:blur(4px);align-items:center;justify-content:center;">
+    <div style="background:white;border-radius:16px;padding:32px;max-width:480px;width:90%;box-shadow:0 24px 48px rgba(0,0,0,0.15);position:relative;">
+      <button onclick="closeDemoModal()" style="position:absolute;top:16px;right:16px;background:none;border:none;cursor:pointer;color:#9CA3AF;font-size:20px;" aria-label="Tutup modal">&times;</button>
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px;">
+        <div style="width:44px;height:44px;border-radius:12px;background:rgba(245,158,11,0.1);display:flex;align-items:center;justify-content:center;"><i data-lucide="flask-conical" style="color:#D97706;width:22px;height:22px;"></i></div>
+        <div><h3 style="margin:0;font-size:1.15rem;">Simulasi Pembayaran</h3><p style="margin:0;font-size:0.85rem;color:#6B7280;">Skip payment gateway — langsung masuk.</p></div>
+      </div>
+      <div id="demoResult" style="display:none;margin-bottom:16px;padding:12px 16px;border-radius:8px;font-size:0.9rem;"></div>
+      <form id="demoForm" onsubmit="runDemo(event)">
+        <div class="form-group">
+          <label class="form-label">Pilih Kampanye</label>
+          <select class="form-control" id="demoCampaign" required><option value="">Memuat...</option></select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Jumlah Donasi (Rp)</label>
+          <input type="number" class="form-control" id="demoAmount" min="1000" step="1000" value="50000" required placeholder="Contoh: 50000">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Nama Donatur (opsional)</label>
+          <input type="text" class="form-control" id="demoDonor" placeholder="Admin Test" value="Admin Test">
+        </div>
+        <button type="submit" class="btn btn-primary btn-block btn-lg" id="demoSubmitBtn" style="background:linear-gradient(135deg,#D97706,#F59E0B);"><i data-lucide="zap" class="icon-md"></i> Jalankan Simulasi</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script src="../js/api.js"></script>
+  <script src="../js/auth.js"></script>
+  <script>
+    if(!Auth.isLoggedIn()||!Auth.isAdmin()){window.location.href='../login.html';}
+
+    async function loadDashboard(){
+      try{
+        const stats=await API.getStats();
+        if(stats?.data){
+          document.getElementById('totalCampaigns').textContent=stats.data.totalCampaigns||0;
+          document.getElementById('totalDonations').textContent=formatCompactCurrency(stats.data.totalDonations||0);
+          document.getElementById('totalDonors').textContent=stats.data.totalDonors||0;
+          document.getElementById('totalTransactions').textContent=stats.data.totalTransactions||0;
+        }
+      }catch(err){
+        document.getElementById('totalCampaigns').textContent='-';
+        document.getElementById('totalDonations').textContent='-';
+        document.getElementById('totalDonors').textContent='-';
+        document.getElementById('totalTransactions').textContent='-';
+      }
+    }
+
+    // Demo modal
+    async function openDemoModal(){
+      document.getElementById('demoModal').style.display='flex';
+      document.getElementById('demoResult').style.display='none';
+      refreshIcons();
+      try{
+        const res=await API.getCampaigns({status:'active',limit:50});
+        const sel=document.getElementById('demoCampaign');
+        if(res?.data?.campaigns?.length>0){
+          sel.innerHTML=res.data.campaigns.map(c=>`<option value="${c.id}">${c.title} (${Math.round(c.current_amount/c.target_amount*100)}%)</option>`).join('');
+        }else{sel.innerHTML='<option value="">Tidak ada kampanye aktif</option>';}
+      }catch(e){document.getElementById('demoCampaign').innerHTML='<option value="">Gagal memuat</option>';}
+    }
+
+    function closeDemoModal(){document.getElementById('demoModal').style.display='none';}
+
+    async function runDemo(e){
+      e.preventDefault();
+      const btn=document.getElementById('demoSubmitBtn');
+      const resultDiv=document.getElementById('demoResult');
+      btn.disabled=true;btn.textContent='Memproses...';
+      try{
+        const res=await apiFetch('/demo/simulate-payment',{
+          method:'POST',
+          body:JSON.stringify({
+            campaign_id:document.getElementById('demoCampaign').value,
+            amount:Number(document.getElementById('demoAmount').value),
+            donor_name:document.getElementById('demoDonor').value||'Admin Test',
+          }),
+        });
+        resultDiv.style.display='block';
+        resultDiv.style.background='#DCFCE7';resultDiv.style.color='#166534';
+        resultDiv.innerHTML=`<strong>Berhasil!</strong> ${res.message}<br>Progress: <strong>${res.data.progress}%</strong> (Rp ${res.data.new_amount.toLocaleString('id-ID')} / Rp ${res.data.target_amount.toLocaleString('id-ID')})`;
+        loadDashboard();
+        // Refresh campaign dropdown
+        openDemoModal();
+      }catch(err){
+        resultDiv.style.display='block';
+        resultDiv.style.background='#FEE2E2';resultDiv.style.color='#991B1B';
+        resultDiv.innerHTML=`<strong>Gagal:</strong> ${err.message}`;
+      }finally{btn.disabled=false;btn.innerHTML='<i data-lucide="zap" class="icon-md"></i> Jalankan Simulasi';refreshIcons();}
+    }
+
+    document.addEventListener('DOMContentLoaded',loadDashboard);
+  </script>
+</body>
+</html>

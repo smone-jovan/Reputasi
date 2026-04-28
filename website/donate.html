@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Salurkan donasi Anda — Donaria">
+  <title>Donasi — Donaria</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .donate-page{padding-top:calc(var(--header-height)+32px);padding-bottom:80px;min-height:100dvh;}
+    .donate-grid{display:grid;grid-template-columns:1fr 1fr;gap:32px;max-width:900px;margin:0 auto;}
+    .donate-card{background:var(--glass-bg);backdrop-filter:var(--glass-blur);border:1px solid var(--glass-border);border-radius:var(--radius-lg);padding:32px;box-shadow:var(--glass-shadow);}
+    .donate-card h2{font-size:1.3rem;margin-bottom:24px;display:flex;align-items:center;gap:8px;}
+    .campaign-summary{display:flex;gap:16px;padding:16px;background:var(--gray-50);border-radius:var(--radius-md);margin-bottom:24px;}
+    .campaign-summary img{width:80px;height:60px;border-radius:var(--radius-sm);object-fit:cover;}
+    .campaign-summary .camp-name{font-weight:700;font-size:0.95rem;margin-bottom:4px;}
+    .campaign-summary .camp-progress{font-size:0.8rem;color:var(--text-muted);}
+    .amount-presets{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px;}
+    .amount-preset{padding:14px;border:2px solid var(--gray-200);border-radius:var(--radius-md);text-align:center;font-weight:600;cursor:pointer;transition:var(--transition);font-size:0.9rem;touch-action:manipulation;}
+    .amount-preset:hover,.amount-preset.active{border-color:var(--primary);background:var(--primary-50);color:var(--primary-dark);}
+    .bank-options{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px;}
+    .bank-option{display:flex;align-items:center;gap:10px;padding:12px 16px;border:2px solid var(--gray-200);border-radius:var(--radius-md);cursor:pointer;transition:var(--transition);font-size:0.85rem;font-weight:500;touch-action:manipulation;}
+    .bank-option:hover,.bank-option.active{border-color:var(--primary);background:var(--primary-50);}
+    .bank-option input{accent-color:var(--primary);}
+    .summary-row{display:flex;justify-content:space-between;padding:10px 0;font-size:0.9rem;border-bottom:1px solid var(--gray-100);}
+    .summary-row:last-child{border-bottom:none;}.summary-row .label{color:var(--text-muted);}.summary-row .value{font-weight:600;}
+    .summary-row.total{font-size:1.1rem;padding-top:16px;border-top:2px solid var(--gray-200);}
+    .summary-row.total .value{color:var(--primary-dark);font-weight:800;}
+    @media(max-width:768px){.donate-grid{grid-template-columns:1fr;}}
+  </style>
+</head>
+<body>
+  <a href="#main-content" class="skip-link">Langsung ke konten utama</a>
+  <nav class="navbar" id="navbar">
+    <div class="container">
+      <a href="index.html" class="navbar-brand"><span class="logo-icon"><i data-lucide="heart-handshake" style="color:white;width:20px;height:20px;"></i></span><span>Donaria</span></a>
+      <div class="navbar-nav" id="navbarNav">
+        <a href="index.html">Beranda</a><a href="campaigns.html">Kampanye</a><a href="dashboard.html">Dashboard</a>
+        <div class="mobile-auth"><a href="login.html" class="btn btn-sm btn-outline">Masuk</a><a href="register.html" class="btn btn-sm btn-primary">Daftar</a></div>
+      </div>
+      <div class="navbar-actions" id="navbarActions"></div>
+      <button class="navbar-toggle" id="navbarToggle" aria-label="Buka menu navigasi"><i data-lucide="menu" class="icon-lg"></i></button>
+    </div>
+  </nav>
+
+  <div class="donate-page" id="main-content">
+    <div class="container">
+      <div class="donate-grid">
+        <div class="donate-card">
+          <h2><i data-lucide="heart" class="icon-lg" style="color:var(--primary);"></i> Form Donasi</h2>
+          <div class="campaign-summary" id="campaignSummary"><div class="skeleton" style="width:80px;height:60px;"></div><div style="flex:1;"><div class="skeleton" style="height:18px;margin-bottom:8px;"></div><div class="skeleton" style="height:12px;width:60%;"></div></div></div>
+          <div id="donateError" class="alert alert-error hidden"><span><svg class="icon-md" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg></span><span id="donateErrorMsg"></span></div>
+          <form id="donateForm" onsubmit="handleDonate(event)">
+            <div class="form-group">
+              <label class="form-label">Jumlah Donasi</label>
+              <div class="amount-presets">
+                <div class="amount-preset" onclick="setAmount(10000,this)">Rp 10.000</div><div class="amount-preset" onclick="setAmount(25000,this)">Rp 25.000</div><div class="amount-preset" onclick="setAmount(50000,this)">Rp 50.000</div>
+                <div class="amount-preset" onclick="setAmount(100000,this)">Rp 100.000</div><div class="amount-preset" onclick="setAmount(250000,this)">Rp 250.000</div><div class="amount-preset" onclick="setAmount(500000,this)">Rp 500.000</div>
+              </div>
+              <input type="number" id="amount" class="form-control" placeholder="Atau masukkan jumlah lain (min. Rp 10.000)" min="10000" required inputmode="numeric" oninput="updateSummary()">
+            </div>
+            <div class="form-group"><label class="form-label">Pesan (opsional)</label><textarea id="message" class="form-control" rows="3" placeholder="Tulis pesan atau doa..."></textarea></div>
+            <div class="form-group"><label style="display:flex;align-items:center;gap:8px;cursor:pointer;"><input type="checkbox" id="isAnonymous" style="accent-color:var(--primary);width:18px;height:18px;"><span style="font-size:0.9rem;">Donasi sebagai anonim</span></label></div>
+            <div class="form-group">
+              <label class="form-label">Metode Pembayaran</label>
+              <div class="payment-methods">
+                <div class="payment-method selected" onclick="setPaymentMethod('qris',this)"><input type="radio" name="paymentMethod" value="qris" checked><div class="payment-method-info"><h4><i data-lucide="qr-code" class="icon-md"></i> QRIS</h4><p>Scan QR dari aplikasi e-wallet atau mobile banking</p></div></div>
+                <div class="payment-method" onclick="setPaymentMethod('bank_transfer',this)"><input type="radio" name="paymentMethod" value="bank_transfer"><div class="payment-method-info"><h4><i data-lucide="building-2" class="icon-md"></i> Transfer Bank</h4><p>Transfer via Virtual Account</p></div></div>
+              </div>
+              <div id="bankOptions" class="bank-options" style="display:none;">
+                <div class="bank-option" onclick="setBankCode('bca',this)"><input type="radio" name="bankCode" value="bca"> BCA</div>
+                <div class="bank-option" onclick="setBankCode('bni',this)"><input type="radio" name="bankCode" value="bni"> BNI</div>
+                <div class="bank-option" onclick="setBankCode('bri',this)"><input type="radio" name="bankCode" value="bri"> BRI</div>
+                <div class="bank-option" onclick="setBankCode('mandiri',this)"><input type="radio" name="bankCode" value="mandiri"> Mandiri</div>
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block btn-lg" id="donateBtn"><i data-lucide="heart" class="icon-md"></i> Donasi Sekarang</button>
+          </form>
+        </div>
+        <div>
+          <div class="donate-card">
+            <h2>Ringkasan</h2>
+            <div id="summaryContent">
+              <div class="summary-row"><span class="label">Jumlah donasi</span><span class="value" id="summaryAmount">Rp 0</span></div>
+              <div class="summary-row"><span class="label">Biaya layanan</span><span class="value" id="summaryFee">Gratis</span></div>
+              <div class="summary-row total"><span class="label">Total</span><span class="value" id="summaryTotal">Rp 0</span></div>
+            </div>
+          </div>
+          <div class="donate-card mt-2" style="font-size:0.85rem;color:var(--text-muted);">
+            <h4 style="margin-bottom:12px;display:flex;align-items:center;gap:8px;"><i data-lucide="shield-check" class="icon-md" style="color:var(--primary);"></i> Keamanan Terjamin</h4>
+            <p>Semua transaksi diproses melalui payment gateway Tripay yang aman dan terpercaya.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script src="js/api.js"></script>
+  <script>
+    const campaignId=new URLSearchParams(window.location.search).get('id');let selectedPaymentMethod='qris',selectedBankCode=null,campaignData=null;
+    if(!Auth.isLoggedIn()){showToast('Silakan login terlebih dahulu','error');setTimeout(()=>window.location.href=`login.html?redirect=donate.html?id=${campaignId}`,800);}
+    async function loadCampaign(){
+      if(!campaignId){window.location.href='campaigns.html';return;}
+      try{
+        const res=await API.getCampaignById(campaignId);campaignData=res.data.campaign;const progress=calculateProgress(campaignData.current_amount,campaignData.target_amount);
+        document.getElementById('campaignSummary').innerHTML=`<img src="${campaignData.banner_image||'https://placehold.co/80x60/10B981/white?text=Donaria'}" alt="${campaignData.title}" loading="lazy" onerror="this.src='https://placehold.co/80x60/10B981/white?text=Donaria'"><div><div class="camp-name">${campaignData.title}</div><div class="camp-progress">Terkumpul ${formatCompactCurrency(campaignData.current_amount)} (${progress}%)</div></div>`;
+      }catch(e){showToast('Kampanye tidak ditemukan','error');}
+    }
+    function setAmount(amount,el){document.getElementById('amount').value=amount;document.querySelectorAll('.amount-preset').forEach(p=>p.classList.remove('active'));el.classList.add('active');updateSummary();}
+    function setPaymentMethod(method,el){selectedPaymentMethod=method;document.querySelectorAll('.payment-method').forEach(p=>p.classList.remove('selected'));el.classList.add('selected');el.querySelector('input[type="radio"]').checked=true;document.getElementById('bankOptions').style.display=method==='bank_transfer'?'grid':'none';if(method==='bank_transfer'&&!selectedBankCode){selectedBankCode='bca';document.querySelector('.bank-option').classList.add('active');document.querySelector('.bank-option input').checked=true;}}
+    function setBankCode(code,el){selectedBankCode=code;document.querySelectorAll('.bank-option').forEach(b=>b.classList.remove('active'));el.classList.add('active');el.querySelector('input[type="radio"]').checked=true;}
+    function updateSummary(){const amount=parseInt(document.getElementById('amount').value)||0;document.getElementById('summaryAmount').textContent=formatCurrency(amount);document.getElementById('summaryTotal').textContent=formatCurrency(amount);}
+    async function handleDonate(e){
+      e.preventDefault();const btn=document.getElementById('donateBtn'),errorBox=document.getElementById('donateError'),errorMsg=document.getElementById('donateErrorMsg');
+      const amount=parseInt(document.getElementById('amount').value);
+      if(!amount||amount<10000){errorMsg.textContent='Minimal donasi Rp 10.000';errorBox.classList.remove('hidden');document.getElementById('amount').focus();return;}
+      btn.disabled=true;btn.innerHTML='<div class="spinner" style="width:20px;height:20px;border-width:2px;"></div> Memproses...';errorBox.classList.add('hidden');
+      try{
+        const data={campaign_id:parseInt(campaignId),amount,message:document.getElementById('message').value,is_anonymous:document.getElementById('isAnonymous').checked,payment_method:selectedPaymentMethod};
+        if(selectedPaymentMethod==='bank_transfer')data.bank_code=selectedBankCode||'bca';
+        const res=await API.createDonation(data);
+        if(res?.success){localStorage.setItem('donaria_payment',JSON.stringify(res.data));showToast('Donasi berhasil dibuat! Redirecting...','success');setTimeout(()=>{window.location.href=`payment.html?order_id=${res.data.transaction.order_id}`;},500);}
+      }catch(error){errorMsg.textContent=error.message||'Gagal membuat donasi.';errorBox.classList.remove('hidden');btn.disabled=false;btn.innerHTML='<i data-lucide="heart" class="icon-md"></i> Donasi Sekarang';refreshIcons();}
+    }
+    document.addEventListener('DOMContentLoaded',loadCampaign);
+  </script>
+</body>
+</html>

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Daftar akun Donaria untuk mulai berdonasi secara online.">
+  <title>Daftar — Donaria</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="auth-page">
+    <div class="auth-card animate-fade-in-up">
+      <div class="logo">
+        <h2><i data-lucide="heart-handshake" class="icon-lg" style="color:var(--primary);"></i> Donaria</h2>
+      </div>
+      <h3>Buat Akun Baru</h3>
+      <p class="subtitle">Daftar untuk mulai menyalurkan donasi</p>
+      <div id="registerError" class="alert alert-error hidden">
+        <span><svg class="icon-md" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg></span>
+        <span id="registerErrorMsg"></span>
+      </div>
+      <form id="registerForm" onsubmit="handleRegister(event)">
+        <div class="form-group">
+          <label class="form-label" for="name">Nama Lengkap</label>
+          <input type="text" id="name" class="form-control" placeholder="Nama lengkap Anda" required autocomplete="name">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="email">Email</label>
+          <input type="email" id="email" class="form-control" placeholder="nama@email.com" required autocomplete="email">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="phone">Nomor Telepon</label>
+          <input type="tel" id="phone" class="form-control" placeholder="081234567890" autocomplete="tel">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="password">Password</label>
+          <div class="password-wrapper">
+            <input type="password" id="password" class="form-control" placeholder="Minimal 6 karakter" required minlength="6" autocomplete="new-password">
+            <button type="button" class="password-toggle" onclick="togglePassword('password',this)" aria-label="Tampilkan password"><i data-lucide="eye" class="icon-md"></i></button>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="confirmPassword">Konfirmasi Password</label>
+          <div class="password-wrapper">
+            <input type="password" id="confirmPassword" class="form-control" placeholder="Ulangi password" required autocomplete="new-password" onblur="validatePasswordMatch()">
+            <button type="button" class="password-toggle" onclick="togglePassword('confirmPassword',this)" aria-label="Tampilkan password"><i data-lucide="eye" class="icon-md"></i></button>
+          </div>
+          <div id="passwordMatchError" class="form-error" style="display:none;">Password tidak sama.</div>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block btn-lg" id="registerBtn">Daftar Sekarang</button>
+      </form>
+      <div class="auth-footer">Sudah punya akun? <a href="login.html">Masuk di sini</a></div>
+    </div>
+  </div>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    if (Auth.isLoggedIn()) { window.location.href = 'dashboard.html'; }
+    function togglePassword(id,btn){
+      const el=document.getElementById(id);const show=el.type==='password';el.type=show?'text':'password';
+      btn.setAttribute('aria-label',show?'Sembunyikan password':'Tampilkan password');
+      btn.innerHTML=show?'<i data-lucide="eye-off" class="icon-md"></i>':'<i data-lucide="eye" class="icon-md"></i>';refreshIcons();
+    }
+    function validatePasswordMatch(){
+      const p=document.getElementById('password').value,cp=document.getElementById('confirmPassword').value,err=document.getElementById('passwordMatchError');
+      if(cp&&p!==cp){err.style.display='block';}else{err.style.display='none';}
+    }
+    async function handleRegister(e){
+      e.preventDefault();const btn=document.getElementById('registerBtn'),errorBox=document.getElementById('registerError'),errorMsg=document.getElementById('registerErrorMsg');
+      const name=document.getElementById('name').value,email=document.getElementById('email').value,phone=document.getElementById('phone').value,password=document.getElementById('password').value,confirmPassword=document.getElementById('confirmPassword').value;
+      if(password!==confirmPassword){errorMsg.textContent='Password dan konfirmasi password tidak sama.';errorBox.classList.remove('hidden');document.getElementById('confirmPassword').focus();return;}
+      btn.disabled=true;btn.innerHTML='<div class="spinner" style="width:20px;height:20px;border-width:2px;"></div> Memproses...';errorBox.classList.add('hidden');
+      try{
+        const res=await API.register(name,email,password,phone);
+        if(res?.success){showToast('Registrasi berhasil! Mengalihkan...','success');setTimeout(()=>{window.location.href='dashboard.html';},800);}
+      }catch(error){errorMsg.textContent=error.message||'Gagal mendaftar. Coba lagi.';errorBox.classList.remove('hidden');btn.disabled=false;btn.textContent='Daftar Sekarang';}
+    }
+  </script>
+</body>
+</html>

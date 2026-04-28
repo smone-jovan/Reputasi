@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Lihat semua kampanye donasi di Donaria. Cari dan filter berdasarkan kategori.">
+  <title>Kampanye Donasi — Donaria</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <a href="#main-content" class="skip-link">Langsung ke konten utama</a>
+  <!-- Navbar -->
+  <nav class="navbar" id="navbar">
+    <div class="container">
+      <a href="index.html" class="navbar-brand"><span class="logo-icon"><i data-lucide="heart-handshake" style="color:white;width:20px;height:20px;"></i></span><span>Donaria</span></a>
+      <div class="navbar-nav" id="navbarNav">
+        <a href="index.html">Beranda</a>
+        <a href="campaigns.html" class="active">Kampanye</a>
+        <a href="dashboard.html">Dashboard</a>
+        <div class="mobile-auth"><a href="login.html" class="btn btn-sm btn-outline">Masuk</a><a href="register.html" class="btn btn-sm btn-primary">Daftar</a></div>
+      </div>
+      <div class="navbar-actions" id="navbarActions"><a href="login.html" class="btn btn-sm btn-outline">Masuk</a><a href="register.html" class="btn btn-sm btn-primary">Daftar</a></div>
+      <button class="navbar-toggle" id="navbarToggle" aria-label="Buka menu navigasi"><i data-lucide="menu" class="icon-lg"></i></button>
+    </div>
+  </nav>
+
+  <!-- Page Header -->
+  <section style="padding: calc(var(--header-height) + 40px) 0 32px; background: var(--primary-50);">
+    <div class="container">
+      <h1 style="margin-bottom: 8px;">Kampanye Donasi</h1>
+      <p>Pilih program donasi yang ingin Anda dukung</p>
+    </div>
+  </section>
+
+  <!-- Filters -->
+  <section id="main-content" style="padding: 24px 0; background: white; border-bottom: 1px solid var(--gray-200); position: sticky; top: var(--header-height); z-index: 50;">
+    <div class="container">
+      <div class="d-flex gap-2 flex-wrap align-center justify-between">
+        <div class="categories-scroll" id="categoriesList" style="flex: 1;"></div>
+        <div style="display: flex; gap: 12px; flex-shrink: 0;">
+          <div style="position:relative;">
+            <i data-lucide="search" class="icon-sm" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text-muted);"></i>
+            <input type="text" id="searchInput" class="form-control" placeholder="Cari kampanye..." style="width: 240px; padding: 10px 16px 10px 36px;">
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Campaigns Grid -->
+  <section class="section" style="background: var(--bg-secondary);">
+    <div class="container">
+      <div class="campaigns-grid" id="campaignsGrid">
+        <div class="campaign-card"><div class="skeleton" style="height:180px;"></div><div style="padding:20px;"><div class="skeleton" style="height:20px; margin-bottom:12px;"></div><div class="skeleton" style="height:8px; margin-bottom:8px;"></div><div class="skeleton" style="height:14px; width:60%;"></div></div></div>
+        <div class="campaign-card"><div class="skeleton" style="height:180px;"></div><div style="padding:20px;"><div class="skeleton" style="height:20px; margin-bottom:12px;"></div><div class="skeleton" style="height:8px; margin-bottom:8px;"></div><div class="skeleton" style="height:14px; width:60%;"></div></div></div>
+        <div class="campaign-card"><div class="skeleton" style="height:180px;"></div><div style="padding:20px;"><div class="skeleton" style="height:20px; margin-bottom:12px;"></div><div class="skeleton" style="height:8px; margin-bottom:8px;"></div><div class="skeleton" style="height:14px; width:60%;"></div></div></div>
+      </div>
+      <div class="text-center mt-4" id="paginationContainer" style="display:none;"><div class="d-flex gap-1" style="justify-content: center;" id="paginationButtons"></div></div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer"><div class="container"><div class="footer-bottom"><p>&copy; 2026 Donaria. Semua hak dilindungi.</p></div></div></footer>
+
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script src="js/api.js"></script>
+  <script>
+    let currentPage=1,currentCategory=null,searchTimeout=null;
+    async function loadCampaigns(){
+      const grid=document.getElementById('campaignsGrid');
+      try{
+        const params={page:currentPage,limit:12,status:'active'};
+        if(currentCategory)params.category_id=currentCategory;
+        const search=document.getElementById('searchInput').value.trim();
+        if(search)params.search=search;
+        const res=await API.getCampaigns(params);
+        if(res?.data?.campaigns?.length>0){grid.innerHTML=res.data.campaigns.map(c=>createCampaignCard(c)).join('');renderPagination(res.data.pagination);}
+        else{grid.innerHTML=`<div class="text-center" style="grid-column:1/-1;padding:80px 0;"><div style="margin-bottom:16px;"><i data-lucide="search-x" style="width:48px;height:48px;color:var(--gray-300);"></i></div><h3>Kampanye Tidak Ditemukan</h3><p>Coba ubah kata kunci atau filter kategori.</p></div>`;document.getElementById('paginationContainer').style.display='none';}
+        refreshIcons();
+      }catch(e){grid.innerHTML=`<div class="text-center" style="grid-column:1/-1;padding:80px 0;"><div style="margin-bottom:16px;"><i data-lucide="alert-triangle" style="width:48px;height:48px;color:var(--warning);"></i></div><h3>Gagal Memuat Data</h3><p>Pastikan backend server berjalan di port 3000.</p></div>`;refreshIcons();}
+    }
+    function renderPagination(pagination){const container=document.getElementById('paginationContainer'),buttons=document.getElementById('paginationButtons');if(pagination.totalPages<=1){container.style.display='none';return;}container.style.display='block';let html='';for(let i=1;i<=pagination.totalPages;i++){const active=i===pagination.page?'btn-primary':'btn-outline';html+=`<button class="btn btn-sm ${active}" onclick="goToPage(${i})">${i}</button>`;}buttons.innerHTML=html;}
+    function goToPage(page){currentPage=page;loadCampaigns();window.scrollTo({top:0,behavior:'smooth'});}
+    function setCategory(categoryId,el){currentCategory=categoryId;currentPage=1;document.querySelectorAll('.category-chip').forEach(c=>c.classList.remove('active'));el.classList.add('active');loadCampaigns();}
+    document.getElementById('searchInput').addEventListener('input',()=>{clearTimeout(searchTimeout);searchTimeout=setTimeout(()=>{currentPage=1;loadCampaigns();},400);});
+    document.addEventListener('DOMContentLoaded',async()=>{
+      const urlParams=new URLSearchParams(window.location.search);const catSlug=urlParams.get('category');
+      try{
+        const res=await API.getCategories();const container=document.getElementById('categoriesList');
+        if(res?.data?.categories){
+          let catMatchId=null;if(catSlug){const found=res.data.categories.find(c=>c.slug===catSlug||c.id==catSlug);if(found)catMatchId=found.id;}
+          if(catMatchId)currentCategory=catMatchId;
+          container.innerHTML=`<div class="category-chip ${!catMatchId?'active':''}" onclick="setCategory(null,this)">Semua</div>${res.data.categories.map(c=>`<div class="category-chip ${c.id===catMatchId?'active':''}" onclick="setCategory('${c.id}',this)">${c.icon||'<i data-lucide="clipboard-list" class="icon-sm"></i>'} ${c.name}</div>`).join('')}`;
+          refreshIcons();
+        }
+      }catch(e){}
+      loadCampaigns();
+    });
+  </script>
+</body>
+</html>

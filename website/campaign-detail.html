@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Detail kampanye donasi — Donaria">
+  <title>Detail Kampanye — Donaria</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .detail-page{padding-top:calc(var(--header-height)+32px);padding-bottom:80px;}
+    .detail-grid{display:grid;grid-template-columns:1.5fr 1fr;gap:32px;}
+    .detail-banner{width:100%;height:360px;object-fit:cover;border-radius:var(--radius-lg);margin-bottom:24px;}
+    .detail-category{display:inline-flex;align-items:center;gap:6px;background:var(--primary-50);color:var(--primary-dark);padding:6px 16px;border-radius:var(--radius-full);font-size:0.85rem;font-weight:600;margin-bottom:16px;}
+    .detail-title{font-size:1.8rem;margin-bottom:16px;line-height:1.3;}
+    .detail-desc{color:var(--text-secondary);line-height:1.8;white-space:pre-wrap;}
+    .detail-sidebar{position:sticky;top:calc(var(--header-height)+32px);}
+    .sidebar-card{background:var(--glass-bg);backdrop-filter:var(--glass-blur);border:1px solid var(--glass-border);border-radius:var(--radius-lg);padding:28px;margin-bottom:20px;box-shadow:var(--glass-shadow);}
+    .sidebar-card .progress-bar{height:10px;}
+    .sidebar-card .amount-raised{font-size:1.5rem;font-weight:800;color:var(--primary-dark);margin-bottom:4px;}
+    .sidebar-card .amount-target{font-size:0.9rem;color:var(--text-muted);margin-bottom:16px;}
+    .sidebar-card .meta-row{display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--gray-100);font-size:0.9rem;}
+    .sidebar-card .meta-row:last-child{border-bottom:none;}
+    .sidebar-card .meta-label{color:var(--text-muted);display:flex;align-items:center;gap:6px;}
+    .sidebar-card .meta-value{font-weight:600;}
+    .donors-list{max-height:300px;overflow-y:auto;}
+    .donor-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--gray-100);}
+    .donor-row:last-child{border-bottom:none;}
+    .donor-avatar{width:36px;height:36px;border-radius:50%;background:var(--primary-50);display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--primary-dark);font-size:0.8rem;flex-shrink:0;}
+    .donor-name{font-weight:600;font-size:0.85rem;}.donor-amount{font-size:0.8rem;color:var(--primary-dark);font-weight:600;}.donor-time{font-size:0.75rem;color:var(--text-muted);}
+    .creator-info{display:flex;align-items:center;gap:12px;margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid var(--gray-100);}
+    .creator-avatar{width:40px;height:40px;border-radius:50%;background:var(--gray-200);display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--gray-600);}
+    .creator-name{font-weight:600;font-size:0.9rem;}.creator-label{font-size:0.8rem;color:var(--text-muted);}
+    .share-buttons{display:flex;gap:8px;margin-top:16px;}
+    .share-btn{flex:1;padding:10px;border-radius:var(--radius-sm);text-align:center;font-size:0.85rem;font-weight:600;cursor:pointer;transition:var(--transition);display:flex;align-items:center;justify-content:center;gap:6px;}
+    .share-btn:hover{transform:translateY(-1px);}.share-wa{background:#DCFCE7;color:#16A34A;}.share-copy{background:var(--gray-100);color:var(--gray-600);}
+    @media(max-width:768px){.detail-grid{grid-template-columns:1fr;}.detail-banner{height:220px;}.detail-sidebar{position:static;}}
+  </style>
+</head>
+<body>
+  <a href="#main-content" class="skip-link">Langsung ke konten utama</a>
+  <nav class="navbar" id="navbar">
+    <div class="container">
+      <a href="index.html" class="navbar-brand"><span class="logo-icon"><i data-lucide="heart-handshake" style="color:white;width:20px;height:20px;"></i></span><span>Donaria</span></a>
+      <div class="navbar-nav" id="navbarNav">
+        <a href="index.html">Beranda</a><a href="campaigns.html" class="active">Kampanye</a><a href="dashboard.html">Dashboard</a>
+        <div class="mobile-auth"><a href="login.html" class="btn btn-sm btn-outline">Masuk</a><a href="register.html" class="btn btn-sm btn-primary">Daftar</a></div>
+      </div>
+      <div class="navbar-actions" id="navbarActions"></div>
+      <button class="navbar-toggle" id="navbarToggle" aria-label="Buka menu navigasi"><i data-lucide="menu" class="icon-lg"></i></button>
+    </div>
+  </nav>
+
+  <div class="detail-page" id="main-content">
+    <div class="container">
+      <div class="breadcrumb" id="breadcrumb"><a href="index.html">Beranda</a><span class="separator"><i data-lucide="chevron-right" class="icon-sm"></i></span><a href="campaigns.html">Kampanye</a><span class="separator"><i data-lucide="chevron-right" class="icon-sm"></i></span><span id="breadcrumbTitle">Detail</span></div>
+      <div class="detail-grid" id="detailContent">
+        <div><div class="skeleton" style="height:360px;border-radius:var(--radius-lg);margin-bottom:24px;"></div><div class="skeleton" style="height:24px;width:150px;margin-bottom:16px;"></div><div class="skeleton" style="height:32px;margin-bottom:12px;"></div><div class="skeleton" style="height:16px;margin-bottom:8px;"></div><div class="skeleton" style="height:16px;width:70%;"></div></div>
+        <div><div class="skeleton" style="height:300px;border-radius:var(--radius-lg);"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer"><div class="container"><div class="footer-bottom"><p>&copy; 2026 Donaria. Semua hak dilindungi.</p></div></div></footer>
+
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script src="js/api.js"></script>
+  <script>
+    const campaignId=new URLSearchParams(window.location.search).get('id');
+    async function loadCampaign(){
+      if(!campaignId){window.location.href='campaigns.html';return;}
+      try{
+        const res=await API.getCampaignById(campaignId);if(!res?.data?.campaign)throw new Error('Not found');
+        const c=res.data.campaign,donorCount=res.data.donorCount||0,progress=calculateProgress(c.current_amount,c.target_amount),daysLeft=calculateDaysLeft(c.deadline),categoryName=c.category?.name||'Umum',categoryIcon=c.category?.icon||'<i data-lucide="clipboard-list" class="icon-sm"></i>',creatorName=c.creator?.name||'Admin';
+        document.title=`${c.title} — Donaria`;
+        document.getElementById('breadcrumbTitle').textContent=c.title;
+        const donorsHtml=(c.donations||[]).map(d=>`<div class="donor-row"><div class="donor-avatar">${getInitials(d.is_anonymous?'A':(d.donatur?.name||'A'))}</div><div style="flex:1;"><div class="donor-name">${d.is_anonymous?'Anonim':(d.donatur?.name||'Anonim')}</div><div class="donor-time">${formatTimeAgo(d.created_at)}</div></div><div class="donor-amount">${formatCompactCurrency(d.amount)}</div></div>`).join('');
+        document.getElementById('detailContent').innerHTML=`
+          <div>
+            <img class="detail-banner" src="${c.banner_image||'https://placehold.co/800x400/10B981/white?text=Donaria'}" alt="${c.title}" loading="lazy" onerror="this.src='https://placehold.co/800x400/10B981/white?text=Donaria'">
+            <div class="creator-info"><div class="creator-avatar">${getInitials(creatorName)}</div><div><div class="creator-name">${creatorName}</div><div class="creator-label">Penyelenggara Campaign</div></div></div>
+            <div class="detail-category">${categoryIcon} ${categoryName}</div>
+            <h1 class="detail-title">${c.title}</h1>
+            ${c.short_description?`<p style="font-size:1.05rem;color:var(--gray-600);margin-bottom:24px;">${c.short_description}</p>`:''}
+            <div class="detail-desc">${c.description||'Belum ada deskripsi.'}</div>
+          </div>
+          <div class="detail-sidebar">
+            <div class="sidebar-card">
+              <div class="amount-raised">${formatCurrency(c.current_amount)}</div>
+              <div class="amount-target">terkumpul dari ${formatCurrency(c.target_amount)}</div>
+              <div class="progress-bar" style="margin-bottom:20px;"><div class="progress-fill" style="width:${progress}%"></div></div>
+              <div class="meta-row"><span class="meta-label"><i data-lucide="users" class="icon-sm"></i> Donatur</span><span class="meta-value">${donorCount}</span></div>
+              <div class="meta-row"><span class="meta-label"><i data-lucide="trending-up" class="icon-sm"></i> Progress</span><span class="meta-value">${progress}%</span></div>
+              ${daysLeft!==null?`<div class="meta-row"><span class="meta-label"><i data-lucide="clock" class="icon-sm"></i> Sisa Waktu</span><span class="meta-value">${daysLeft} hari</span></div>`:''}
+              <div class="meta-row"><span class="meta-label"><i data-lucide="calendar" class="icon-sm"></i> Dibuat</span><span class="meta-value">${formatDate(c.created_at)}</span></div>
+              <a href="donate.html?id=${c.id}" class="btn btn-primary btn-block btn-lg mt-3" ${c.status!=='active'?'style="pointer-events:none;opacity:0.5;"':''}><i data-lucide="heart" class="icon-md"></i> Donasi Sekarang</a>
+              ${c.status!=='active'?'<div class="text-center mt-1"><span class="badge badge-warning">Kampanye sudah '+c.status+'</span></div>':''}
+              <div class="share-buttons"><div class="share-btn share-wa" onclick="shareWA()"><i data-lucide="smartphone" class="icon-sm"></i> WhatsApp</div><div class="share-btn share-copy" onclick="copyLink()"><i data-lucide="copy" class="icon-sm"></i> Salin Link</div></div>
+            </div>
+            ${donorsHtml?`<div class="sidebar-card"><h4 style="margin-bottom:16px;">Donatur Terbaru</h4><div class="donors-list">${donorsHtml}</div></div>`:''}
+          </div>`;
+        refreshIcons();
+      }catch(e){
+        document.getElementById('detailContent').innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:80px 0;"><div style="margin-bottom:16px;"><i data-lucide="frown" style="width:48px;height:48px;color:var(--gray-300);"></i></div><h2>Kampanye Tidak Ditemukan</h2><p>Kampanye yang Anda cari tidak tersedia atau sudah dihapus.</p><a href="campaigns.html" class="btn btn-primary mt-3">Lihat Kampanye Lain</a></div>`;refreshIcons();
+      }
+    }
+    function shareWA(){const url=encodeURIComponent(window.location.href),text=encodeURIComponent('Yuk bantu donasi di Donaria! ');window.open(`https://wa.me/?text=${text}${url}`,'_blank');}
+    function copyLink(){navigator.clipboard.writeText(window.location.href).then(()=>showToast('Link berhasil disalin!'));}
+    document.addEventListener('DOMContentLoaded',loadCampaign);
+  </script>
+</body>
+</html>

@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description"
+    content="Donaria - Platform donasi online terpercaya. Salurkan donasi untuk kebaikan melalui QRIS dan transfer bank.">
+  <title>Donaria — Platform Donasi Online</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/21st-premium.css">
+</head>
+
+<body class="premium-mesh-bg">
+  <a href="#main-content" class="skip-link">Langsung ke konten utama</a>
+
+  <!-- Navbar -->
+  <nav class="navbar" id="navbar">
+    <div class="container">
+      <a href="index.html" class="navbar-brand">
+        <span class="logo-icon"><i data-lucide="heart-handshake" style="color:white;width:20px;height:20px;"></i></span>
+        <span>Donaria</span>
+      </a>
+      <div class="navbar-nav" id="navbarNav">
+        <a href="index.html" class="active">Beranda</a>
+        <a href="campaigns.html">Kampanye</a>
+        <a href="dashboard.html">Dashboard</a>
+        <div class="mobile-auth">
+          <a href="login.html" class="btn btn-sm btn-outline">Masuk</a>
+          <a href="register.html" class="btn btn-sm btn-primary">Daftar</a>
+        </div>
+      </div>
+      <div class="navbar-actions" id="navbarActions">
+        <a href="login.html" class="btn btn-sm btn-outline">Masuk</a>
+        <a href="register.html" class="btn btn-sm btn-primary">Daftar</a>
+      </div>
+      <button class="navbar-toggle" id="navbarToggle" aria-label="Buka menu navigasi"><i data-lucide="menu"
+          class="icon-lg"></i></button>
+    </div>
+  </nav>
+
+  <!-- Hero Section (21st.dev Premium) -->
+  <section class="hero-premium" id="hero">
+    <div class="hero-premium-glow-bg">
+      <div class="orb-1"></div>
+      <div class="orb-2"></div>
+    </div>
+    <div class="container">
+      <div class="hero-content" id="main-content">
+        <div class="badge-premium">
+          <i data-lucide="sparkles" class="icon-sm"></i>
+          Platform Donasi #1 Terpercaya di Indonesia
+        </div>
+        <h1 class="title-premium">
+          Salurkan <span class="text-gradient-premium">Kebaikan</span><br> untuk Sesama
+        </h1>
+        <p class="desc-premium">
+          Donaria memudahkan Anda berdonasi secara online untuk berbagai program sosial, kemanusiaan, dan keagamaan. Cepat, transparan, dan tepat sasaran.
+        </p>
+        <div class="hero-actions-premium">
+          <a href="campaigns.html" class="btn-premium">
+            <i data-lucide="heart" class="icon-md"></i> Mulai Donasi
+          </a>
+          <a href="#campaigns-section" class="btn-premium-outline">
+            Jelajah Kampanye
+          </a>
+        </div>
+      </div>
+      
+      <div class="hero-visual mockup-wrapper-premium">
+        <!-- Floating Elements -->
+        <div class="float-card-premium float-card-1">
+          <div class="fc-icon emerald">
+            <i data-lucide="shield-check"></i>
+          </div>
+          <div class="fc-content">
+            <strong>100% Amanah</strong>
+            <small>Transparan & Terverifikasi</small>
+          </div>
+        </div>
+        <div class="float-card-premium float-card-2">
+          <div class="fc-icon amber">
+            <i data-lucide="users"></i>
+          </div>
+          <div class="fc-content">
+            <strong>10rb+ Donatur</strong>
+            <small>Bergabung Bersama Kami</small>
+          </div>
+        </div>
+        
+        <!-- Main Mockup -->
+        <div class="mockup-card-premium">
+          <div class="mockup-inner">
+            <img src="https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?q=80&w=800&auto=format&fit=crop" alt="Donaria App Dashboard Mockup" class="mockup-img" style="height: 400px; object-fit: cover;">
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats Section (21st.dev Premium) -->
+  <section class="stats-premium-wrapper">
+    <div class="container">
+      <div class="stats-grid-premium">
+        <div class="stat-item-premium">
+          <div class="stat-val-premium">
+            <span id="statCampaigns">0</span><span class="plus">+</span>
+          </div>
+          <div class="stat-label-premium">Kampanye Aktif</div>
+        </div>
+        <div class="stat-item-premium">
+          <div class="stat-val-premium">
+            <span id="statDonors">0</span><span class="plus">+</span>
+          </div>
+          <div class="stat-label-premium">Donatur Baik</div>
+        </div>
+        <div class="stat-item-premium">
+          <div class="stat-val-premium">
+            <span id="statTransactions">0</span><span class="plus">+</span>
+          </div>
+          <div class="stat-label-premium">Transaksi Berhasil</div>
+        </div>
+        <div class="stat-item-premium">
+          <div class="stat-val-premium">
+            <span id="statDonations" style="font-size: 1.5rem; display: flex; align-items: center; margin-top: 10px;">Rp 0</span>
+          </div>
+          <div class="stat-label-premium">Total Donasi</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Explore Campaigns Section (Merged Categories & Campaigns) -->
+  <section class="section bg-mesh-light" id="campaigns-section">
+    <div class="container">
+      <div class="section-header text-center">
+        <h2 class="section-title">Salurkan Kebaikan Anda</h2>
+        <p class="section-subtitle">Pilih kategori dan temukan program donasi mendesak yang membutuhkan uluran tangan Anda</p>
+      </div>
+
+      <!-- Categories Filter List -->
+      <div class="categories-scroll-wrapper mb-10">
+        <div class="categories-scroll" id="categoriesList">
+          <!-- Diisi via JS -->
+        </div>
+      </div>
+
+      <!-- Campaigns Grid -->
+      <div class="campaigns-grid" id="campaignsGrid">
+        <!-- Diisi via JS -->
+      </div>
+      
+      <div class="text-center mt-12">
+        <a href="campaigns.html" class="btn btn-outline btn-lg hover-arrow group">
+          Lihat Semua Kampanye <i data-lucide="arrow-right" class="icon-sm transition-transform group-hover:translate-x-1"></i>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Recent Donations Section -->
+  <section class="section" id="donationsSection">
+    <div class="container">
+      <div class="section-header text-center">
+        <h2 class="section-title">Jejak Kebaikan</h2>
+        <p class="section-subtitle">Malaikat tanpa sayap yang telah menyalurkan donasi mereka</p>
+      </div>
+      <div class="recent-donations-wrapper glass-panel">
+        <div class="recent-donations" id="recentDonations">
+          <!-- Diisi via JS -->
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="section cta-section relative overflow-hidden">
+    <div class="cta-bg-gradient absolute inset-0"></div>
+    <div class="container relative z-10 text-center">
+      <h2 class="cta-title">Satu Langkah Kecil, Beribu Harapan Baru</h2>
+      <p class="cta-desc">
+        Setiap rupiah yang Anda donasikan membawa perubahan nyata bagi mereka yang sangat membutuhkan. Mulai jejak kebaikan Anda hari ini.
+      </p>
+      <div class="cta-actions">
+        <div class="btn-primary-wrapper inline-block">
+          <a href="campaigns.html" class="btn btn-primary btn-lg"><i data-lucide="heart" class="icon-md"></i> Donasi Sekarang</a>
+        </div>
+        <a href="register.html" class="btn btn-glass btn-lg text-white border-white/30">Daftar Gratis</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand-col">
+          <div class="footer-brand">
+             <i data-lucide="heart-handshake" class="icon-md text-emerald"></i> 
+             <span class="text-gradient">Donaria</span>
+          </div>
+          <p class="footer-desc">Platform donasi online terpercaya dengan transparansi penuh untuk menyalurkan bantuan ke berbagai program sosial dan kemanusiaan.</p>
+        </div>
+        <div class="footer-links-col">
+          <h4 class="footer-heading">Navigasi</h4>
+          <ul class="footer-links">
+            <li><a href="index.html">Beranda</a></li>
+            <li><a href="campaigns.html">Jelajah Kampanye</a></li>
+            <li><a href="login.html">Masuk Akun</a></li>
+            <li><a href="register.html">Daftar Akun</a></li>
+          </ul>
+        </div>
+        <div class="footer-links-col">
+          <h4 class="footer-heading">Kategori</h4>
+          <ul class="footer-links">
+            <li><a href="campaigns.html?category=bencana-alam">Bencana Alam</a></li>
+            <li><a href="campaigns.html?category=pendidikan">Bantuan Pendidikan</a></li>
+            <li><a href="campaigns.html?category=kesehatan">Bantuan Kesehatan</a></li>
+            <li><a href="campaigns.html?category=kemanusiaan">Aksi Kemanusiaan</a></li>
+          </ul>
+        </div>
+        <div class="footer-contact-col">
+          <h4 class="footer-heading">Hubungi Kami</h4>
+          <ul class="footer-contact">
+            <li><i data-lucide="mail" class="icon-sm"></i> info@donaria.id</li>
+            <li><i data-lucide="phone" class="icon-sm"></i> 0811-2233-4455</li>
+            <li><i data-lucide="map-pin" class="icon-sm"></i> Jakarta Selatan, Indonesia</li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 Donaria.id — Merangkai Kebaikan Bersama.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script src="js/api.js"></script>
+  <script>
+    // Load stats
+    async function loadStats() {
+      try {
+        const res = await API.getStats();
+        if (res?.data) {
+          document.getElementById('statCampaigns').textContent = res.data.totalCampaigns || 0;
+          document.getElementById('statDonations').textContent = formatCompactCurrency(res.data.totalDonations || 0);
+          document.getElementById('statDonors').textContent = res.data.totalDonors || 0;
+          document.getElementById('statTransactions').textContent = res.data.totalTransactions || 0;
+        }
+      } catch (e) {
+        console.log('Stats not available');
+      }
+    }
+
+    // Load categories
+    async function loadCategories() {
+      try {
+        const res = await API.getCategories();
+        const container = document.getElementById('categoriesList');
+        if (res?.data?.categories) {
+          container.innerHTML = `
+            <div class="category-chip active" onclick="filterByCategory(null, this)">
+              <span class="chip-icon"><i data-lucide="layout-grid" class="icon-sm"></i></span> Semua
+            </div>
+            ${res.data.categories.map(c => `
+              <div class="category-chip" onclick="filterByCategory('${c.id}', this)">
+                <span class="chip-icon">${c.icon || '<i data-lucide="clipboard-list" class="icon-sm"></i>'}</span> ${c.name}
+              </div>
+            `).join('')}
+          `;
+          refreshIcons();
+        }
+      } catch (e) {
+        console.log('Categories not available');
+      }
+    }
+
+    // Load campaigns
+    async function loadCampaigns(categoryId = null) {
+      try {
+        const params = { status: 'active', limit: 6 };
+        if (categoryId) params.category_id = categoryId;
+        const res = await API.getCampaigns(params);
+        const grid = document.getElementById('campaignsGrid');
+        if (res?.data?.campaigns?.length > 0) {
+          grid.innerHTML = res.data.campaigns.map(c => createCampaignCard(c)).join('');
+        } else {
+          grid.innerHTML = `
+            <div class="text-center" style="grid-column:1/-1; padding: 60px 0;">
+              <div style="margin-bottom: 16px;"><i data-lucide="inbox" style="width:48px;height:48px;color:var(--gray-300);"></i></div>
+              <h3>Belum Ada Kampanye</h3>
+              <p>Kampanye donasi akan tampil di sini.</p>
+            </div>
+          `;
+        }
+        refreshIcons();
+      } catch (e) {
+        console.log('Campaigns not available');
+      }
+    }
+
+    // Filter by category
+    function filterByCategory(categoryId, el) {
+      document.querySelectorAll('.category-chip').forEach(c => c.classList.remove('active'));
+      el.classList.add('active');
+      loadCampaigns(categoryId);
+    }
+
+    // Load recent donations
+    async function loadRecentDonations() {
+      try {
+        const res = await API.getRecentDonations();
+        const container = document.getElementById('recentDonations');
+        if (res?.data?.donations?.length > 0) {
+          container.innerHTML = res.data.donations.map(d => `
+            <div class="donation-item">
+              <div class="donation-avatar">${getInitials(d.donatur?.name || 'A')}</div>
+              <div class="donation-info">
+                <div class="donation-name">${d.donatur?.name || 'Anonim'}</div>
+                <div class="donation-campaign">${d.campaign?.title || ''} · ${formatTimeAgo(d.created_at)}</div>
+              </div>
+              <div class="donation-amount">${formatCurrency(d.amount)}</div>
+            </div>
+          `).join('');
+        } else {
+          container.innerHTML = '<div class="text-center" style="padding: 40px;"><p>Belum ada donasi terbaru.</p></div>';
+        }
+      } catch (e) {
+        console.log('Recent donations not available');
+      }
+    }
+
+    // Init
+    document.addEventListener('DOMContentLoaded', () => {
+      loadStats();
+      loadCategories();
+      loadCampaigns();
+      loadRecentDonations();
+    });
+  </script>
+
+</body>
+
+</html>

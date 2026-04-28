@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Kelola kampanye donasi — Donaria Admin">
+  <title>Kelola Kampanye — Donaria Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+  <a href="#main-content" class="skip-link">Langsung ke konten utama</a>
+  <nav class="navbar" id="navbar">
+    <div class="container">
+      <a href="../index.html" class="navbar-brand"><span class="logo-icon"><i data-lucide="heart-handshake" style="color:white;width:20px;height:20px;"></i></span><span>Donaria</span></a>
+      <div class="navbar-nav" id="navbarNav">
+        <a href="index.html">Dashboard</a><a href="campaigns.html" class="active">Kampanye</a><a href="transactions.html">Transaksi</a><a href="../index.html">Website</a>
+      </div>
+      <div class="navbar-actions" id="navbarActions">
+        <span class="badge badge-primary">Admin</span>
+        <button class="btn btn-sm btn-outline" onclick="Auth.logout()">Keluar</button>
+      </div>
+      <button class="navbar-toggle" id="navbarToggle" aria-label="Buka menu navigasi"><i data-lucide="menu" class="icon-lg"></i></button>
+    </div>
+  </nav>
+
+  <div class="dashboard" id="main-content">
+    <div class="container">
+      <div class="dashboard-header d-flex justify-between align-center flex-wrap" style="gap:16px;">
+        <div><h1>Kelola Kampanye</h1><p>Buat, edit, dan kelola kampanye donasi</p></div>
+        <button class="btn btn-primary" onclick="openCreateModal()"><i data-lucide="plus" class="icon-md"></i> Buat Kampanye</button>
+      </div>
+      <div class="table-container" style="margin-bottom:60px;">
+        <div style="overflow-x:auto;">
+          <table>
+            <thead><tr><th>ID</th><th>Judul</th><th>Kategori</th><th>Target</th><th>Terkumpul</th><th>Status</th><th>Aksi</th></tr></thead>
+            <tbody id="campaignsTableBody"><tr><td colspan="7" class="text-center" style="padding:40px;"><div class="spinner" style="margin:0 auto 12px;"></div>Memuat...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Create/Edit Modal -->
+  <div class="modal-overlay" id="campaignModal">
+    <div class="modal" style="max-width:600px;">
+      <div class="modal-header">
+        <h3 id="modalTitle">Buat Kampanye Baru</h3>
+        <button class="modal-close" onclick="closeModal()" aria-label="Tutup modal"><i data-lucide="x" class="icon-md"></i></button>
+      </div>
+      <div class="modal-body">
+        <div id="modalError" class="alert alert-error hidden"><span><svg class="icon-md" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg></span><span id="modalErrorMsg"></span></div>
+        <form id="campaignForm" onsubmit="saveCampaign(event)">
+          <input type="hidden" id="editId">
+          <div class="form-group"><label class="form-label">Judul Kampanye *</label><input type="text" id="campTitle" class="form-control" placeholder="Judul kampanye donasi" required></div>
+          <div class="form-group"><label class="form-label">Kategori *</label><select id="campCategory" class="form-control" required><option value="">Pilih Kategori</option></select></div>
+          <div class="form-group"><label class="form-label">Deskripsi Singkat</label><input type="text" id="campShortDesc" class="form-control" placeholder="Ringkasan singkat kampanye"></div>
+          <div class="form-group"><label class="form-label">Deskripsi Lengkap</label><textarea id="campDesc" class="form-control" rows="4" placeholder="Jelaskan detail kampanye..."></textarea></div>
+          <div class="form-group"><label class="form-label">Target Dana (Rp) *</label><input type="number" id="campTarget" class="form-control" placeholder="Contoh: 10000000" required min="100000" inputmode="numeric"></div>
+          <div class="form-group"><label class="form-label">URL Banner Image</label><input type="url" id="campBanner" class="form-control" placeholder="https://example.com/banner.jpg"></div>
+          <div class="form-group"><label class="form-label">Deadline</label><input type="date" id="campDeadline" class="form-control"></div>
+          <div class="form-group" id="statusGroup" style="display:none;"><label class="form-label">Status</label><select id="campStatus" class="form-control"><option value="active">Active</option><option value="completed">Completed</option><option value="cancelled">Cancelled</option></select></div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeModal()">Batal</button>
+        <button class="btn btn-primary" onclick="document.getElementById('campaignForm').requestSubmit()" id="saveBtn">Simpan</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script src="../js/api.js"></script>
+  <script src="../js/auth.js"></script>
+  <script>
+    let categoriesData=[],campaignsStore={};
+    async function loadCategories(){try{const res=await API.getCategories();categoriesData=res?.data?.categories||[];const select=document.getElementById('campCategory');select.innerHTML='<option value="">Pilih Kategori</option>'+categoriesData.map(c=>`<option value="${c.id}">${c.name}</option>`).join('');}catch(e){}}
+    async function loadCampaigns(){
+      try{
+        const res=await API.getCampaigns({limit:100}),tbody=document.getElementById('campaignsTableBody');
+        if(res?.data?.campaigns?.length>0){
+          res.data.campaigns.forEach(c=>{campaignsStore[c.id]=c;});
+          tbody.innerHTML=res.data.campaigns.map(c=>{
+            const progress=calculateProgress(c.current_amount,c.target_amount);
+            const statusBadge={
+              active:'<span class="badge badge-success"><svg class="badge-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg> Aktif</span>',
+              completed:'<span class="badge badge-info"><svg class="badge-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg> Selesai</span>',
+              cancelled:'<span class="badge badge-danger"><svg class="badge-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg> Batal</span>',
+            };
+            return `<tr><td>${c.id}</td><td><strong>${c.title}</strong></td><td>${c.category?.name||'-'}</td><td>${formatCompactCurrency(c.target_amount)}</td><td>${formatCompactCurrency(c.current_amount)} <small>(${progress}%)</small></td><td>${statusBadge[c.status]||c.status}</td><td><div class="d-flex gap-1"><button class="btn btn-sm btn-outline" onclick="openEditModal(campaignsStore[${c.id}])" aria-label="Edit kampanye ${c.title}"><i data-lucide="pencil" class="icon-sm"></i></button><button class="btn btn-sm btn-danger" onclick="deleteCampaign(${c.id})" aria-label="Hapus kampanye ${c.title}"><i data-lucide="trash-2" class="icon-sm"></i></button></div></td></tr>`;
+          }).join('');
+        }else{tbody.innerHTML='<tr><td colspan="7" class="text-center" style="padding:40px;">Belum ada kampanye. Klik "Buat Kampanye" untuk mulai.</td></tr>';}
+        refreshIcons();
+      }catch(e){console.error('Failed loading campaigns:',e);}
+    }
+    function openCreateModal(){document.getElementById('modalTitle').textContent='Buat Kampanye Baru';document.getElementById('editId').value='';document.getElementById('campaignForm').reset();document.getElementById('statusGroup').style.display='none';document.getElementById('modalError').classList.add('hidden');document.getElementById('campaignModal').classList.add('active');}
+    function openEditModal(campaign){document.getElementById('modalTitle').textContent='Edit Kampanye';document.getElementById('editId').value=campaign.id;document.getElementById('campTitle').value=campaign.title||'';document.getElementById('campCategory').value=campaign.category_id||'';document.getElementById('campShortDesc').value=campaign.short_description||'';document.getElementById('campDesc').value=campaign.description||'';document.getElementById('campTarget').value=campaign.target_amount||'';document.getElementById('campBanner').value=campaign.banner_image||'';document.getElementById('campDeadline').value=campaign.deadline?campaign.deadline.split('T')[0]:'';document.getElementById('campStatus').value=campaign.status||'active';document.getElementById('statusGroup').style.display='block';document.getElementById('modalError').classList.add('hidden');document.getElementById('campaignModal').classList.add('active');}
+    function closeModal(){document.getElementById('campaignModal').classList.remove('active');}
+    async function saveCampaign(e){
+      e.preventDefault();const btn=document.getElementById('saveBtn'),errorBox=document.getElementById('modalError'),errorMsg=document.getElementById('modalErrorMsg');
+      btn.disabled=true;btn.textContent='Menyimpan...';errorBox.classList.add('hidden');
+      const editId=document.getElementById('editId').value;
+      const data={title:document.getElementById('campTitle').value,category_id:parseInt(document.getElementById('campCategory').value),short_description:document.getElementById('campShortDesc').value,description:document.getElementById('campDesc').value,target_amount:parseInt(document.getElementById('campTarget').value),banner_image:document.getElementById('campBanner').value,deadline:document.getElementById('campDeadline').value||null};
+      if(editId)data.status=document.getElementById('campStatus').value;
+      try{if(editId){await API.updateCampaign(editId,data);showToast('Kampanye berhasil diperbarui!');}else{await API.createCampaign(data);showToast('Kampanye berhasil dibuat!');}closeModal();loadCampaigns();}
+      catch(error){errorMsg.textContent=error.message||'Gagal menyimpan kampanye.';errorBox.classList.remove('hidden');}
+      finally{btn.disabled=false;btn.textContent='Simpan';}
+    }
+    async function deleteCampaign(id){if(!confirm('Yakin ingin menghapus kampanye ini?'))return;try{await API.deleteCampaign(id);showToast('Kampanye berhasil dihapus.');loadCampaigns();}catch(e){showToast('Gagal menghapus kampanye.','error');}}
+    document.addEventListener('DOMContentLoaded',()=>{loadCategories();loadCampaigns();});
+    // Close modal on overlay click
+    document.getElementById('campaignModal').addEventListener('click',(e)=>{if(e.target.classList.contains('modal-overlay'))closeModal();});
+    // Close modal on Escape key
+    document.addEventListener('keydown',(e)=>{if(e.key==='Escape'&&document.getElementById('campaignModal').classList.contains('active'))closeModal();});
+  </script>
+</body>
+</html>

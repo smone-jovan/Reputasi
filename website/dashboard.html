@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Dashboard donatur — Donaria">
+  <title>Dashboard — Donaria</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <a href="#main-content" class="skip-link">Langsung ke konten utama</a>
+  <nav class="navbar" id="navbar">
+    <div class="container">
+      <a href="index.html" class="navbar-brand"><span class="logo-icon"><i data-lucide="heart-handshake" style="color:white;width:20px;height:20px;"></i></span><span>Donaria</span></a>
+      <div class="navbar-nav" id="navbarNav">
+        <a href="index.html">Beranda</a><a href="campaigns.html">Kampanye</a><a href="dashboard.html" class="active">Dashboard</a>
+        <div class="mobile-auth"><a href="login.html" class="btn btn-sm btn-outline">Masuk</a><a href="register.html" class="btn btn-sm btn-primary">Daftar</a></div>
+      </div>
+      <div class="navbar-actions" id="navbarActions"></div>
+      <button class="navbar-toggle" id="navbarToggle" aria-label="Buka menu navigasi"><i data-lucide="menu" class="icon-lg"></i></button>
+    </div>
+  </nav>
+
+  <div class="dashboard" id="main-content">
+    <div class="container">
+      <div class="dashboard-profile-card animate-fade-in-up">
+        <div class="dpc-avatar" id="dpcAvatarIcon"><i data-lucide="user" style="width:48px;height:48px;"></i></div>
+        <div class="dpc-info">
+          <div class="dpc-name" id="dashboardGreeting">Halo, Donatur!</div>
+          <div class="dpc-role"><i data-lucide="star" class="icon-sm" style="color:var(--accent);"></i> Donatur Setia | <span id="userEmailPlaceholder">memuat...</span></div>
+          <div class="dpc-status">Aktif Berdonasi</div>
+        </div>
+      </div>
+
+      <div class="dashboard-stats" id="dashboardStats">
+        <div class="dashboard-stat-card">
+          <div class="stat-icon green"><i data-lucide="coins" class="icon-lg"></i></div>
+          <div><div class="stat-value" id="userTotalDonation">Rp 0</div><div class="stat-label">Total Donasi</div></div>
+        </div>
+        <div class="dashboard-stat-card">
+          <div class="stat-icon blue"><i data-lucide="clipboard-list" class="icon-lg"></i></div>
+          <div><div class="stat-value" id="userTotalCount">0</div><div class="stat-label">Jumlah Donasi</div></div>
+        </div>
+        <div class="dashboard-stat-card">
+          <div class="stat-icon amber"><i data-lucide="bell" class="icon-lg"></i></div>
+          <div><div class="stat-value" id="userNotifCount">0</div><div class="stat-label">Notifikasi Baru</div></div>
+        </div>
+      </div>
+
+      <div class="table-container">
+        <div class="table-header"><h3>Riwayat Donasi</h3></div>
+        <div style="overflow-x: auto;">
+          <table>
+            <thead><tr><th>Kampanye</th><th>Jumlah</th><th>Metode</th><th>Status</th><th>Tanggal</th><th>Aksi</th></tr></thead>
+            <tbody id="donationHistory"><tr><td colspan="6" class="text-center" style="padding:40px;"><div class="spinner" style="margin:0 auto 12px;"></div>Memuat riwayat donasi...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="table-container mt-4" style="margin-bottom: 60px;">
+        <div class="table-header">
+          <h3><i data-lucide="bell" class="icon-md"></i> Notifikasi</h3>
+          <button class="btn btn-sm btn-outline" onclick="markAllRead()">Tandai semua dibaca</button>
+        </div>
+        <div id="notificationsList" style="padding: 0 24px;">
+          <div class="text-center" style="padding:40px;"><div class="spinner" style="margin:0 auto 12px;"></div>Memuat notifikasi...</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer"><div class="container"><div class="footer-bottom"><p>&copy; 2026 Donaria. Semua hak dilindungi.</p></div></div></footer>
+
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script src="js/api.js"></script>
+  <script>
+    if(!Auth.isLoggedIn()){window.location.href='login.html';}
+    async function loadDashboard(){
+      const user=Auth.getUser();
+      if(user){document.getElementById('dashboardGreeting').textContent=`Halo, ${user.name}!`;const emailEl=document.getElementById('userEmailPlaceholder');if(emailEl)emailEl.textContent=user.email||'donatur@email.com';}
+      try{
+        const res=await API.getMyDonations({limit:50});const tbody=document.getElementById('donationHistory');
+        if(res?.data?.donations?.length>0){
+          const donations=res.data.donations;let totalAmount=0,totalCount=donations.length;
+          tbody.innerHTML=donations.map(d=>{
+            if(d.status==='success')totalAmount+=parseInt(d.amount);
+            const statusBadge={
+              success:'<span class="badge badge-success"><svg class="badge-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg> Berhasil</span>',
+              pending:'<span class="badge badge-warning"><svg class="badge-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Pending</span>',
+              failed:'<span class="badge badge-danger"><svg class="badge-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg> Gagal</span>',
+              refunded:'<span class="badge badge-info"><svg class="badge-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg> Refund</span>',
+            };
+            return `<tr><td><div style="font-weight:600;font-size:0.85rem;">${d.campaign?.title||'-'}</div></td><td style="font-weight:600;color:var(--primary-dark);">${formatCurrency(d.amount)}</td><td>${d.transaction?.payment_method==='qris'?'<i data-lucide="qr-code" class="icon-sm"></i> QRIS':'<i data-lucide="building-2" class="icon-sm"></i> Bank'}</td><td>${statusBadge[d.status]||d.status}</td><td style="font-size:0.85rem;color:var(--text-muted);">${formatDate(d.created_at)}</td><td>${d.status==='pending'&&d.transaction?.order_id?`<a href="payment.html?order_id=${d.transaction.order_id}" class="btn btn-sm btn-primary">Bayar</a>`:''}</td></tr>`;
+          }).join('');
+          document.getElementById('userTotalDonation').textContent=formatCurrency(totalAmount);document.getElementById('userTotalCount').textContent=totalCount;
+        }else{tbody.innerHTML=`<tr><td colspan="6" class="text-center" style="padding:60px;"><div style="margin-bottom:12px;"><i data-lucide="inbox" style="width:32px;height:32px;color:var(--gray-300);"></i></div><p>Belum ada riwayat donasi.</p><a href="campaigns.html" class="btn btn-primary btn-sm mt-2">Mulai Donasi</a></td></tr>`;}
+        refreshIcons();
+      }catch(e){console.log('Failed to load donations');}
+      try{
+        const res=await API.getNotifications();const container=document.getElementById('notificationsList');
+        if(res?.data?.notifications?.length>0){
+          document.getElementById('userNotifCount').textContent=res.data.unreadCount||0;
+          container.innerHTML=res.data.notifications.map(n=>`<div class="donation-item" style="opacity:${n.is_read?0.6:1};"><div class="donation-avatar" style="background:${n.is_read?'var(--gray-100)':'var(--primary-50)'};font-size:1.2rem;">${n.type==='donation'?'<i data-lucide="coins" class="icon-md"></i>':n.type==='campaign'?'<i data-lucide="megaphone" class="icon-md"></i>':'<i data-lucide="bell" class="icon-md"></i>'}</div><div class="donation-info"><div class="donation-name">${n.title}</div><div class="donation-campaign">${n.message||''}</div></div><div style="font-size:0.75rem;color:var(--text-muted);white-space:nowrap;">${formatTimeAgo(n.created_at)}</div></div>`).join('');
+        }else{container.innerHTML='<div class="text-center" style="padding:40px;"><p>Belum ada notifikasi.</p></div>';}
+        refreshIcons();
+      }catch(e){console.log('Failed to load notifications');}
+    }
+    async function markAllRead(){try{await API.markAllNotificationsRead();showToast('Semua notifikasi ditandai sudah dibaca');document.getElementById('userNotifCount').textContent='0';}catch(e){}}
+    document.addEventListener('DOMContentLoaded',loadDashboard);
+  </script>
+</body>
+</html>

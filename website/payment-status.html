@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Status pembayaran — Donaria">
+  <title>Status Pembayaran — Donaria</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .status-page{min-height:100dvh;display:flex;align-items:center;justify-content:center;padding:40px 24px;background:linear-gradient(135deg,#ECFDF5 0%,#D1FAE5 50%,#F0FDF4 100%);}
+    .status-card{background:white;border-radius:var(--radius-xl);padding:48px;width:100%;max-width:500px;box-shadow:var(--shadow-xl);text-align:center;}
+    .status-icon{font-size:4rem;margin-bottom:16px;display:flex;justify-content:center;}
+    .status-title{font-size:1.5rem;margin-bottom:8px;}
+    .status-desc{color:var(--text-secondary);margin-bottom:32px;line-height:1.7;}
+    .status-detail{text-align:left;background:var(--gray-50);padding:20px;border-radius:var(--radius-md);margin-bottom:24px;}
+    .status-detail .row{display:flex;justify-content:space-between;padding:8px 0;font-size:0.9rem;border-bottom:1px solid var(--gray-200);}
+    .status-detail .row:last-child{border-bottom:none;}.status-detail .row .label{color:var(--text-muted);}.status-detail .row .value{font-weight:600;}
+  </style>
+</head>
+<body>
+  <div class="status-page">
+    <div class="status-card animate-fade-in-up" id="statusContent">
+      <div style="margin-bottom:32px;"><a href="index.html" style="font-size:1.3rem;font-weight:800;color:var(--primary-dark);display:inline-flex;align-items:center;gap:8px;"><i data-lucide="heart-handshake" class="icon-lg"></i> Donaria</a></div>
+      <div class="spinner" style="margin:40px auto;"></div>
+      <p>Mengecek status pembayaran...</p>
+    </div>
+  </div>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script src="js/api.js"></script>
+  <script>
+    const orderId=new URLSearchParams(window.location.search).get('order_id');let pollInterval=null;
+    async function checkStatus(){
+      if(!orderId){window.location.href='index.html';return;}
+      try{
+        const res=await API.checkPaymentStatus(orderId),data=res?.data;if(!data)throw new Error('Not found');
+        const statusMap={
+          settlement:{icon:'<svg style="width:64px;height:64px;color:#16A34A;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg>',title:'Pembayaran Berhasil!',desc:'Terima kasih atas donasi Anda. Dana sudah diterima dan akan disalurkan.'},
+          pending:{icon:'<i data-lucide="hourglass" style="width:64px;height:64px;color:#D97706;"></i>',title:'Menunggu Pembayaran',desc:'Pembayaran belum diterima. Halaman ini akan diperbarui otomatis.'},
+          expire:{icon:'<i data-lucide="clock" style="width:64px;height:64px;color:#DC2626;"></i>',title:'Pembayaran Kedaluwarsa',desc:'Waktu pembayaran telah habis. Silakan buat donasi baru.'},
+          deny:{icon:'<i data-lucide="x-circle" style="width:64px;height:64px;color:#DC2626;"></i>',title:'Pembayaran Ditolak',desc:'Pembayaran ditolak oleh sistem. Silakan coba lagi.'},
+          cancel:{icon:'<i data-lucide="ban" style="width:64px;height:64px;color:#DC2626;"></i>',title:'Pembayaran Dibatalkan',desc:'Transaksi telah dibatalkan.'},
+        };
+        const s=statusMap[data.status]||statusMap.pending;
+        document.getElementById('statusContent').innerHTML=`
+          <div style="margin-bottom:24px;"><a href="index.html" style="font-size:1.3rem;font-weight:800;color:var(--primary-dark);display:inline-flex;align-items:center;gap:8px;"><i data-lucide="heart-handshake" class="icon-lg"></i> Donaria</a></div>
+          <div class="status-icon">${s.icon}</div><h2 class="status-title">${s.title}</h2><p class="status-desc">${s.desc}</p>
+          <div class="status-detail">
+            <div class="row"><span class="label">Order ID</span><span class="value">${data.order_id}</span></div>
+            <div class="row"><span class="label">Metode</span><span class="value">${data.payment_method==='qris'?'QRIS':'Transfer Bank'}</span></div>
+            <div class="row"><span class="label">Jumlah</span><span class="value">${formatCurrency(data.amount)}</span></div>
+            <div class="row"><span class="label">Status</span><span class="value">${data.status.toUpperCase()}</span></div>
+            ${data.paid_at?`<div class="row"><span class="label">Dibayar</span><span class="value">${formatDate(data.paid_at)}</span></div>`:''}
+          </div>
+          <div class="d-flex gap-2" style="flex-direction:column;">
+            ${data.status==='settlement'?`<a href="dashboard.html" class="btn btn-primary btn-block"><i data-lucide="bar-chart-3" class="icon-sm"></i> Ke Dashboard</a><a href="campaigns.html" class="btn btn-outline btn-block">Donasi Lagi</a>`:data.status==='pending'?`<a href="payment.html?order_id=${data.order_id}" class="btn btn-primary btn-block">Kembali ke Pembayaran</a><p style="font-size:0.8rem;color:var(--text-muted);margin-top:8px;">Auto-refresh setiap 10 detik...</p>`:`<a href="campaigns.html" class="btn btn-primary btn-block">Donasi Lagi</a><a href="index.html" class="btn btn-outline btn-block">Kembali ke Beranda</a>`}
+          </div>`;
+        refreshIcons();
+        if(['settlement','expire','deny','cancel'].includes(data.status)){clearInterval(pollInterval);localStorage.removeItem('donaria_payment');}
+      }catch(e){
+        document.getElementById('statusContent').innerHTML=`<div style="margin-bottom:24px;"><a href="index.html" style="font-size:1.3rem;font-weight:800;color:var(--primary-dark);display:inline-flex;align-items:center;gap:8px;"><i data-lucide="heart-handshake" class="icon-lg"></i> Donaria</a></div><div class="status-icon"><i data-lucide="help-circle" style="width:64px;height:64px;color:var(--gray-300);"></i></div><h2 class="status-title">Transaksi Tidak Ditemukan</h2><p class="status-desc">Order ID "${orderId}" tidak ditemukan di sistem.</p><a href="index.html" class="btn btn-primary btn-block">Kembali ke Beranda</a>`;
+        refreshIcons();
+      }
+    }
+    document.addEventListener('DOMContentLoaded',()=>{checkStatus();pollInterval=setInterval(checkStatus,10000);});
+  </script>
+</body>
+</html>
