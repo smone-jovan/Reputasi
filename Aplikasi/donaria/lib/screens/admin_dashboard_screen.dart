@@ -65,7 +65,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
                   children: [
-                    _buildStatCard('Total Kampanye', '${_stats["totalCampaigns"] ?? 0}', Icons.target, Colors.green),
+                    _buildStatCard('Total Kampanye', '${_stats["totalCampaigns"] ?? 0}', Icons.campaign, Colors.green),
                     _buildStatCard('Total Donasi', formatCompactCurrency((_stats["totalDonations"] ?? 0).toDouble()), Icons.monetization_on, Colors.blue),
                     _buildStatCard('Total Donatur', '${_stats["totalDonors"] ?? 0}', Icons.people, Colors.orange),
                     _buildStatCard('Transaksi', '${_stats["totalTransactions"] ?? 0}', Icons.check_circle, Colors.red),
@@ -236,7 +236,7 @@ class _DemoTestModalState extends State<DemoTestModal> {
               contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             ),
             hint: const Text('Pilih Kampanye'),
-            value: _selectedCampaignId,
+            initialValue: _selectedCampaignId,
             items: campaigns.map((c) {
               return DropdownMenuItem<int>(
                 value: c.id,
