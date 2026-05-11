@@ -1,5 +1,9 @@
 # 🤖 README AI NEXT — Instruksi Lanjutan untuk Model AI Berikutnya
 
+> **⚠️ PENGUMUMAN PENTING (UPDATE: APRIL 2026)**
+> Dokumen ini adalah dokumentasi panduan AI awal.
+> Untuk melihat status terkini dan hasil implementasi (termasuk UI/UX terbaru dengan 21st-premium.css), **silakan merujuk ke file `Projek_sekarang.md`**.
+
 > Dokumen ini berisi konteks lengkap dan instruksi untuk melanjutkan pengembangan
 > **Donaria (Aplikasi Donasi Online)** jika sesi AI sebelumnya sudah ke limit.
 
@@ -13,12 +17,12 @@
 - [x] Implementation Plan dengan pilihan user
 - [x] Flutter project `donaria` sudah di-create (`Aplikasi/donaria/`)
 - [x] Backend Express.js lengkap (8 models, 7 controllers, 7 routes, middleware, Tripay service, seed data)
-- [x] Website Frontend lengkap (12 halaman HTML, CSS design system, JS API helper)
+- [x] Website Frontend lengkap (12 halaman HTML, CSS design system 21st-premium.css, JS API helper)
+- [x] Flutter app screens & API integration
 
 ### Yang Belum Dikerjakan ❌
-- [x] Flutter app screens & API integration
 - [ ] Isi kunci API Tripay di `.env` (masih placeholder)
-- [ ] Testing & deployment
+- [ ] Testing end-to-end & deployment
 
 ---
 
@@ -330,12 +334,13 @@ dependencies:
 | `admin/withdrawals.html` | Kelola pencairan | 🟢 Rendah |
 
 ### Design System Website
+Menggunakan standar **21st.dev / UI-UX Pro Max** (Premium Glassmorphism).
 - **Font:** Inter atau Poppins (Google Fonts)
-- **Warna utama:** Hijau (#10B981) — melambangkan kebaikan/donasi
+- **Warna utama:** Hijau (#10B981) & Premium Glow
 - **Warna sekunder:** Emerald gradient (#059669 → #34D399)
-- **Background:** Light mode (#F9FAFB), dark card (#1F2937)
-- **Border radius:** 12px (modern rounded)
-- **Shadow:** Soft shadow (0 4px 6px rgba(0,0,0,0.07))
+- **Background:** Light mode (#F9FAFB), dark card (#1F2937), orb glow effects
+- **Border radius:** 12px hingga 24px (modern rounded)
+- **Shadow:** Soft shadow (0 4px 6px rgba(0,0,0,0.07)), Glassmorphism, backdrop-blur
 
 ---
 

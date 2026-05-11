@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../config/theme.dart';
 import '../providers/auth_provider.dart';
 import '../widgets/custom_button.dart';
+import '../widgets/app_logo.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -77,7 +78,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Text('🕌', style: TextStyle(fontSize: 40)),
+                      const AppLogo(size: 48),
                       const SizedBox(height: 8),
                       const Text(
                         'Buat Akun Donaria',

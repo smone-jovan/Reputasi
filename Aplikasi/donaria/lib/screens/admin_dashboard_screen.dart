@@ -236,7 +236,7 @@ class _DemoTestModalState extends State<DemoTestModal> {
               contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             ),
             hint: const Text('Pilih Kampanye'),
-            initialValue: _selectedCampaignId,
+            value: _selectedCampaignId,
             items: campaigns.map((c) {
               return DropdownMenuItem<int>(
                 value: c.id,

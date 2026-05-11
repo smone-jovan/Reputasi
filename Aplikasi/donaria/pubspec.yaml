@@ -21,6 +21,7 @@ dependencies:
   google_fonts: ^6.1.0
   flutter_widget_from_html: ^0.17.2
   audioplayers: ^6.6.0
+  flutter_svg: ^2.0.10+1
 
 dev_dependencies:
   flutter_test:
@@ -31,3 +32,4 @@ flutter:
   uses-material-design: true
   assets:
     - assets/sounds/
+    - assets/emojis/

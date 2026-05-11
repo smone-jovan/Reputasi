@@ -26,10 +26,10 @@ Flutter App (Dart) ─────┘         │
 - [x] AI Continuation Guide (`readme ai next.MD`)
 - [x] Flutter project created
 - [x] Backend setup & API (Express.js, 8 models, 7 controllers, 7 routes, Tripay service)
-- [x] Website frontend (12 halaman HTML, CSS design system, JS API helper)
+- [x] Website frontend (12 halaman HTML, design system 21st-premium.css, JS API helper)
 - [x] Flutter screens & integration
 - [ ] Tripay integration (kunci API belum diisi)
-- [ ] Testing & deployment
+- [ ] Testing end-to-end & deployment
 
 ## Urutan Kerja
 

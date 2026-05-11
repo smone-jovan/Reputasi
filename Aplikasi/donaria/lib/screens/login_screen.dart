@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../config/theme.dart';
 import '../providers/auth_provider.dart';
 import '../widgets/custom_button.dart';
+import '../widgets/app_logo.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -72,7 +73,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       // Logo
-                      const Text('🕌', style: TextStyle(fontSize: 40)),
+                      const AppLogo(size: 48),
                       const SizedBox(height: 8),
                       const Text(
                         'Donaria',

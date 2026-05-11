@@ -40,13 +40,21 @@ class TransactionData {
       qrisUrl: json['qris_url'],
       qrString: json['qr_string'],
       vaNumber: json['va_number'],
-      amount: json['amount'] ?? 0,
-      fee: json['fee'] ?? 0,
-      total: json['total'] ?? json['amount'] ?? 0,
+      amount: _parseInt(json['amount']),
+      fee: _parseInt(json['fee']),
+      total: _parseInt(json['total'] ?? json['amount']),
       expiredAt: json['expired_at'] != null ? DateTime.tryParse(json['expired_at']) : null,
       checkoutUrl: json['checkout_url'],
       instructions: instructionsList,
     );
+  }
+
+  static int _parseInt(dynamic value) {
+    if (value == null) return 0;
+    if (value is int) return value;
+    if (value is double) return value.toInt();
+    if (value is String) return int.tryParse(value) ?? (double.tryParse(value)?.toInt() ?? 0);
+    return 0;
   }
 
   bool get isQris => paymentMethod == 'qris';

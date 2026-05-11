@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:audioplayers/audioplayers.dart';
 
 import '../providers/auth_provider.dart';
+import '../widgets/app_logo.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -98,7 +99,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                         ],
                       ),
                       child: const Center(
-                        child: Text('🕌', style: TextStyle(fontSize: 44)),
+                        child: AppLogo(size: 52),
                       ),
                     ),
                     const SizedBox(height: 24),

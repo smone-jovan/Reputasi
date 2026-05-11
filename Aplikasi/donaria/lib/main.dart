@@ -52,20 +52,33 @@ class MainApp extends StatelessWidget {
           case '/home':
             return MaterialPageRoute(builder: (_) => const HomeScreen());
           case '/notifications':
-            return MaterialPageRoute(builder: (_) => const NotificationScreen());
+            return MaterialPageRoute(
+              builder: (_) => const NotificationScreen(),
+            );
           case '/campaign-detail':
             final id = settings.arguments as int;
-            return MaterialPageRoute(builder: (_) => CampaignDetailScreen(campaignId: id));
+            return MaterialPageRoute(
+              builder: (_) => CampaignDetailScreen(campaignId: id),
+            );
           case '/donate':
             final campaign = settings.arguments as Campaign;
-            return MaterialPageRoute(builder: (_) => DonateScreen(campaign: campaign));
+            return MaterialPageRoute(
+              builder: (_) => DonateScreen(campaign: campaign),
+            );
           case '/payment':
             final transaction = settings.arguments as TransactionData;
-            return MaterialPageRoute(builder: (_) => PaymentScreen(transaction: transaction));
+            return MaterialPageRoute(
+              builder: (_) => PaymentScreen(transaction: transaction),
+            );
           case '/admin-dashboard':
-            return MaterialPageRoute(builder: (_) => const AdminDashboardScreen());
+            return MaterialPageRoute(
+              builder: (_) => const AdminDashboardScreen(),
+            );
           default:
-            return MaterialPageRoute(builder: (_) => const Scaffold(body: Center(child: Text('Route not found'))));
+            return MaterialPageRoute(
+              builder: (_) =>
+                  const Scaffold(body: Center(child: Text('Route not found'))),
+            );
         }
       },
     );

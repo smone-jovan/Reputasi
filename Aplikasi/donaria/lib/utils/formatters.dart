@@ -1,6 +1,6 @@
 import 'package:intl/intl.dart';
 
-String formatCurrency(int amount) {
+String formatCurrency(num amount) {
   final formatter = NumberFormat.currency(
     locale: 'id_ID',
     symbol: 'Rp ',
@@ -9,7 +9,7 @@ String formatCurrency(int amount) {
   return formatter.format(amount);
 }
 
-String formatCompactCurrency(int amount) {
+String formatCompactCurrency(num amount) {
   if (amount >= 1000000000) return 'Rp ${(amount / 1000000000).toStringAsFixed(1)} M';
   if (amount >= 1000000) return 'Rp ${(amount / 1000000).toStringAsFixed(1)} Jt';
   if (amount >= 1000) return 'Rp ${(amount / 1000).toStringAsFixed(0)} Rb';

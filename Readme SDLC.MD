@@ -1,5 +1,9 @@
 # 📋 SDLC — Donaria (Aplikasi Donasi Online)
 
+> **⚠️ PENGUMUMAN PENTING (UPDATE: APRIL 2026)**
+> Dokumen ini adalah dokumentasi *Software Development Life Cycle* (SDLC) awal.
+> Untuk melihat status terkini dan hasil implementasi (termasuk UI/UX terbaru dengan 21st-premium.css), **silakan merujuk ke file `Projek_sekarang.md`**.
+
 > Dokumen Software Development Life Cycle untuk platform donasi online **Donaria**
 > yang mencakup Website dan Aplikasi Mobile dengan pembayaran via QRIS & Transfer Bank.
 

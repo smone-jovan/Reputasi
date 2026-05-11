@@ -106,7 +106,8 @@ D:\code_xI\Reputasi\
 │   │   ├── transactions.html # List transaksi
 │   │   └── withdrawals.html  # Kelola pencairan
 │   ├── css/
-│   │   └── style.css         # Design system (CSS variables)
+│   │   ├── style.css         # Design system dasar
+│   │   └── 21st-premium.css  # Design system baru (Premium Glassmorphism)
 │   ├── js/
 │   │   ├── app.js            # Main app logic
 │   │   ├── api.js            # API calls helper
@@ -339,13 +340,14 @@ TRIPAY_BASE_URL=https://tripay.co.id/api-sandbox
 | `admin/withdrawals.html` | ✅ | Kelola pencairan dana |
 
 ### Design System (Website)
+Menggunakan standar **21st.dev / UI-UX Pro Max** (Premium Glassmorphism).
 | Komponen | Nilai |
 |:---|:---|
-| **Warna Utama** | `#10B981` (Green) |
+| **Warna Utama** | `#10B981` (Green) & Premium Glow |
 | **Gradient** | `#059669 → #34D399` |
 | **Font** | Inter / Poppins (Google Fonts) |
-| **Border Radius** | 12px (rounded) |
-| **Shadow** | `0 4px 6px rgba(0,0,0,0.07)` |
+| **Border Radius** | 12px (rounded) hingga 24px |
+| **Shadow & Efek** | `0 4px 6px rgba(0,0,0,0.07)`, Glassmorphism, backdrop-blur |
 
 ---
 

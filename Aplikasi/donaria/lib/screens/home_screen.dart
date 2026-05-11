@@ -8,6 +8,7 @@ import '../widgets/campaign_card.dart';
 import '../widgets/category_chip.dart';
 import '../utils/formatters.dart';
 import '../models/category.dart';
+import '../widgets/app_logo.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -79,7 +80,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     gradient: const LinearGradient(colors: [AppTheme.primaryDark, AppTheme.primary, AppTheme.primaryLight]),
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: const Center(child: Text('🕌', style: TextStyle(fontSize: 18))),
+                  child: const Center(child: AppLogo(size: 22)),
                 ),
                 const SizedBox(width: 10),
                 const Text('Donaria', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 20)),
