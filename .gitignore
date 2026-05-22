@@ -1,0 +1,11 @@
+# Claude configuration
+.claude/
+.claude/*
+!/.claude/settings.local.json
+
+# Documentation
+implementation_plan.md
+Handoff.MD
+Projek_sekarang.md
+readme ai next.MD
+!Readme SDLC.MD

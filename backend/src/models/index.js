@@ -7,6 +7,12 @@ const Donation = require('./Donation');
 const Transaction = require('./Transaction');
 const Withdrawal = require('./Withdrawal');
 const Notification = require('./Notification');
+const Squad = require('./Squad');
+const SquadMember = require('./SquadMember');
+
+// ── Add squad_id to Donation (optional FK) ──
+Donation.belongsTo(Squad, { foreignKey: { name: 'squad_id', allowNull: true }, as: 'squad' });
+Squad.hasMany(Donation, { foreignKey: 'squad_id', as: 'donations' });
 
 // ── Associations ──
 
@@ -46,6 +52,24 @@ Withdrawal.belongsTo(User, { foreignKey: 'admin_id', as: 'admin' });
 User.hasMany(Notification, { foreignKey: 'user_id', as: 'notifications' });
 Notification.belongsTo(User, { foreignKey: 'user_id', as: 'user' });
 
+// ── Squad Associations ──
+
+// Campaign <-> Squad
+Campaign.hasMany(Squad, { foreignKey: 'campaign_id', as: 'squads' });
+Squad.belongsTo(Campaign, { foreignKey: 'campaign_id', as: 'campaign' });
+
+// User (creator) <-> Squad
+User.hasMany(Squad, { foreignKey: 'creator_id', as: 'created_squads' });
+Squad.belongsTo(User, { foreignKey: 'creator_id', as: 'creator' });
+
+// Squad <-> SquadMember
+Squad.hasMany(SquadMember, { foreignKey: 'squad_id', as: 'members' });
+SquadMember.belongsTo(Squad, { foreignKey: 'squad_id', as: 'squad' });
+
+// User <-> SquadMember
+User.hasMany(SquadMember, { foreignKey: 'user_id', as: 'squad_memberships' });
+SquadMember.belongsTo(User, { foreignKey: 'user_id', as: 'user' });
+
 module.exports = {
   sequelize,
   User,
@@ -56,4 +80,7 @@ module.exports = {
   Transaction,
   Withdrawal,
   Notification,
+  Squad,
+  SquadMember,
 };
+

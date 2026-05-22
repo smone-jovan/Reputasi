@@ -5,8 +5,10 @@ import 'package:shimmer/shimmer.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import '../config/theme.dart';
 import '../providers/campaign_provider.dart';
+import '../providers/squad_provider.dart';
 import '../widgets/progress_bar.dart';
 import '../widgets/custom_button.dart';
+import '../widgets/squad_card.dart';
 import '../utils/formatters.dart';
 
 class CampaignDetailScreen extends StatefulWidget {
@@ -22,7 +24,9 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
   void initState() {
     super.initState();
     Future.microtask(() {
-      if (mounted) context.read<CampaignProvider>().loadCampaignDetail(widget.campaignId);
+      if (!mounted) return;
+      context.read<CampaignProvider>().loadCampaignDetail(widget.campaignId);
+      context.read<SquadProvider>().loadCampaignSquads(widget.campaignId);
     });
   }
 
@@ -136,6 +140,15 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
                           ],
                         ),
                       ),
+                      const SizedBox(height: 16),
+
+                      // --- Squad Donasi Section ---
+                      _SquadSection(
+                        campaignId: widget.campaignId,
+                        campaignTitle: campaign.title,
+                        campaignTarget: campaign.targetAmount,
+                        isActive: campaign.isActive,
+                      ),
                       const SizedBox(height: 24),
 
                       // Description
@@ -181,6 +194,115 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
           );
         },
       ),
+    );
+  }
+}
+
+// --- Squad Section (embedded in campaign detail) ---
+class _SquadSection extends StatelessWidget {
+  final int campaignId;
+  final String campaignTitle;
+  final num campaignTarget;
+  final bool isActive;
+
+  const _SquadSection({
+    required this.campaignId,
+    required this.campaignTitle,
+    required this.campaignTarget,
+    required this.isActive,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<SquadProvider>(
+      builder: (_, squadProvider, __) {
+        final squads = squadProvider.campaignSquads;
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Header row
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Row(
+                  children: [
+                    Icon(Icons.groups_rounded, size: 22, color: AppTheme.primaryDark),
+                    SizedBox(width: 8),
+                    Text(
+                      'Squad Donasi',
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+                    ),
+                  ],
+                ),
+                if (isActive)
+                  TextButton.icon(
+                    onPressed: () {
+                      Navigator.pushNamed(context, '/create-squad', arguments: {
+                        'campaignId': campaignId,
+                        'campaignTitle': campaignTitle,
+                        'campaignTarget': campaignTarget,
+                      });
+                    },
+                    icon: const Icon(Icons.add_circle_outline, size: 18),
+                    label: const Text('Buat Squad'),
+                    style: TextButton.styleFrom(
+                      foregroundColor: AppTheme.primary,
+                      textStyle: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+                    ),
+                  ),
+              ],
+            ),
+
+            if (squads.isEmpty)
+              Container(
+                width: double.infinity,
+                margin: const EdgeInsets.only(top: 8),
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: AppTheme.gray50,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: AppTheme.gray200),
+                ),
+                child: Column(
+                  children: [
+                    Icon(Icons.groups_3_rounded, size: 36, color: AppTheme.gray300),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Belum ada squad',
+                      style: TextStyle(fontSize: 14, color: AppTheme.gray400, fontWeight: FontWeight.w600),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'Ajak teman donasi bareng!',
+                      style: TextStyle(fontSize: 12, color: AppTheme.gray400),
+                    ),
+                  ],
+                ),
+              )
+            else
+              ...squads.take(3).map((squad) => SquadCard(
+                    squad: squad,
+                    onTap: () {
+                      Navigator.pushNamed(context, '/squad-detail', arguments: {
+                        'id': squad.id,
+                        'code': squad.inviteCode,
+                      });
+                    },
+                  )),
+
+            if (squads.length > 3)
+              Center(
+                child: TextButton(
+                  onPressed: () {
+                    // Could navigate to full list, for now show all inline
+                  },
+                  child: Text('Lihat ${squads.length - 3} squad lainnya →'),
+                ),
+              ),
+          ],
+        );
+      },
     );
   }
 }

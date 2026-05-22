@@ -1,8 +1,8 @@
 # Project Donaria - Status Saat Ini
 
-> **Diperbarui:** 16 April 2026  
-> **Versi:** 1.0  
-> **Status:** Siap testing
+> **Diperbarui:** 13 Mei 2026  
+> **Versi:** 2.1  
+> **Status:** Siap testing — Fitur Squad Donasi selesai (Backend + Web + Flutter)
 
 ---
 
@@ -42,7 +42,9 @@ Please humanize this text: [teks Anda di sini]
 
 Semua komponen yang didokumentasikan dalam MD (`readme ai next.MD`, `Readme SDLC.MD`, `implementation_plan.md`) **sudah selesai diimplementasikan**. Project berada di fase **siap testing & deployment**.
 
+**Terdapat ide proyek baru (Sampingan): Web Translator (Klon ReadOmni).** Dokumen ide telah dibuat di `docs/ideas/Ide_Penerjemah_Web.md`. Handoff untuk proyek ini ada di `Handoff.MD`.
 ---
+
 
 ## 📁 Struktur Project Saat Ini
 
@@ -62,12 +64,12 @@ D:\code_xI\Reputasi\
 │       │   │   └── transaction.dart  # Transaction model
 │       │   ├── services/
 │       │   │   ├── api_service.dart      # HTTP client (Dio)
-│       │   │   ├── auth_service.dart     # Login, register, token
-│       │   │   └── donation_provider.dart # State management
+│       │   │   └── auth_service.dart     # Login, register, token
 │       │   ├── providers/
 │       │   │   ├── auth_provider.dart        # Auth state
 │       │   │   ├── campaign_provider.dart    # Campaign state
-│       │   │   └── donation_provider.dart    # Donation state
+│       │   │   ├── donation_provider.dart    # Donation state
+│       │   │   └── squad_provider.dart       # 🆕 Squad state
 │       │   ├── screens/
 │       │   │   ├── splash_screen.dart      # Animation saat startup
 │       │   │   ├── login_screen.dart       # Halaman login
@@ -76,14 +78,17 @@ D:\code_xI\Reputasi\
 │       │   │   ├── campaign_detail_screen.dart # Detail kampanye
 │       │   │   ├── donate_screen.dart      # Form donasi
 │       │   │   ├── payment_screen.dart     # Tampilan QR/VA
-│       │   │   └── notification_screen.dart # Notifikasi
+│       │   │   ├── notification_screen.dart # Notifikasi
+│       │   │   ├── squad_detail_screen.dart  # 🆕 Detail squad + leaderboard
+│       │   │   └── create_squad_screen.dart  # 🆕 Form buat squad
 │       │   ├── widgets/
 │       │   │   ├── campaign_card.dart
 │       │   │   ├── donation_item.dart
 │       │   │   ├── category_chip.dart
 │       │   │   ├── progress_bar.dart
 │       │   │   ├── loading_widget.dart
-│       │   │   └── custom_button.dart
+│       │   │   ├── custom_button.dart
+│       │   │   └── squad_card.dart           # 🆕 Squad card widget
 │       │   └── utils/
 │       │       ├── formatters.dart       # Currency, date formatter
 │       │       └── constants.dart
@@ -107,7 +112,8 @@ D:\code_xI\Reputasi\
 │   │   └── withdrawals.html  # Kelola pencairan
 │   ├── css/
 │   │   ├── style.css         # Design system dasar
-│   │   └── 21st-premium.css  # Design system baru (Premium Glassmorphism)
+│   │   └── 21st-premium.css  # Design system lama
+│   │   └── (Integrasi Tailwind CSS CDN pada HTML pages)
 │   ├── js/
 │   │   ├── app.js            # Main app logic
 │   │   ├── api.js            # API calls helper
@@ -132,6 +138,8 @@ D:\code_xI\Reputasi\
 │   │   ├── models/
 │   │   │   ├── User.js
 │   │   │   ├── Category.js
+│   │   │   ├── Squad.js          # 🆕 Squad Donasi
+│   │   │   ├── SquadMember.js    # 🆕 Squad Members
 │   │   │   ├── Campaign.js
 │   │   │   ├── CampaignImage.js
 │   │   │   ├── Donation.js
@@ -145,7 +153,8 @@ D:\code_xI\Reputasi\
 │   │   │   ├── donationRoutes.js
 │   │   │   ├── transactionRoutes.js
 │   │   │   ├── withdrawalRoutes.js
-│   │   │   └── notificationRoutes.js
+│   │   │   ├── notificationRoutes.js
+│   │   │   └── squadRoutes.js     # 🆕 Squad Donasi
 │   │   ├── middleware/
 │   │   │   ├── auth.js       # JWT verification
 │   │   │   ├── admin.js      # Admin role check
@@ -157,9 +166,14 @@ D:\code_xI\Reputasi\
 │   ├── .env                  # Environment variables
 │   └── package.json
 │
-├── Readme SDLC.MD            # Dokumen SDLC (dokumentasi lama)
-├── readme ai next.MD         # AI Continuation Guide (dokumentasi lama)
-├── implementation_plan.md    # Implementation Plan (dokumentasi lama)
+├── docs/
+│   ├── brand-guidelines.md   # Brand guidelines Donaria
+│   └── ideas/
+│       └── squad-donasi.md   # 🆕 Rencana fitur Squad Donasi
+├── mcp.json                  # MCP server config (Stitch)
+├── Readme SDLC.MD            # Dokumen SDLC
+├── readme ai next.MD         # AI Continuation Guide
+├── implementation_plan.md    # Implementation Plan
 ├── Projek_sekarang.md        # ← File ini (status terkini)
 └── README.md
 ```
@@ -169,7 +183,7 @@ D:\code_xI\Reputasi\
 ## 🗄️ Database Schema (MySQL)
 
 **Database Name:** `donaria`  
-**Total Tables:** 8
+**Total Tables:** 8 (+ 2 baru untuk Squad Donasi)
 
 | Tabel | Status | Deskripsi |
 |:---|:---|:---|
@@ -177,10 +191,12 @@ D:\code_xI\Reputasi\
 | `categories` | ✅ | Kategori kampanye (8 default) |
 | `campaigns` | ✅ | Program donasi |
 | `campaign_images` | ✅ | Galeri foto kampanye |
-| `donations` | ✅ | Record donasi |
+| `donations` | ✅ | Record donasi (+ field `squad_id` opsional 🆕) |
 | `transactions` | ✅ | Detail pembayaran (QRIS/VA) |
 | `withdrawals` | ✅ | Pencairan dana |
 | `notifications` | ✅ | Notifikasi user |
+| `squads` | ✅ | Squad donasi per kampanye |
+| `squad_members` | ✅ | Anggota squad |
 
 **Admin Default:**
 - Email: `admin@donaria.com`
@@ -253,6 +269,15 @@ D:\code_xI\Reputasi\
 |:---|:---|:---|:---|
 | GET | `/api/stats` | Dashboard statistik | ✅ |
 
+### Squads (🆕 Squad Donasi)
+| Method | Endpoint | Deskripsi | Status |
+|:---|:---|:---|:---|
+| POST | `/api/squads` | Buat squad untuk kampanye | ✅ |
+| GET | `/api/squads/:code` | Detail squad via invite code | ✅ |
+| POST | `/api/squads/:code/join` | Bergabung ke squad | ✅ |
+| GET | `/api/squads/:id` | Detail squad + leaderboard | ✅ |
+| GET | `/api/squads/campaign/:id` | List squad dari kampanye | ✅ |
+
 ---
 
 ## Integrasi Tripay
@@ -299,10 +324,12 @@ TRIPAY_BASE_URL=https://tripay.co.id/api-sandbox
 | `login_screen.dart` | ✅ | Login dengan validasi, error handling |
 | `register_screen.dart` | ✅ | Register (nama, email, password, phone) |
 | `home_screen.dart` | ✅ | 4 Tabs: Beranda, Jelajah, Riwayat, Profil |
-| `campaign_detail_screen.dart` | ✅ | Detail kampanye, progress bar, donasi |
+| `campaign_detail_screen.dart` | ✅ | Detail kampanye, progress bar, donasi, **squad section** |
 | `donate_screen.dart` | ✅ | Form donasi, preset amounts, anonymous toggle |
 | `payment_screen.dart` | ✅ | Tampilan QR code / VA number |
 | `notification_screen.dart` | ✅ | List notifikasi user |
+| `squad_detail_screen.dart` | ✅ | 🆕 Detail squad, leaderboard, join/share |
+| `create_squad_screen.dart` | ✅ | 🆕 Form buat squad, preset target, invite code |
 
 ### Tab Home (`home_screen.dart`)
 | Tab | Deskripsi |
@@ -318,6 +345,7 @@ TRIPAY_BASE_URL=https://tripay.co.id/api-sandbox
 | `AuthProvider` | ✅ | Login, register, logout, get profile |
 | `CampaignProvider` | ✅ | Load campaigns, categories, detail |
 | `DonationProvider` | ✅ | Create donation, load history |
+| `SquadProvider` | ✅ | 🆕 Create/join squad, load squads, leaderboard |
 
 ---
 
@@ -338,16 +366,19 @@ TRIPAY_BASE_URL=https://tripay.co.id/api-sandbox
 | `admin/campaigns.html` | ✅ | CRUD kampanye |
 | `admin/transactions.html` | ✅ | List transaksi |
 | `admin/withdrawals.html` | ✅ | Kelola pencairan dana |
+| `squad.html` | ✅ | Halaman detail squad donasi |
 
 ### Design System (Website)
-Menggunakan standar **21st.dev / UI-UX Pro Max** (Premium Glassmorphism).
+Menggunakan standar **UI/UX Pro Max Ver 3** (Premium Glassmorphism) **yang telah dimodernisasi menggunakan Tailwind CSS (Mobile-First)**.
 | Komponen | Nilai |
 |:---|:---|
-| **Warna Utama** | `#10B981` (Green) & Premium Glow |
+| **Warna Utama** | `#10B981` (Emerald Green) & Premium Glow |
 | **Gradient** | `#059669 → #34D399` |
-| **Font** | Inter / Poppins (Google Fonts) |
+| **Font** | Inter (Google Fonts) — diperbarui dari Plus Jakarta Sans |
+| **Background** | Premium Mesh Gradient (`premium-mesh-bg` class) |
 | **Border Radius** | 12px (rounded) hingga 24px |
 | **Shadow & Efek** | `0 4px 6px rgba(0,0,0,0.07)`, Glassmorphism, backdrop-blur |
+| **CSS Files** | `21st-premium.css` (tokens) + `style.css` (components) |
 
 ---
 
@@ -367,6 +398,8 @@ Menggunakan standar **21st.dev / UI-UX Pro Max** (Premium Glassmorphism).
 | joi | ^17.13.1 | Validation |
 | multer | ^1.4.5 | File upload |
 | morgan | ^1.10.0 | Logging |
+| helmet | ^8.x | 🆕 HTTP security headers |
+| express-rate-limit | ^7.x | 🆕 Rate limiting |
 
 ### Environment Variables (`.env`)
 ```env
@@ -393,7 +426,19 @@ TRIPAY_BASE_URL=https://tripay.co.id/api-sandbox
 
 # Frontend URL (CORS)
 FRONTEND_URL=http://localhost:5500
+
+# 🆕 Security: Allowed origins for CORS
+ALLOWED_ORIGINS=http://localhost:5500,http://127.0.0.1:5500
 ```
+
+### 🔒 Security Middleware (Diperbarui: 13 Mei 2026)
+| Middleware | Fungsi |
+|:---|:---|
+| `helmet` | Mengamankan HTTP headers (CSP, HSTS, X-Frame, dll) |
+| `express-rate-limit` | Membatasi request: 10/15min (auth), 100/15min (API umum) |
+| `cors` | Membatasi origin berdasarkan `ALLOWED_ORIGINS` env |
+| `escapeHTML()` | Sanitasi input di frontend untuk mencegah XSS |
+| Error handler | Tidak membocorkan stack trace di production |
 
 ---
 
@@ -430,12 +475,16 @@ flutter run
 | **Database** | ✅ | 8 tabel, seed data lengkap |
 | **Backend API** | ✅ | 7 controllers, 7 routes, middleware, Tripay service |
 | **Website Frontend** | ✅ | 12 halaman HTML, CSS design system, JS API helper |
-| **Flutter App** | ✅ | 8 screens, 5 providers, 3 models, 6 widgets |
+| **Flutter App** | ✅ | 10 screens, 4 providers, 6 models, 7 widgets |
 | **Auth System** | ✅ | JWT, register, login, logout, profile |
 | **Payment Gateway** | ✅ | Tripay (QRIS + Bank Transfer) |
 | **Admin Panel** | ✅ | Dashboard, campaigns, transactions, withdrawals |
 | **Notification** | ✅ | Get, read, mark all read |
 | **Seed Data** | ✅ | 8 categories + admin user |
+| **Security Hardening** | ✅ | Helmet, rate limit, CORS, XSS protection |
+| **MCP Integration** | ✅ | Stitch server terkonfigurasi |
+| **Design System Ver 3** | ✅ | Inter font, Premium Mesh Background |
+| **Squad Donasi** | ✅ | Backend, Web, dan Flutter App selesai |
 
 ---
 
@@ -446,6 +495,7 @@ flutter run
 |:---|:---|:---|
 | **Tripay API Key** | ⚠️ Need setup | Isi kunci API di `.env` |
 | **Database Setup** | ⚠️ Need run | Jalankan `npm run seed` untuk seed data |
+| **Squad Donasi (Mobile)** | ✅ Done | Model, Provider, 2 Screens, Widget, Routes, share_plus |
 
 ### Testing
 - [ ] Test semua API endpoints via Postman/Thunder Client
@@ -453,6 +503,8 @@ flutter run
 - [ ] Test webhook callback dari Tripay
 - [ ] Test Flutter app di emulator/device
 - [ ] Test website di browser (responsive)
+- [ ] Test rate limiter pada login endpoint
+- [ ] Test CORS restriction dari origin yang tidak diizinkan
 
 ### Deployment
 - [ ] Setup database production (MySQL)
@@ -460,6 +512,8 @@ flutter run
 - [ ] Setup SSL/HTTPS
 - [ ] Konfigurasi Tripay production
 - [ ] Setup monitoring & logging
+- [ ] Ganti `JWT_SECRET` dengan key yang kuat
+- [ ] Set `NODE_ENV=production` di server
 
 ---
 
@@ -467,59 +521,22 @@ flutter run
 
 1. **File MD lama (SDLC, AI NEXT) tidak aktif** — Dokumen tersebut memuat "rencana" atau "status sebelum implementasi". Dokumen ini (`Projek_sekarang.md`) yang **berlaku saat ini**.
 
-2. **Semua komponen sudah diimplementasikan** — Jika MD menyebut "BELUM dibuat", itu adalah peninggalan dari fase perencanaan.
+2. **Semua komponen inti sudah diimplementasikan** — Jika MD menyebut "BELUM dibuat", itu adalah peninggalan dari fase perencanaan.
 
 3. **Tripay API key perlu diisi** — File `.env` masih berisi placeholder. Isi dengan kunci sandbox Tripay untuk testing pembayaran.
 
 4. **Seed data tersedia** — 8 kategori + 1 admin user sudah siap setelah `npm run seed`.
 
-5. **No breaking changes** — Tidak ada perubahan arsitektur dari MD. Semua API endpoints & database schema sesuai.
+5. **Security sudah diperkuat** — Helmet, rate limiting, CORS, dan XSS protection sudah aktif sejak 13 Mei 2026.
+
+6. **Design System Ver 3 aktif** — Semua halaman sudah menggunakan font Inter dan Premium Mesh Background.
+
+7. **MCP Stitch tersedia** — Server Stitch terkonfigurasi di `mcp.json` untuk AI-driven design generation.
+
+8. **Fitur Squad Donasi (Selesai)** — Model database, API backend, UI Web, dan Flutter App sudah lengkap.
 
 ---
 
-## Cara pakai Humanizer skill di project ini
-
-Skill Humanizer sudah terinstall di komputer ini. Cara pakainya很简单:
-
-```text
-/humanizer
-[paste teks yang ingin diubah di sini]
-```
-
-Atau:
-```text
-Please humanize this text: [teks Anda di sini]
-```
-
-**Contoh nyata di project ini:**
-
-**Sebelum (AI-like, formal berlebihan):**
-> Semua komponen yang direncanakan dalam MD (SDLC, AI NEXT, implementation plan) sudah diimplementasikan. Project berada di fase **Siap Testing & Deployment**.
-
-**Sesudah (lebih natural, human-like):**
-> Semua komponen yang direncanakan dalam MD (SDLC, AI NEXT, implementation plan) sudah diimplementasikan. Project berada di fase **siap testing & deployment**.
-
-**Perubahan yang dilakukan:**
-- Menghapus kata-kata berlebihan: "SUDAH DIIMPLEMENTASIKAN" → "sudah diimplementasikan"
-- Mengubah format judul: "Siap Testing & Deployment" → "siap testing & deployment"
-- Menghapus emoji berlebihan di header
-
-**Contoh lain (dari tabel bagian backend):**
-
-**Sebelum (AI-like):**
-> **Status:** ✅ **SUDAH DIIMPLEMENTASIKAN**
-
-**Sesudah (lebih natural):**
-> **Status:** sudah diimplementasikan
-
-Skill ini sangat berguna untuk:
-- Memperbaiki teks dokumentasi agar lebih mudah dibaca
-- Mengubah output AI menjadi lebih natural
-- Menyesuaikan gaya tulis agar lebih personal dan tidak kaku
-- Mengurangi kata-kata berlebihan yang sering muncul di output AI
-
----
-
-*Dokumen ini dibuat untuk mencerminkan status project saat ini (16 April 2026).*  
-*Terakhir diupdate: 16 April 2026*
+*Dokumen ini dibuat untuk mencerminkan status project saat ini.*  
+*Terakhir diupdate: 15 Mei 2026*
 

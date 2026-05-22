@@ -183,6 +183,34 @@ const API = {
   async markAllNotificationsRead() {
     return apiFetch('/notifications/read-all', { method: 'PUT' });
   },
+
+  // Squads
+  async createSquad(data) {
+    return apiFetch('/squads', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  },
+
+  async getSquadByCode(code) {
+    return apiFetch(`/squads/code/${code}`);
+  },
+
+  async joinSquad(code) {
+    return apiFetch(`/squads/code/${code}/join`, { method: 'POST' });
+  },
+
+  async getSquadsByCampaign(campaignId) {
+    return apiFetch(`/squads/campaign/${campaignId}`);
+  },
+
+  async getMySquads() {
+    return apiFetch('/squads/my');
+  },
+
+  async getSquadById(id) {
+    return apiFetch(`/squads/${id}`);
+  },
 };
 
 // ── Utility Functions ──
@@ -226,6 +254,16 @@ function calculateProgress(current, target) {
   return Math.min(Math.round((current / target) * 100), 100);
 }
 
+function escapeHTML(str) {
+  if (!str) return '';
+  return str.toString()
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
 function calculateDaysLeft(deadline) {
   if (!deadline) return null;
   const now = new Date();
@@ -255,7 +293,7 @@ function showToast(message, type = 'success') {
   toast.setAttribute('role', 'alert');
   toast.innerHTML = `
     <span>${iconSvg[type] || iconSvg.info}</span>
-    <span>${message}</span>
+    <span>${escapeHTML(message)}</span>
   `;
 
   container.appendChild(toast);
@@ -347,20 +385,24 @@ function createCampaignCard(campaign) {
   const categoryIcon = campaign.category?.icon || '<i data-lucide="clipboard-list" class="icon-sm"></i>';
 
   // If category icon is still an emoji, wrap it; otherwise use as-is
-  const iconHtml = categoryIcon.includes('data-lucide') ? categoryIcon : `<span>${categoryIcon}</span>`;
+  const iconHtml = categoryIcon.includes('data-lucide') ? categoryIcon : `<span>${escapeHTML(categoryIcon)}</span>`;
+  const safeTitle = escapeHTML(campaign.title);
+  const safeCatName = escapeHTML(categoryName);
+  // URL sanitize for banner_image
+  const safeBanner = campaign.banner_image ? encodeURI(campaign.banner_image) : 'https://placehold.co/400x200/10B981/white?text=Donaria';
 
   return `
     <div class="campaign-card animate-fade-in-up">
       <div class="card-image">
-        <img src="${campaign.banner_image || 'https://placehold.co/400x200/10B981/white?text=Donaria'}"
-             alt="${campaign.title}"
+        <img src="${safeBanner}"
+             alt="${safeTitle}"
              loading="lazy"
              onerror="this.src='https://placehold.co/400x200/10B981/white?text=Donaria'">
-        <span class="campaign-category">${iconHtml} ${categoryName}</span>
+        <span class="campaign-category">${iconHtml} ${safeCatName}</span>
       </div>
       <div class="card-body">
         <h4 class="campaign-title">
-          <a href="campaign-detail.html?id=${campaign.id}">${campaign.title}</a>
+          <a href="campaign-detail.html?id=${campaign.id}">${safeTitle}</a>
         </h4>
         <div class="progress-bar-container">
           <div class="progress-bar">

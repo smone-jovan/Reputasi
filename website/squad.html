@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Squad Donasi — Donaria">
+  <title>Squad Donasi — Donaria</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .squad-page{padding-top:calc(var(--header-height)+32px);padding-bottom:80px;}
+    .squad-hero{background:var(--glass-bg);backdrop-filter:var(--glass-blur);border:1px solid var(--glass-border);border-radius:var(--radius-lg);padding:32px;margin-bottom:24px;box-shadow:var(--glass-shadow);text-align:center;}
+    .squad-hero h1{font-size:1.6rem;margin-bottom:8px;}
+    .squad-hero .squad-campaign{font-size:0.9rem;color:var(--text-muted);margin-bottom:20px;}
+    .squad-hero .squad-campaign a{color:var(--primary-dark);font-weight:600;text-decoration:underline;}
+    .squad-progress-wrap{max-width:480px;margin:0 auto 20px;}
+    .squad-amount{font-size:1.8rem;font-weight:800;color:var(--primary-dark);}
+    .squad-target{font-size:0.9rem;color:var(--text-muted);margin-bottom:12px;}
+    .squad-stats{display:flex;justify-content:center;gap:32px;margin-top:16px;flex-wrap:wrap;}
+    .squad-stat{text-align:center;}.squad-stat .stat-val{font-size:1.3rem;font-weight:700;color:var(--gray-800);}.squad-stat .stat-label{font-size:0.8rem;color:var(--text-muted);}
+    .squad-actions{display:flex;gap:12px;justify-content:center;margin-top:24px;flex-wrap:wrap;}
+    .squad-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;}
+    .squad-card{background:var(--glass-bg);backdrop-filter:var(--glass-blur);border:1px solid var(--glass-border);border-radius:var(--radius-lg);padding:24px;box-shadow:var(--glass-shadow);}
+    .squad-card h3{font-size:1.1rem;margin-bottom:16px;display:flex;align-items:center;gap:8px;}
+    .leaderboard-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--gray-100);}
+    .leaderboard-row:last-child{border-bottom:none;}
+    .lb-rank{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.8rem;flex-shrink:0;}
+    .lb-rank.gold{background:#FEF3C7;color:#B45309;}.lb-rank.silver{background:#F3F4F6;color:#6B7280;}.lb-rank.bronze{background:#FED7AA;color:#9A3412;}.lb-rank.normal{background:var(--gray-100);color:var(--gray-500);}
+    .lb-name{flex:1;font-weight:600;font-size:0.9rem;}.lb-amount{font-weight:700;color:var(--primary-dark);font-size:0.9rem;}
+    .member-row{display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--gray-100);}
+    .member-row:last-child{border-bottom:none;}
+    .member-avatar{width:36px;height:36px;border-radius:50%;background:var(--primary-50);display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--primary-dark);font-size:0.8rem;flex-shrink:0;}
+    .member-name{font-weight:600;font-size:0.9rem;flex:1;}.member-role{font-size:0.75rem;padding:2px 8px;border-radius:var(--radius-full);background:var(--primary-50);color:var(--primary-dark);font-weight:600;}
+    .invite-box{background:var(--gray-50);border:2px dashed var(--gray-200);border-radius:var(--radius-md);padding:16px;text-align:center;margin-top:16px;}
+    .invite-box code{display:block;font-size:1.2rem;font-weight:700;color:var(--primary-dark);margin:8px 0;letter-spacing:2px;}
+    .share-row{display:flex;gap:8px;justify-content:center;margin-top:12px;}
+    .share-btn{padding:8px 16px;border-radius:var(--radius-sm);font-size:0.85rem;font-weight:600;cursor:pointer;transition:var(--transition);display:flex;align-items:center;gap:6px;border:none;}
+    .share-btn:hover{transform:translateY(-1px);}.share-wa{background:#DCFCE7;color:#16A34A;}.share-copy{background:var(--gray-100);color:var(--gray-600);}
+    @media(max-width:768px){.squad-grid{grid-template-columns:1fr;}.squad-amount{font-size:1.4rem;}}
+  </style>
+</head>
+<body>
+  <a href="#main-content" class="skip-link">Langsung ke konten utama</a>
+  <nav class="navbar" id="navbar">
+    <div class="container">
+      <a href="index.html" class="navbar-brand"><span class="logo-icon"><i data-lucide="heart-handshake" style="color:white;width:20px;height:20px;"></i></span><span>Donaria</span></a>
+      <div class="navbar-nav" id="navbarNav">
+        <a href="index.html">Beranda</a><a href="campaigns.html">Kampanye</a><a href="dashboard.html">Dashboard</a>
+        <div class="mobile-auth"><a href="login.html" class="btn btn-sm btn-outline">Masuk</a><a href="register.html" class="btn btn-sm btn-primary">Daftar</a></div>
+      </div>
+      <div class="navbar-actions" id="navbarActions"></div>
+      <button class="navbar-toggle" id="navbarToggle" aria-label="Buka menu navigasi"><i data-lucide="menu" class="icon-lg"></i></button>
+    </div>
+  </nav>
+
+  <div class="squad-page" id="main-content">
+    <div class="container">
+      <div id="squadContent">
+        <div class="squad-hero"><div class="skeleton" style="height:200px;border-radius:var(--radius-lg);"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer"><div class="container"><div class="footer-bottom"><p>&copy; 2026 Donaria. Semua hak dilindungi.</p></div></div></footer>
+
+  <!-- Create Squad Modal -->
+  <div id="createSquadModal" style="display:none;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,0.5);backdrop-filter:blur(4px);align-items:center;justify-content:center;">
+    <div style="background:white;border-radius:var(--radius-lg);padding:32px;max-width:440px;width:90%;margin:auto;position:relative;top:50%;transform:translateY(-50%);">
+      <h3 style="margin-bottom:4px;">Buat Squad Baru</h3>
+      <p style="color:var(--text-muted);font-size:0.9rem;margin-bottom:20px;">Ajak teman & keluarga donasi bareng!</p>
+      <form id="createSquadForm">
+        <input type="hidden" id="csf_campaign_id">
+        <div style="margin-bottom:16px;">
+          <label style="display:block;font-weight:600;margin-bottom:6px;font-size:0.9rem;">Nama Squad</label>
+          <input type="text" id="csf_name" placeholder="cth: Keluarga Pak Mulyono" required style="width:100%;padding:10px 14px;border:1px solid var(--gray-200);border-radius:var(--radius-sm);font-size:0.95rem;">
+        </div>
+        <div style="margin-bottom:20px;">
+          <label style="display:block;font-weight:600;margin-bottom:6px;font-size:0.9rem;">Target Squad (Rp)</label>
+          <input type="number" id="csf_target" placeholder="cth: 5000000" min="10000" style="width:100%;padding:10px 14px;border:1px solid var(--gray-200);border-radius:var(--radius-sm);font-size:0.95rem;">
+        </div>
+        <div style="display:flex;gap:12px;">
+          <button type="button" onclick="closeCreateModal()" class="btn btn-outline" style="flex:1;">Batal</button>
+          <button type="submit" class="btn btn-primary" style="flex:1;" id="csf_submit">Buat Squad</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script src="js/api.js"></script>
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const squadCode = params.get('code');
+    const campaignIdForCreate = params.get('create_for');
+
+    async function loadSquad() {
+      if (campaignIdForCreate) {
+        await showCreateFlow(campaignIdForCreate);
+        return;
+      }
+      if (!squadCode) { window.location.href = 'campaigns.html'; return; }
+      try {
+        const res = await API.getSquadByCode(squadCode);
+        if (!res?.data?.squad) throw new Error('Not found');
+        renderSquad(res.data);
+      } catch (e) {
+        document.getElementById('squadContent').innerHTML = `<div style="text-align:center;padding:80px 0;"><h2>Squad Tidak Ditemukan</h2><p style="color:var(--text-muted);margin:8px 0 24px;">Squad yang Anda cari tidak tersedia.</p><a href="campaigns.html" class="btn btn-primary">Lihat Kampanye</a></div>`;
+        refreshIcons();
+      }
+    }
+
+    function renderSquad(data) {
+      const s = data.squad, lb = data.leaderboard || [], mc = data.member_count || 0;
+      const campaign = s.campaign || {};
+      const progress = s.target_amount > 0 ? Math.min(Math.round((s.current_amount / s.target_amount) * 100), 100) : 0;
+      document.title = `${escapeHTML(s.name)} — Squad Donasi — Donaria`;
+
+      const lbHtml = lb.length ? lb.map((d, i) => {
+        const rankClass = i === 0 ? 'gold' : i === 1 ? 'silver' : i === 2 ? 'bronze' : 'normal';
+        return `<div class="leaderboard-row"><div class="lb-rank ${rankClass}">${i + 1}</div><div class="lb-name">${escapeHTML(d.donatur?.name || 'Anonim')}</div><div class="lb-amount">${formatCompactCurrency(d.amount)}</div></div>`;
+      }).join('') : '<p style="color:var(--text-muted);text-align:center;padding:16px;">Belum ada donasi di squad ini.</p>';
+
+      const membersHtml = (s.members || []).map(m => `<div class="member-row"><div class="member-avatar">${getInitials(m.user?.name || '?')}</div><div class="member-name">${escapeHTML(m.user?.name || 'User')}</div>${m.role === 'creator' ? '<span class="member-role">Pembuat</span>' : ''}</div>`).join('');
+
+      const inviteUrl = `${window.location.origin}/squad.html?code=${s.invite_code}`;
+
+      document.getElementById('squadContent').innerHTML = `
+        <div class="squad-hero">
+          <p class="squad-campaign">Kampanye: <a href="campaign-detail.html?id=${campaign.id}">${escapeHTML(campaign.title || '')}</a></p>
+          <h1><i data-lucide="users" class="icon-md"></i> ${escapeHTML(s.name)}</h1>
+          <p style="color:var(--text-muted);font-size:0.9rem;">Dibuat oleh ${escapeHTML(s.creator?.name || 'User')}</p>
+          <div class="squad-progress-wrap">
+            <div class="squad-amount">${formatCurrency(s.current_amount)}</div>
+            <div class="squad-target">dari target ${formatCurrency(s.target_amount)}</div>
+            <div class="progress-bar" style="height:12px;"><div class="progress-fill" style="width:${progress}%"></div></div>
+          </div>
+          <div class="squad-stats">
+            <div class="squad-stat"><div class="stat-val">${mc}</div><div class="stat-label">Anggota</div></div>
+            <div class="squad-stat"><div class="stat-val">${lb.length}</div><div class="stat-label">Donasi</div></div>
+            <div class="squad-stat"><div class="stat-val">${progress}%</div><div class="stat-label">Tercapai</div></div>
+          </div>
+          <div class="squad-actions">
+            <a href="donate.html?id=${campaign.id}&squad=${s.id}" class="btn btn-primary btn-lg"><i data-lucide="heart" class="icon-md"></i> Donasi via Squad Ini</a>
+            <button class="btn btn-outline btn-lg" onclick="joinThisSquad()"><i data-lucide="user-plus" class="icon-md"></i> Gabung Squad</button>
+          </div>
+        </div>
+        <div class="squad-grid">
+          <div class="squad-card">
+            <h3><i data-lucide="trophy" class="icon-md" style="color:#F59E0B;"></i> Leaderboard</h3>
+            <div>${lbHtml}</div>
+          </div>
+          <div class="squad-card">
+            <h3><i data-lucide="users" class="icon-md" style="color:var(--primary-dark);"></i> Anggota (${mc})</h3>
+            <div>${membersHtml}</div>
+            <div class="invite-box">
+              <span style="font-size:0.85rem;color:var(--text-muted);">Kode Undangan</span>
+              <code>${s.invite_code}</code>
+              <div class="share-row">
+                <button class="share-btn share-wa" onclick="shareSquadWA()"><i data-lucide="smartphone" class="icon-sm"></i> WhatsApp</button>
+                <button class="share-btn share-copy" onclick="copySquadLink()"><i data-lucide="copy" class="icon-sm"></i> Salin Link</button>
+              </div>
+            </div>
+          </div>
+        </div>`;
+      refreshIcons();
+    }
+
+    async function joinThisSquad() {
+      if (!Auth.isLoggedIn()) { showToast('Silakan login terlebih dahulu.', 'error'); window.location.href = 'login.html'; return; }
+      try {
+        const res = await API.joinSquad(squadCode);
+        showToast(res.message || 'Berhasil bergabung!');
+        setTimeout(() => loadSquad(), 1000);
+      } catch (e) { showToast(e.message || 'Gagal bergabung.', 'error'); }
+    }
+
+    function shareSquadWA() {
+      const url = encodeURIComponent(window.location.href);
+      const text = encodeURIComponent('Yuk donasi bareng di squad ini! ');
+      window.open(`https://wa.me/?text=${text}${url}`, '_blank');
+    }
+    function copySquadLink() {
+      navigator.clipboard.writeText(window.location.href).then(() => showToast('Link squad berhasil disalin!'));
+    }
+
+    // Create squad flow
+    async function showCreateFlow(cid) {
+      if (!Auth.isLoggedIn()) { showToast('Silakan login terlebih dahulu.', 'error'); window.location.href = 'login.html'; return; }
+      document.getElementById('squadContent').innerHTML = '<div style="text-align:center;padding:60px 0;"><h2>Buat Squad Baru</h2><p style="color:var(--text-muted);">Memuat data kampanye...</p></div>';
+      try {
+        const res = await API.getCampaignById(cid);
+        const c = res.data.campaign;
+        document.getElementById('squadContent').innerHTML = `<div style="text-align:center;padding:60px 0;"><h2>Buat Squad untuk</h2><h3 style="color:var(--primary-dark);">${escapeHTML(c.title)}</h3><p style="color:var(--text-muted);margin-top:8px;">Klik tombol di bawah untuk membuat squad</p><button class="btn btn-primary btn-lg mt-3" onclick="openCreateModal(${c.id})"><i data-lucide="users" class="icon-md"></i> Buat Squad Sekarang</button></div>`;
+        refreshIcons();
+      } catch (e) { document.getElementById('squadContent').innerHTML = '<div style="text-align:center;padding:60px;"><h2>Kampanye tidak ditemukan</h2></div>'; }
+    }
+
+    function openCreateModal(cid) {
+      document.getElementById('csf_campaign_id').value = cid;
+      document.getElementById('createSquadModal').style.display = 'block';
+    }
+    function closeCreateModal() { document.getElementById('createSquadModal').style.display = 'none'; }
+
+    document.getElementById('createSquadForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('csf_submit');
+      btn.disabled = true; btn.textContent = 'Membuat...';
+      try {
+        const res = await API.createSquad({
+          campaign_id: parseInt(document.getElementById('csf_campaign_id').value),
+          name: document.getElementById('csf_name').value.trim(),
+          target_amount: parseInt(document.getElementById('csf_target').value) || undefined,
+        });
+        closeCreateModal();
+        const code = res.data.squad.invite_code;
+        showToast('Squad berhasil dibuat!');
+        window.location.href = `squad.html?code=${code}`;
+      } catch (err) {
+        showToast(err.message || 'Gagal membuat squad.', 'error');
+        btn.disabled = false; btn.textContent = 'Buat Squad';
+      }
+    });
+
+    document.addEventListener('DOMContentLoaded', loadSquad);
+  </script>
+</body>
+</html>

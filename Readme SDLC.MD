@@ -1,8 +1,8 @@
 # 📋 SDLC — Donaria (Aplikasi Donasi Online)
 
-> **⚠️ PENGUMUMAN PENTING (UPDATE: APRIL 2026)**
+> **⚠️ PENGUMUMAN PENTING (UPDATE: 13 MEI 2026)**
 > Dokumen ini adalah dokumentasi *Software Development Life Cycle* (SDLC) awal.
-> Untuk melihat status terkini dan hasil implementasi (termasuk UI/UX terbaru dengan 21st-premium.css), **silakan merujuk ke file `Projek_sekarang.md`**.
+> Untuk melihat status terkini dan hasil implementasi (termasuk UI/UX Ver 3, Security Hardening, dan implementasi Squad Donasi untuk Backend & Web), **silakan merujuk ke file `Projek_sekarang.md`**.
 
 > Dokumen Software Development Life Cycle untuk platform donasi online **Donaria**
 > yang mencakup Website dan Aplikasi Mobile dengan pembayaran via QRIS & Transfer Bank.
@@ -93,6 +93,13 @@ Platform donasi online seperti **Donaria** hadir untuk menyelesaikan masalah ini
 - Search & filter kampanye
 - Responsive design (mobile-friendly website)
 - Real-time update progress donasi
+
+#### 🤝 Squad Donasi (Circle of Kindness) — 🆕
+- Buat sub-grup donasi ("Squad") di dalam kampanye
+- Undang teman/keluarga via link unik atau QR code
+- Bar progres khusus squad & leaderboard internal
+- Nama squad tampil di daftar donatur kampanye
+- Rencana detail: `docs/ideas/squad-donasi.md`
 
 ---
 
@@ -397,6 +404,9 @@ MINGGU 9-10: Testing & Deployment
 | UC-11 | Lihat Transaksi | Admin | Melihat semua transaksi |
 | UC-12 | Pencairan Dana | Admin | Request & kelola pencairan |
 | UC-13 | Dashboard | Admin | Lihat statistik & laporan |
+| UC-14 | Buat Squad | Donatur | Membuat sub-grup donasi untuk kampanye 🆕 |
+| UC-15 | Gabung Squad | Donatur | Bergabung ke squad via link undangan 🆕 |
+| UC-16 | Lihat Squad | Donatur | Melihat progres & leaderboard squad 🆕 |
 
 #### Diagram Activity — Proses Donasi
 
@@ -966,9 +976,58 @@ CREATE INDEX idx_donations_status ON donations(status);
 CREATE INDEX idx_transactions_status ON transactions(status);
 CREATE INDEX idx_transactions_order ON transactions(order_id);
 CREATE INDEX idx_notifications_user ON notifications(user_id, is_read);
+
+-- 🆕 Tabel Squads (Squad Donasi / Circle of Kindness)
+CREATE TABLE squads (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  campaign_id INT NOT NULL,
+  creator_id INT NOT NULL,
+  name VARCHAR(100) NOT NULL,
+  target_amount BIGINT NOT NULL DEFAULT 0,
+  current_amount BIGINT NOT NULL DEFAULT 0,
+  invite_code VARCHAR(20) NOT NULL UNIQUE,
+  status ENUM('active', 'completed', 'expired') DEFAULT 'active',
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (campaign_id) REFERENCES campaigns(id),
+  FOREIGN KEY (creator_id) REFERENCES users(id)
+);
+
+-- Tabel Squad Members
+CREATE TABLE squad_members (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  squad_id INT NOT NULL,
+  user_id INT NOT NULL,
+  role ENUM('creator', 'member') DEFAULT 'member',
+  joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (squad_id) REFERENCES squads(id) ON DELETE CASCADE,
+  FOREIGN KEY (user_id) REFERENCES users(id),
+  UNIQUE KEY unique_squad_member (squad_id, user_id)
+);
+
+-- Tambah field squad_id di donations (opsional)
+ALTER TABLE donations ADD COLUMN squad_id INT NULL;
+ALTER TABLE donations ADD FOREIGN KEY (squad_id) REFERENCES squads(id);
+
+-- Index tambahan untuk Squad
+CREATE INDEX idx_squads_campaign ON squads(campaign_id);
+CREATE INDEX idx_squads_invite ON squads(invite_code);
+CREATE INDEX idx_squad_members_squad ON squad_members(squad_id);
+CREATE INDEX idx_donations_squad ON donations(squad_id);
 ```
 
 ---
 
 *Dokumen ini adalah bagian dari SDLC Donaria — Platform Donasi Online.*
-*Terakhir diperbarui: 14 April 2026*
+*Terakhir diperbarui: 13 Mei 2026*
+
+---
+
+## 4. Rencana Ekspansi & Projek Tambahan
+
+### A. Web Translator (ReadOmni Clone)
+Proyek sampingan: Aplikasi *self-hosted* pembaca dan penerjemah novel/buku.
+- **Fungsi Utama:** Web scraping otomatis, pengurai EPUB, terjemah via LM Studio lokal.
+- **Fitur Spesial:** Memori konteks/glosarium persisten agar terjemahan nama konsisten.
+- **Stack Opsional:** Next.js (Front) + FastAPI (Backend) + Crawl4AI (Scraper) + EbookLib (Parser).
+- **Dokumen Referensi:** `docs/ideas/Ide_Penerjemah_Web.md`

@@ -1,15 +1,15 @@
 # 🤖 README AI NEXT — Instruksi Lanjutan untuk Model AI Berikutnya
 
-> **⚠️ PENGUMUMAN PENTING (UPDATE: APRIL 2026)**
+> **⚠️ PENGUMUMAN PENTING (UPDATE: MEI 2026)**
 > Dokumen ini adalah dokumentasi panduan AI awal.
-> Untuk melihat status terkini dan hasil implementasi (termasuk UI/UX terbaru dengan 21st-premium.css), **silakan merujuk ke file `Projek_sekarang.md`**.
+> Untuk melihat status terkini dan hasil implementasi (termasuk UI/UX terbaru dengan Tailwind CSS + Glassmorphism), **silakan merujuk ke file `Projek_sekarang.md`**.
 
 > Dokumen ini berisi konteks lengkap dan instruksi untuk melanjutkan pengembangan
 > **Donaria (Aplikasi Donasi Online)** jika sesi AI sebelumnya sudah ke limit.
 
 ---
 
-## 📌 Status Saat Ini
+## 📌 Status Saat Ini (Diperbarui: 13 Mei 2026)
 
 ### Yang Sudah Selesai ✅
 - [x] ERD (Entity Relationship Diagram) — 8 entitas
@@ -17,8 +17,13 @@
 - [x] Implementation Plan dengan pilihan user
 - [x] Flutter project `donaria` sudah di-create (`Aplikasi/donaria/`)
 - [x] Backend Express.js lengkap (8 models, 7 controllers, 7 routes, middleware, Tripay service, seed data)
-- [x] Website Frontend lengkap (12 halaman HTML, CSS design system 21st-premium.css, JS API helper)
+- [x] Website Frontend lengkap (12 halaman HTML, CSS design system Tailwind + Glassmorphism, JS API helper)
 - [x] Flutter app screens & API integration
+- [x] Security Hardening (Helmet, rate limiting, CORS, XSS protection)
+- [x] UI/UX Pro Max Ver 3 (Inter font, Premium Mesh Background, Glassmorphism)
+- [x] MCP Stitch integration (AI-driven design generation)
+- [x] Brand Guidelines (`docs/brand-guidelines.md`)
+- [x] **Squad Donasi (Circle of Kindness)** — Model, API (Backend), UI (Website), dan Flutter App selesai
 
 ### Yang Belum Dikerjakan ❌
 - [ ] Isi kunci API Tripay di `.env` (masih placeholder)
@@ -115,10 +120,38 @@ d:\code_xI\Reputasi\
 │   ├── .env
 │   └── server.js             # Entry point
 │
+├── docs/
+│   ├── brand-guidelines.md   # Brand guidelines Donaria
+│   └── ideas/
+│       └── squad-donasi.md   # 🆕 Rencana fitur Squad Donasi
+├── mcp.json                  # MCP server config (Stitch)
 ├── Readme SDLC.MD             # Dokumen SDLC (✅ sudah dibuat)
 ├── readme ai next.MD          # File ini
 └── README.md
 ```
+
+### 🔒 Security Layer (Aktif sejak 13 Mei 2026)
+| Middleware | Fungsi |
+|:---|:---|
+| `helmet` | HTTP security headers (CSP, HSTS, X-Frame) |
+| `express-rate-limit` | 10 req/15min (auth), 100 req/15min (API) |
+| `cors` | Origin restriction via `ALLOWED_ORIGINS` env |
+| `escapeHTML()` | XSS sanitization di frontend |
+
+### 🆕 Fitur Baru: Squad Donasi (Selesai ✅)
+Fitur "Circle of Kindness" memungkinkan donatur membuat sub-grup donasi di dalam kampanye. Detail lengkap: `docs/ideas/squad-donasi.md`
+
+**Komponen yang sudah dibuat:**
+- Model `Squad` & `SquadMember` (backend) ✅
+- Routes: `POST /api/squads`, `GET /api/squads/:code`, `POST /api/squads/:code/join` ✅
+- Halaman `squad.html` (website) ✅
+- Model `Squad` (Flutter) ✅
+- `SquadProvider` (Flutter state management) ✅
+- `squad_detail_screen.dart` (detail + leaderboard) ✅
+- `create_squad_screen.dart` (form buat squad) ✅
+- `squad_card.dart` widget ✅
+- Integrasi di `campaign_detail_screen.dart` ✅
+- Share via `share_plus` ✅
 
 ---
 
@@ -334,13 +367,14 @@ dependencies:
 | `admin/withdrawals.html` | Kelola pencairan | 🟢 Rendah |
 
 ### Design System Website
-Menggunakan standar **21st.dev / UI-UX Pro Max** (Premium Glassmorphism).
-- **Font:** Inter atau Poppins (Google Fonts)
+Menggunakan standar **21st.dev / UI-UX Pro Max** (Premium Glassmorphism) dengan integrasi **Tailwind CSS**.
+- **Font:** Inter (Google Fonts) — diperbarui dari Plus Jakarta Sans
 - **Warna utama:** Hijau (#10B981) & Premium Glow
 - **Warna sekunder:** Emerald gradient (#059669 → #34D399)
-- **Background:** Light mode (#F9FAFB), dark card (#1F2937), orb glow effects
+- **Background:** Premium Mesh Gradient (`premium-mesh-bg` class via `21st-premium.css`)
 - **Border radius:** 12px hingga 24px (modern rounded)
 - **Shadow:** Soft shadow (0 4px 6px rgba(0,0,0,0.07)), Glassmorphism, backdrop-blur
+- **CSS Files:** `21st-premium.css` (design tokens) + `style.css` (components)
 
 ---
 
@@ -408,6 +442,10 @@ Menggunakan standar **21st.dev / UI-UX Pro Max** (Premium Glassmorphism).
 6. Database schema SQL ada di `Readme SDLC.MD` bagian Lampiran
 7. User lebih suka **penjelasan bahasa Indonesia**
 8. User preference: website yang **mudah dan sederhana** (vanilla HTML/CSS/JS)
+9. **Security sudah aktif** — Helmet, rate limiting, CORS, XSS protection
+10. **MCP Stitch tersedia** di `mcp.json` untuk AI-driven design generation
+11. **Squad Donasi** adalah fitur berikutnya — cek `docs/ideas/squad-donasi.md`
+12. **Design System Ver 3** aktif — semua halaman menggunakan font Inter + Premium Mesh Background
 
 ---
 
@@ -422,6 +460,5 @@ Menggunakan standar **21st.dev / UI-UX Pro Max** (Premium Glassmorphism).
 ---
 
 *File ini dibuat otomatis oleh AI assistant.*
-*Terakhir diperbarui: 14 April 2026 (Sesi ke-2)*
-*Sesi 1: Conversation ID 180c5ec1-92d0-47e2-9213-64523f63d992 (ERD, SDLC, Backend)*
-*Sesi 2: Conversation ID 4603a5dd-546b-4187-86c0-f1c2ef2f4a09 (Website Frontend)*
+*Terakhir diperbarui: 13 Mei 2026*
+

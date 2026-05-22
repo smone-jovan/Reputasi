@@ -1,0 +1,64 @@
+/* Design Tokens - Auto-generated */
+/* Do not edit directly - modify tokens.json instead */
+
+/* === PRIMITIVES === */
+:root {
+  --primitive-color-emerald-50: #F6FFFF;
+  --primitive-color-emerald-100: #DCFFFF;
+  --primitive-color-emerald-200: #A9FFFF;
+  --primitive-color-emerald-300: #76FFE7;
+  --primitive-color-emerald-400: #43ECB4;
+  --primitive-color-emerald-500: #10B981;
+  --primitive-color-emerald-600: #00935B;
+  --primitive-color-emerald-700: #006D35;
+  --primitive-color-emerald-800: #00460E;
+  --primitive-color-emerald-900: #002000;
+  --primitive-color-sky-blue-50: #F4FFFF;
+  --primitive-color-sky-blue-100: #DAFFFF;
+  --primitive-color-sky-blue-200: #A7FFFF;
+  --primitive-color-sky-blue-300: #74FFFF;
+  --primitive-color-sky-blue-400: #41D8FF;
+  --primitive-color-sky-blue-500: #0EA5E9;
+  --primitive-color-sky-blue-600: #007FC3;
+  --primitive-color-sky-blue-700: #00599D;
+  --primitive-color-sky-blue-800: #003276;
+  --primitive-color-sky-blue-900: #000C50;
+  --primitive-color-amber-50: #FFFFF1;
+  --primitive-color-amber-100: #FFFFD7;
+  --primitive-color-amber-200: #FFFFA4;
+  --primitive-color-amber-300: #FFFF71;
+  --primitive-color-amber-400: #FFD13E;
+  --primitive-color-amber-500: #F59E0B;
+  --primitive-color-amber-600: #CF7800;
+  --primitive-color-amber-700: #A95200;
+  --primitive-color-amber-800: #822B00;
+  --primitive-color-amber-900: #5C0500;
+}
+
+/* === SEMANTIC === */
+:root {
+  --color-primary: #10B981;
+  --color-primary-hover: #00935B;
+  --color-primary-active: #006D35;
+  --color-primary-light: #43ECB4;
+  --color-primary-lighter: #DCFFFF;
+  --color-primary-dark: #00935B;
+  --color-secondary: #0EA5E9;
+  --color-secondary-hover: #007FC3;
+  --color-secondary-light: #74FFFF;
+  --color-secondary-dark: #007FC3;
+  --color-accent: #F59E0B;
+  --color-accent-hover: #CF7800;
+  --color-accent-light: #FFFF71;
+  --color-success: #F59E0B;
+  --color-success-light: #FFFF71;
+  --color-error: #10B981;
+  --color-error-light: #76FFE7;
+  --color-info: #0EA5E9;
+  --color-info-light: #74FFFF;
+}
+
+/* === COMPONENTS === */
+:root {
+
+}

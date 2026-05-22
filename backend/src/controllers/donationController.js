@@ -1,11 +1,11 @@
-const { Donation, Transaction, Campaign, User, Notification } = require('../models');
+const { Donation, Transaction, Campaign, User, Notification, Squad } = require('../models');
 const tripayService = require('../services/tripayService');
 const TripayService = require('../services/tripayService').constructor;
 
 // POST /api/donations
 exports.create = async (req, res) => {
   try {
-    const { campaign_id, amount, message, is_anonymous, payment_method, bank_code } = req.body;
+    const { campaign_id, amount, message, is_anonymous, payment_method, bank_code, squad_id } = req.body;
 
     // Check campaign exists and active
     const campaign = await Campaign.findByPk(campaign_id);
@@ -24,6 +24,7 @@ exports.create = async (req, res) => {
       amount,
       message,
       is_anonymous: is_anonymous || false,
+      squad_id: squad_id || null,
       status: 'pending',
     });
 

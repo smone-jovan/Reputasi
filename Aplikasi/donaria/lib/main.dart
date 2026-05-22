@@ -4,6 +4,7 @@ import 'config/theme.dart';
 import 'providers/auth_provider.dart';
 import 'providers/campaign_provider.dart';
 import 'providers/donation_provider.dart';
+import 'providers/squad_provider.dart';
 
 import 'screens/splash_screen.dart';
 import 'screens/login_screen.dart';
@@ -14,6 +15,8 @@ import 'screens/donate_screen.dart';
 import 'screens/payment_screen.dart';
 import 'screens/notification_screen.dart';
 import 'screens/admin_dashboard_screen.dart';
+import 'screens/squad_detail_screen.dart';
+import 'screens/create_squad_screen.dart';
 import 'models/campaign.dart';
 import 'models/transaction.dart';
 
@@ -25,6 +28,7 @@ void main() {
         ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => CampaignProvider()),
         ChangeNotifierProvider(create: (_) => DonationProvider()),
+        ChangeNotifierProvider(create: (_) => SquadProvider()),
       ],
       child: const MainApp(),
     ),
@@ -73,6 +77,23 @@ class MainApp extends StatelessWidget {
           case '/admin-dashboard':
             return MaterialPageRoute(
               builder: (_) => const AdminDashboardScreen(),
+            );
+          case '/squad-detail':
+            final args = settings.arguments as Map<String, dynamic>;
+            return MaterialPageRoute(
+              builder: (_) => SquadDetailScreen(
+                squadId: args['id'] as int?,
+                inviteCode: args['code'] as String?,
+              ),
+            );
+          case '/create-squad':
+            final args = settings.arguments as Map<String, dynamic>;
+            return MaterialPageRoute(
+              builder: (_) => CreateSquadScreen(
+                campaignId: args['campaignId'] as int,
+                campaignTitle: args['campaignTitle'] as String,
+                campaignTarget: args['campaignTarget'] as num,
+              ),
             );
           default:
             return MaterialPageRoute(

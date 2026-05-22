@@ -42,6 +42,14 @@ class ApiConfig {
 
   static const String stats = '/stats';
 
+  // Squad Donasi Endpoints
+  static const String squads = '/squads';
+  static const String mySquads = '/squads/my';
+  static String squadByCode(String code) => '/squads/code/$code';
+  static String joinSquad(String code) => '/squads/code/$code/join';
+  static String squadDetail(int id) => '/squads/$id';
+  static String campaignSquads(int campaignId) => '/squads/campaign/$campaignId';
+
   // Admin Endpoints
   static const String adminStats = '/admin/stats';
   static const String simulatePayment = '/demo/simulate-payment';

@@ -97,7 +97,9 @@
               <a href="donate.html?id=${c.id}" class="btn btn-primary btn-block btn-lg mt-3" ${c.status!=='active'?'style="pointer-events:none;opacity:0.5;"':''}><i data-lucide="heart" class="icon-md"></i> Donasi Sekarang</a>
               ${c.status!=='active'?'<div class="text-center mt-1"><span class="badge badge-warning">Kampanye sudah '+c.status+'</span></div>':''}
               <div class="share-buttons"><div class="share-btn share-wa" onclick="shareWA()"><i data-lucide="smartphone" class="icon-sm"></i> WhatsApp</div><div class="share-btn share-copy" onclick="copyLink()"><i data-lucide="copy" class="icon-sm"></i> Salin Link</div></div>
+              <a href="squad.html?create_for=${c.id}" class="btn btn-outline btn-block mt-2" style="font-size:0.85rem;border-color:var(--primary);color:var(--primary-dark);"><i data-lucide="users" class="icon-sm"></i> Donasi Bareng Teman (Buat Squad)</a>
             </div>
+            <div id="squadListWidget"></div>
             ${donorsHtml?`<div class="sidebar-card"><h4 style="margin-bottom:16px;">Donatur Terbaru</h4><div class="donors-list">${donorsHtml}</div></div>`:''}
           </div>`;
         refreshIcons();
@@ -107,7 +109,30 @@
     }
     function shareWA(){const url=encodeURIComponent(window.location.href),text=encodeURIComponent('Yuk bantu donasi di Donaria! ');window.open(`https://wa.me/?text=${text}${url}`,'_blank');}
     function copyLink(){navigator.clipboard.writeText(window.location.href).then(()=>showToast('Link berhasil disalin!'));}
-    document.addEventListener('DOMContentLoaded',loadCampaign);
+    document.addEventListener('DOMContentLoaded', async () => {
+      await loadCampaign();
+      if (campaignId) loadSquads();
+    });
+    async function loadSquads() {
+      try {
+        const res = await API.getSquadsByCampaign(campaignId);
+        const squads = res?.data?.squads || [];
+        if (!squads.length) return;
+        const widget = document.getElementById('squadListWidget');
+        if (!widget) return;
+        const html = squads.map(s => {
+          const p = s.target_amount > 0 ? Math.min(Math.round((s.current_amount / s.target_amount) * 100), 100) : 0;
+          return `<a href="squad.html?code=${s.invite_code}" style="display:block;padding:12px 0;border-bottom:1px solid var(--gray-100);text-decoration:none;color:inherit;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;"><span style="font-weight:600;font-size:0.9rem;">${escapeHTML(s.name)}</span><span style="font-size:0.8rem;color:var(--text-muted);">${s.member_count} anggota</span></div>
+            <div class="progress-bar" style="height:6px;"><div class="progress-fill" style="width:${p}%"></div></div>
+            <div style="display:flex;justify-content:space-between;margin-top:4px;font-size:0.8rem;color:var(--text-muted);"><span>${formatCompactCurrency(s.current_amount)}</span><span>${p}%</span></div>
+          </a>`;
+        }).join('');
+        widget.innerHTML = `<div class="sidebar-card"><h4 style="margin-bottom:12px;display:flex;align-items:center;gap:8px;"><i data-lucide="users" class="icon-sm" style="color:var(--primary-dark);"></i> Squad Aktif (${squads.length})</h4>${html}</div>`;
+        refreshIcons();
+      } catch (e) { /* silent */ }
+    }
   </script>
 </body>
 </html>
+

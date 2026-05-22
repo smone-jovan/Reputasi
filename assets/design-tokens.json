@@ -1,0 +1,216 @@
+{
+  "brand": "ClaudeKit Marketing - Emerald",
+  "primitive": {
+    "color": {
+      "emerald": {
+        "50": {
+          "$value": "#F6FFFF",
+          "$type": "color"
+        },
+        "100": {
+          "$value": "#DCFFFF",
+          "$type": "color"
+        },
+        "200": {
+          "$value": "#A9FFFF",
+          "$type": "color"
+        },
+        "300": {
+          "$value": "#76FFE7",
+          "$type": "color"
+        },
+        "400": {
+          "$value": "#43ECB4",
+          "$type": "color"
+        },
+        "500": {
+          "$value": "#10B981",
+          "$type": "color"
+        },
+        "600": {
+          "$value": "#00935B",
+          "$type": "color"
+        },
+        "700": {
+          "$value": "#006D35",
+          "$type": "color"
+        },
+        "800": {
+          "$value": "#00460E",
+          "$type": "color"
+        },
+        "900": {
+          "$value": "#002000",
+          "$type": "color"
+        }
+      },
+      "sky-blue": {
+        "50": {
+          "$value": "#F4FFFF",
+          "$type": "color"
+        },
+        "100": {
+          "$value": "#DAFFFF",
+          "$type": "color"
+        },
+        "200": {
+          "$value": "#A7FFFF",
+          "$type": "color"
+        },
+        "300": {
+          "$value": "#74FFFF",
+          "$type": "color"
+        },
+        "400": {
+          "$value": "#41D8FF",
+          "$type": "color"
+        },
+        "500": {
+          "$value": "#0EA5E9",
+          "$type": "color"
+        },
+        "600": {
+          "$value": "#007FC3",
+          "$type": "color"
+        },
+        "700": {
+          "$value": "#00599D",
+          "$type": "color"
+        },
+        "800": {
+          "$value": "#003276",
+          "$type": "color"
+        },
+        "900": {
+          "$value": "#000C50",
+          "$type": "color"
+        }
+      },
+      "amber": {
+        "50": {
+          "$value": "#FFFFF1",
+          "$type": "color"
+        },
+        "100": {
+          "$value": "#FFFFD7",
+          "$type": "color"
+        },
+        "200": {
+          "$value": "#FFFFA4",
+          "$type": "color"
+        },
+        "300": {
+          "$value": "#FFFF71",
+          "$type": "color"
+        },
+        "400": {
+          "$value": "#FFD13E",
+          "$type": "color"
+        },
+        "500": {
+          "$value": "#F59E0B",
+          "$type": "color"
+        },
+        "600": {
+          "$value": "#CF7800",
+          "$type": "color"
+        },
+        "700": {
+          "$value": "#A95200",
+          "$type": "color"
+        },
+        "800": {
+          "$value": "#822B00",
+          "$type": "color"
+        },
+        "900": {
+          "$value": "#5C0500",
+          "$type": "color"
+        }
+      }
+    }
+  },
+  "semantic": {
+    "color": {
+      "primary": {
+        "$value": "{primitive.color.emerald.500}",
+        "$type": "color"
+      },
+      "primary-hover": {
+        "$value": "{primitive.color.emerald.600}",
+        "$type": "color"
+      },
+      "primary-active": {
+        "$value": "{primitive.color.emerald.700}",
+        "$type": "color"
+      },
+      "primary-light": {
+        "$value": "{primitive.color.emerald.400}",
+        "$type": "color"
+      },
+      "primary-lighter": {
+        "$value": "{primitive.color.emerald.100}",
+        "$type": "color"
+      },
+      "primary-dark": {
+        "$value": "{primitive.color.emerald.600}",
+        "$type": "color"
+      },
+      "secondary": {
+        "$value": "{primitive.color.sky-blue.500}",
+        "$type": "color"
+      },
+      "secondary-hover": {
+        "$value": "{primitive.color.sky-blue.600}",
+        "$type": "color"
+      },
+      "secondary-light": {
+        "$value": "{primitive.color.sky-blue.300}",
+        "$type": "color"
+      },
+      "secondary-dark": {
+        "$value": "{primitive.color.sky-blue.600}",
+        "$type": "color"
+      },
+      "accent": {
+        "$value": "{primitive.color.amber.500}",
+        "$type": "color"
+      },
+      "accent-hover": {
+        "$value": "{primitive.color.amber.600}",
+        "$type": "color"
+      },
+      "accent-light": {
+        "$value": "{primitive.color.amber.300}",
+        "$type": "color"
+      },
+      "success": {
+        "$value": "{primitive.color.amber.500}",
+        "$type": "color"
+      },
+      "success-light": {
+        "$value": "{primitive.color.amber.300}",
+        "$type": "color"
+      },
+      "error": {
+        "$value": "{primitive.color.emerald.500}",
+        "$type": "color"
+      },
+      "error-light": {
+        "$value": "{primitive.color.emerald.300}",
+        "$type": "color"
+      },
+      "info": {
+        "$value": "{primitive.color.sky-blue.500}",
+        "$type": "color"
+      },
+      "info-light": {
+        "$value": "{primitive.color.sky-blue.300}",
+        "$type": "color"
+      }
+    }
+  },
+  "component": {
+    "button": {}
+  }
+}

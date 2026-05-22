@@ -2,82 +2,298 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta name="description" content="Daftar akun Donaria untuk mulai berdonasi secara online.">
   <title>Daftar — Donaria</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/21st-premium.css">
   <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          },
+          colors: {
+            primary: {
+              50: '#ecfdf5',
+              100: '#d1fae5',
+              500: '#10b981',
+              600: '#059669',
+              700: '#047857',
+            }
+          },
+          animation: {
+            'fade-in-up': 'fadeInUp 0.5s ease-out',
+          },
+          keyframes: {
+            fadeInUp: {
+              '0%': { opacity: '0', transform: 'translateY(20px)' },
+              '100%': { opacity: '1', transform: 'translateY(0)' },
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+  <style>
+    .glass-panel {
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
+    }
+    @media (min-width: 1024px) {
+      .glass-panel {
+        background: rgba(255, 255, 255, 0.6);
+      }
+    }
+    .form-input {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .form-input:focus {
+      box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.15);
+    }
+    button, a {
+      min-height: 44px;
+      touch-action: manipulation;
+    }
+  </style>
 </head>
-<body>
-  <div class="auth-page">
-    <div class="auth-card animate-fade-in-up">
-      <div class="logo">
-        <h2><i data-lucide="heart-handshake" class="icon-lg" style="color:var(--primary);"></i> Donaria</h2>
+<body class="premium-mesh-bg min-h-screen flex items-center justify-center p-0 sm:p-4 md:p-8 text-gray-800 antialiased">
+
+  <div class="w-full max-w-5xl min-h-screen sm:min-h-0 grid grid-cols-1 lg:grid-cols-2 glass-panel rounded-none sm:rounded-3xl overflow-hidden animate-fade-in-up">
+    
+    <!-- Branding / Info Section -->
+    <div class="hidden lg:flex flex-col justify-between p-12 bg-gradient-to-br from-primary-600 to-primary-500 text-white relative overflow-hidden">
+      <!-- Decorative Elements -->
+      <div class="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 rounded-full bg-white opacity-10 blur-2xl"></div>
+      <div class="absolute bottom-0 left-0 -ml-16 -mb-16 w-80 h-80 rounded-full bg-white opacity-10 blur-3xl"></div>
+      
+      <div class="relative z-10">
+        <a href="index.html" class="inline-flex items-center gap-3 text-2xl font-bold tracking-tight hover:opacity-90 transition-opacity">
+          <div class="w-10 h-10 bg-white text-primary-600 rounded-xl flex items-center justify-center shadow-lg">
+            <i data-lucide="heart-handshake" class="w-6 h-6"></i>
+          </div>
+          Donaria
+        </a>
       </div>
-      <h3>Buat Akun Baru</h3>
-      <p class="subtitle">Daftar untuk mulai menyalurkan donasi</p>
-      <div id="registerError" class="alert alert-error hidden">
-        <span><svg class="icon-md" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg></span>
-        <span id="registerErrorMsg"></span>
+      
+      <div class="relative z-10 mt-20">
+        <h1 class="text-4xl font-extrabold leading-tight mb-6">
+          Kebaikan Anda,<br/>Harapan Mereka.
+        </h1>
+        <p class="text-primary-50 text-lg leading-relaxed max-w-md">
+          Bergabunglah dengan ribuan orang baik lainnya untuk menciptakan perubahan positif setiap harinya. Daftar sekarang dan mulai buat perbedaan.
+        </p>
       </div>
-      <form id="registerForm" onsubmit="handleRegister(event)">
-        <div class="form-group">
-          <label class="form-label" for="name">Nama Lengkap</label>
-          <input type="text" id="name" class="form-control" placeholder="Nama lengkap Anda" required autocomplete="name">
+
+      <div class="relative z-10 flex items-center gap-4 mt-20 text-sm font-medium text-primary-100">
+        <div class="flex -space-x-3">
+          <img src="https://i.pravatar.cc/100?img=1" alt="User" class="w-10 h-10 rounded-full border-2 border-primary-500">
+          <img src="https://i.pravatar.cc/100?img=2" alt="User" class="w-10 h-10 rounded-full border-2 border-primary-500">
+          <img src="https://i.pravatar.cc/100?img=3" alt="User" class="w-10 h-10 rounded-full border-2 border-primary-500">
         </div>
-        <div class="form-group">
-          <label class="form-label" for="email">Email</label>
-          <input type="email" id="email" class="form-control" placeholder="nama@email.com" required autocomplete="email">
+        <p>Bergabung dengan 10.000+ Donatur</p>
+      </div>
+    </div>
+
+    <!-- Register Form Section -->
+    <div class="px-6 py-12 sm:p-12 lg:p-16 flex flex-col justify-center bg-white/90 lg:bg-white/80 w-full min-h-screen sm:min-h-0">
+      <div class="lg:hidden flex items-center gap-3 mb-10 mt-4">
+        <div class="w-10 h-10 bg-primary-500 text-white rounded-xl flex items-center justify-center shadow-md">
+          <i data-lucide="heart-handshake" class="w-6 h-6"></i>
         </div>
-        <div class="form-group">
-          <label class="form-label" for="phone">Nomor Telepon</label>
-          <input type="tel" id="phone" class="form-control" placeholder="081234567890" autocomplete="tel">
-        </div>
-        <div class="form-group">
-          <label class="form-label" for="password">Password</label>
-          <div class="password-wrapper">
-            <input type="password" id="password" class="form-control" placeholder="Minimal 6 karakter" required minlength="6" autocomplete="new-password">
-            <button type="button" class="password-toggle" onclick="togglePassword('password',this)" aria-label="Tampilkan password"><i data-lucide="eye" class="icon-md"></i></button>
+        <span class="text-2xl font-bold text-gray-900">Donaria</span>
+      </div>
+
+      <div class="mb-10">
+        <h2 class="text-3xl font-bold text-gray-900 mb-3 tracking-tight">Buat Akun Baru</h2>
+        <p class="text-gray-500 leading-relaxed">Daftar untuk mulai menyalurkan donasi dan bergabung dengan kebaikan.</p>
+      </div>
+
+      <!-- Error Alert -->
+      <div id="registerError" class="hidden mb-6 p-4 rounded-xl bg-red-50 border border-red-100 flex items-start gap-3 text-red-600 animate-fade-in-up">
+        <i data-lucide="alert-circle" class="w-5 h-5 flex-shrink-0 mt-0.5"></i>
+        <span id="registerErrorMsg" class="text-sm font-medium"></span>
+      </div>
+
+      <form id="registerForm" onsubmit="handleRegister(event)" class="space-y-5">
+        <div>
+          <label for="name" class="block text-sm font-semibold text-gray-700 mb-2">Nama Lengkap</label>
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400">
+              <i data-lucide="user" class="w-5 h-5"></i>
+            </div>
+            <input type="text" id="name" required autocomplete="name" 
+              class="form-input w-full pl-11 pr-4 py-3.5 bg-gray-50/50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:border-primary-500 focus:bg-white transition-colors" 
+              placeholder="Nama lengkap Anda">
           </div>
         </div>
-        <div class="form-group">
-          <label class="form-label" for="confirmPassword">Konfirmasi Password</label>
-          <div class="password-wrapper">
-            <input type="password" id="confirmPassword" class="form-control" placeholder="Ulangi password" required autocomplete="new-password" onblur="validatePasswordMatch()">
-            <button type="button" class="password-toggle" onclick="togglePassword('confirmPassword',this)" aria-label="Tampilkan password"><i data-lucide="eye" class="icon-md"></i></button>
+
+        <div>
+          <label for="email" class="block text-sm font-semibold text-gray-700 mb-2">Alamat Email</label>
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400">
+              <i data-lucide="mail" class="w-5 h-5"></i>
+            </div>
+            <input type="email" id="email" required autocomplete="email" 
+              class="form-input w-full pl-11 pr-4 py-3.5 bg-gray-50/50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:border-primary-500 focus:bg-white transition-colors" 
+              placeholder="nama@email.com">
           </div>
-          <div id="passwordMatchError" class="form-error" style="display:none;">Password tidak sama.</div>
         </div>
-        <button type="submit" class="btn btn-primary btn-block btn-lg" id="registerBtn">Daftar Sekarang</button>
+
+        <div>
+          <label for="phone" class="block text-sm font-semibold text-gray-700 mb-2">Nomor Telepon</label>
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400">
+              <i data-lucide="phone" class="w-5 h-5"></i>
+            </div>
+            <input type="tel" id="phone" autocomplete="tel" 
+              class="form-input w-full pl-11 pr-4 py-3.5 bg-gray-50/50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:border-primary-500 focus:bg-white transition-colors" 
+              placeholder="081234567890">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div>
+            <label for="password" class="block text-sm font-semibold text-gray-700 mb-2">Password</label>
+            <div class="relative">
+              <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400">
+                <i data-lucide="lock" class="w-5 h-5"></i>
+              </div>
+              <input type="password" id="password" required autocomplete="new-password" minlength="6"
+                class="form-input w-full pl-11 pr-12 py-3.5 bg-gray-50/50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:border-primary-500 focus:bg-white transition-colors" 
+                placeholder="Min. 6 karakter">
+              <button type="button" onclick="togglePassword('password', this)" aria-label="Tampilkan password" 
+                class="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-gray-600 transition-colors">
+                <i data-lucide="eye" class="w-5 h-5"></i>
+              </button>
+            </div>
+          </div>
+
+          <div>
+            <label for="confirmPassword" class="block text-sm font-semibold text-gray-700 mb-2">Konfirmasi Password</label>
+            <div class="relative">
+              <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400">
+                <i data-lucide="lock" class="w-5 h-5"></i>
+              </div>
+              <input type="password" id="confirmPassword" required autocomplete="new-password" oninput="validatePasswordMatch()"
+                class="form-input w-full pl-11 pr-12 py-3.5 bg-gray-50/50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:border-primary-500 focus:bg-white transition-colors" 
+                placeholder="Ulangi password">
+              <button type="button" onclick="togglePassword('confirmPassword', this)" aria-label="Tampilkan password" 
+                class="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-gray-600 transition-colors">
+                <i data-lucide="eye" class="w-5 h-5"></i>
+              </button>
+            </div>
+            <div id="passwordMatchError" class="text-xs text-red-500 mt-1.5 font-medium hidden">Password tidak sama.</div>
+          </div>
+        </div>
+
+        <div class="pt-2">
+          <button type="submit" id="registerBtn" 
+            class="w-full flex justify-center items-center gap-2 py-4 px-4 border border-transparent rounded-xl shadow-sm text-base font-bold text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-all transform hover:-translate-y-0.5 disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none">
+            Daftar Sekarang
+          </button>
+        </div>
       </form>
-      <div class="auth-footer">Sudah punya akun? <a href="login.html">Masuk di sini</a></div>
+
+      <div class="mt-10 pt-8 border-t border-gray-100 text-center pb-8 lg:pb-0">
+        <p class="text-gray-600 text-sm">
+          Sudah punya akun? 
+          <a href="login.html" class="font-bold text-primary-600 hover:text-primary-700 transition-colors p-1">
+            Masuk di sini
+          </a>
+        </p>
+      </div>
     </div>
   </div>
-  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+
+  <script src="https://unpkg.com/lucide@latest"></script>
   <script src="js/api.js"></script>
   <script src="js/app.js"></script>
   <script>
-    if (Auth.isLoggedIn()) { window.location.href = 'dashboard.html'; }
-    function togglePassword(id,btn){
-      const el=document.getElementById(id);const show=el.type==='password';el.type=show?'text':'password';
-      btn.setAttribute('aria-label',show?'Sembunyikan password':'Tampilkan password');
-      btn.innerHTML=show?'<i data-lucide="eye-off" class="icon-md"></i>':'<i data-lucide="eye" class="icon-md"></i>';refreshIcons();
+    lucide.createIcons();
+    if (typeof Auth !== 'undefined' && Auth.isLoggedIn()) { 
+      window.location.href = 'dashboard.html'; 
     }
-    function validatePasswordMatch(){
-      const p=document.getElementById('password').value,cp=document.getElementById('confirmPassword').value,err=document.getElementById('passwordMatchError');
-      if(cp&&p!==cp){err.style.display='block';}else{err.style.display='none';}
+    function togglePassword(id, btn) {
+      const el = document.getElementById(id);
+      const icon = btn.querySelector('i');
+      if (el.type === 'password') {
+        el.type = 'text';
+        btn.setAttribute('aria-label', 'Sembunyikan password');
+        icon.setAttribute('data-lucide', 'eye-off');
+      } else {
+        el.type = 'password';
+        btn.setAttribute('aria-label', 'Tampilkan password');
+        icon.setAttribute('data-lucide', 'eye');
+      }
+      lucide.createIcons();
     }
-    async function handleRegister(e){
-      e.preventDefault();const btn=document.getElementById('registerBtn'),errorBox=document.getElementById('registerError'),errorMsg=document.getElementById('registerErrorMsg');
-      const name=document.getElementById('name').value,email=document.getElementById('email').value,phone=document.getElementById('phone').value,password=document.getElementById('password').value,confirmPassword=document.getElementById('confirmPassword').value;
-      if(password!==confirmPassword){errorMsg.textContent='Password dan konfirmasi password tidak sama.';errorBox.classList.remove('hidden');document.getElementById('confirmPassword').focus();return;}
-      btn.disabled=true;btn.innerHTML='<div class="spinner" style="width:20px;height:20px;border-width:2px;"></div> Memproses...';errorBox.classList.add('hidden');
-      try{
-        const res=await API.register(name,email,password,phone);
-        if(res?.success){showToast('Registrasi berhasil! Mengalihkan...','success');setTimeout(()=>{window.location.href='dashboard.html';},800);}
-      }catch(error){errorMsg.textContent=error.message||'Gagal mendaftar. Coba lagi.';errorBox.classList.remove('hidden');btn.disabled=false;btn.textContent='Daftar Sekarang';}
+    function validatePasswordMatch() {
+      const p = document.getElementById('password').value;
+      const cp = document.getElementById('confirmPassword').value;
+      const err = document.getElementById('passwordMatchError');
+      if (cp && p !== cp) {
+        err.classList.remove('hidden');
+      } else {
+        err.classList.add('hidden');
+      }
+    }
+    async function handleRegister(e) {
+      e.preventDefault();
+      const btn = document.getElementById('registerBtn');
+      const errorBox = document.getElementById('registerError');
+      const errorMsg = document.getElementById('registerErrorMsg');
+      
+      const name = document.getElementById('name').value;
+      const email = document.getElementById('email').value;
+      const phone = document.getElementById('phone').value;
+      const password = document.getElementById('password').value;
+      const confirmPassword = document.getElementById('confirmPassword').value;
+      
+      if (password !== confirmPassword) {
+        errorMsg.textContent = 'Password dan konfirmasi password tidak sama.';
+        errorBox.classList.remove('hidden');
+        document.getElementById('confirmPassword').focus();
+        return;
+      }
+      
+      btn.disabled = true;
+      btn.innerHTML = '<svg class="animate-spin -ml-1 mr-2 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Memproses...';
+      errorBox.classList.add('hidden');
+      
+      try {
+        if (typeof API !== 'undefined') {
+          const res = await API.register(name, email, password, phone);
+          if (res?.success) {
+            if (typeof showToast === 'function') {
+              showToast('Registrasi berhasil! Mengalihkan...', 'success');
+            }
+            btn.innerHTML = '<i data-lucide="check-circle" class="w-5 h-5"></i> Berhasil';
+            lucide.createIcons();
+            setTimeout(() => {
+              window.location.href = 'dashboard.html';
+            }, 800);
+          }
+        } else {
+          throw new Error('API tidak tersedia');
+        }
+      } catch (error) {
+        errorMsg.textContent = error.message || 'Gagal mendaftar. Coba lagi.';
+        errorBox.classList.remove('hidden');
+        btn.disabled = false;
+        btn.innerHTML = 'Daftar Sekarang';
+      }
     }
   </script>
 </body>
 </html>
+
