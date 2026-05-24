@@ -37,10 +37,8 @@ class _SquadDetailScreenState extends State<SquadDetailScreen> {
   void _shareSquad(Squad squad) {
     final url =
         'https://donaria.id/squad?code=${squad.inviteCode}';
-    SharePlus.instance.share(
-      ShareParams(
-        text: '🤝 Ayo gabung Squad "${squad.name}"!\nDonasi bareng untuk kebaikan.\n\nGabung sekarang: $url\n\nKode: ${squad.inviteCode}',
-      ),
+    Share.share(
+      '🤝 Ayo gabung Squad "${squad.name}"!\nDonasi bareng untuk kebaikan.\n\nGabung sekarang: $url\n\nKode: ${squad.inviteCode}',
     );
   }
 
