@@ -409,6 +409,7 @@ class _ProfileTab extends StatelessWidget {
               // Menu items
               if (user?.role == 'admin')
                 _menuItem(Icons.admin_panel_settings, 'Admin Dashboard', () => Navigator.pushNamed(context, '/admin-dashboard')),
+              _menuItem(Icons.campaign_rounded, 'Ajukan Kampanye', () => Navigator.pushNamed(context, '/submit-campaign')),
               _menuItem(Icons.history, 'Riwayat Donasi', () => Navigator.pushNamed(context, '/history')),
               _menuItem(Icons.notifications_outlined, 'Notifikasi', () => Navigator.pushNamed(context, '/notifications')),
               _menuItem(Icons.info_outline, 'Tentang Aplikasi', () {}),

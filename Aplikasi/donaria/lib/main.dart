@@ -17,6 +17,7 @@ import 'screens/notification_screen.dart';
 import 'screens/admin_dashboard_screen.dart';
 import 'screens/squad_detail_screen.dart';
 import 'screens/create_squad_screen.dart';
+import 'screens/submit_campaign_screen.dart';
 import 'models/campaign.dart';
 import 'models/transaction.dart';
 
@@ -94,6 +95,10 @@ class MainApp extends StatelessWidget {
                 campaignTitle: args['campaignTitle'] as String,
                 campaignTarget: args['campaignTarget'] as num,
               ),
+            );
+          case '/submit-campaign':
+            return MaterialPageRoute(
+              builder: (_) => const SubmitCampaignScreen(),
             );
           default:
             return MaterialPageRoute(

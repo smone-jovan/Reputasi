@@ -49,4 +49,10 @@ class ApiConfig {
   static const String simulatePayment = '/demo/simulate-payment';
   static const String testMode = '/admin/test-mode';
   static const String testModeStatus = '/settings/test-mode';
+
+  // User Campaign Endpoints
+  static const String submitCampaign = '/campaigns/submit';
+  static const String myCampaigns = '/campaigns/my';
+  static String approveCampaign(int id) => '/campaigns/$id/approve';
+  static String rejectCampaign(int id) => '/campaigns/$id/reject';
 }
