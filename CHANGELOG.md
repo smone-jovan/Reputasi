@@ -8,7 +8,60 @@ Format berdasarkan [Keep a Changelog](https://keepachangelog.com/ID/1.0.0/).
 
 ### Added
 - MCP: chrome-devtools dan context7 terkonfigurasi
-- Perbarui seluruh dokumentasi `docs/` sesuai kode aktual
+
+---
+
+## [0.6.0] - 2026-05-30
+
+### Added
+- Admin Analytics & Laporan
+  - `GET /api/admin/analytics/trend` — donasi per hari (7 hari terakhir)
+  - `GET /api/admin/analytics/top-campaigns` — top 5 campaigns dengan progress
+  - `GET /api/admin/analytics/top-donors` — top 5 donatur dengan total donasi
+  - Website: Chart.js line chart, tabel performa kampanye, tabel top donatur
+  - Export CSV: trend-donasi.csv dan performa-kampanye.csv
+- Pesan Donatur (komentar publik)
+  - Tampilkan `message` dari donasi sebagai komentar di halaman kampanye
+  - Website: section "Pesan Donatur" di campaign-detail.html
+  - Flutter: `CampaignComment` model + section di campaign_detail_screen.dart
+  - Tidak perlu tabel baru — pakai data yang sudah ada
+- User-Generated Campaigns
+  - `POST /api/campaigns/submit` — user ajukan kampanye (status: pending)
+  - `GET /api/campaigns/my` — user lihat kampanye sendiri
+  - `PUT /api/campaigns/my/:id` — user edit own pending/rejected campaign
+  - `POST /api/campaigns/:id/resubmit` — user resubmit rejected campaign
+  - `PUT /api/campaigns/:id/approve` — admin approve
+  - `PUT /api/campaigns/:id/reject` — admin reject
+  - Campaign model: tambah ENUM `pending` dan `rejected`
+  - Website: submit-campaign.html, section "Kampanye Saya" di dashboard
+  - Flutter: SubmitCampaignScreen, menu "Ajukan Kampanye" di profil
+- Test Mode
+  - `POST /api/admin/test-mode` — admin toggle test mode
+  - `GET /api/admin/test-mode` — admin cek status
+  - `GET /api/settings/test-mode` — publik cek status
+  - Saat aktif, semua donasi user langsung settlement tanpa Tripay
+  - Website: toggle di admin dashboard + banner di donate page
+  - Flutter: toggle di admin dashboard + banner di donate screen
+- Admin sidebar navigation
+  - Redesign admin dashboard dengan sidebar kiri (260px)
+  - Konsisten di admin/index.html, campaigns.html, transactions.html
+  - Mobile responsive dengan hamburger menu
+
+### Fixed
+- Public `GET /api/campaigns` sekarang filter out pending/rejected/cancelled
+- Route conflict: `PUT /my/:id` dan `POST /:id/resubmit` sekarang di atas `/:id`
+- Trend analytics off-by-one (return 8 hari instead of 7)
+- Top donors query error (raw + nest + include tidak kompatibel)
+- `Setting` model export di `models/index.js`
+- CORS: izinkan semua origin saat `NODE_ENV=development`
+
+### Changed
+- `donationController.create()` sekarang cek test mode sebelum proses payment
+- `transactionController.getAll()` support filter source `test`
+- Back buttons ditambahkan di beberapa halaman (admin, squad, donate, payment)
+
+### Tests
+- 48 test cases (3 suite): test-mode (14), user-campaigns (21), analytics (13)
 
 ---
 
