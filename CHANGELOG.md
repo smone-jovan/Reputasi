@@ -9,6 +9,14 @@ Format berdasarkan [Keep a Changelog](https://keepachangelog.com/ID/1.0.0/).
 ### Added
 - MCP: chrome-devtools dan context7 terkonfigurasi
 
+### Security
+- Joi validation schemas untuk campaign, donation, dan squad endpoints
+  - `campaignValidation.js` — `submitCampaignSchema`, `updateMyCampaignSchema`
+  - `donationValidation.js` — `createDonationSchema`
+  - `squadValidation.js` — `createSquadSchema`
+- Production guard: test mode tidak bisa diaktifkan saat `NODE_ENV=production`
+- `donationController.create()` refactor — delegasi ke `PaymentService` (hilangkan duplicate logic)
+
 ---
 
 ## [0.6.0] - 2026-05-30

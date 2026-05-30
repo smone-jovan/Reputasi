@@ -7,7 +7,7 @@ Donaria adalah platform donasi modern yang memudahkan siapa saja untuk berbagi k
 - **Squad Donasi** - Donasi bareng teman/keluarga dengan sub-target khusus
 - **User-Generated Campaigns** - User bisa ajukan kampanye, admin approve/reject
 - **Admin Analytics** - Trend chart, top campaigns, top donors, export CSV
-- **Test Mode** - Bypass pembayaran untuk testing tanpa gateway
+- **Test Mode** - Bypass pembayaran untuk testing tanpa gateway (production guard)
 - **Tripay Integration** - QRIS, Virtual Account, berbagai metode pembayaran
 - **Admin Dashboard** - Kelola kampanye, transaksi, pencairan dana
 - **Mobile App** - Aplikasi Flutter untuk akses cepat

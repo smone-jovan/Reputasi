@@ -197,17 +197,17 @@ Authorization: Bearer <admin-token>
 POST /api/campaigns/submit
 Authorization: Bearer <token>
 {
-  "title": "Bantu Renovasi Masjid",
-  "short_description": "Ringkasan singkat",
-  "description": "Deskripsi lengkap",
-  "category_id": 5,
-  "target_amount": 25000000,
-  "banner_image": "https://example.com/banner.jpg",
-  "deadline": "2026-12-31"
+  "title": "Bantu Renovasi Masjid",        // wajib, 5-255 karakter
+  "short_description": "Ringkasan singkat", // opsional, max 500
+  "description": "Deskripsi lengkap",       // opsional, max 10000
+  "category_id": 5,                         // wajib, integer positif
+  "target_amount": 25000000,                // wajib, min 100000
+  "banner_image": "https://example.com/banner.jpg", // opsional, valid URI
+  "deadline": "2026-12-31"                  // opsional, tanggal ISO ≥ hari ini
 }
 ```
 
-Validasi: `title`, `category_id`, `target_amount` wajib. Minimal target Rp 100.000.
+Validasi Joi: `title` (5-255), `category_id` (integer+), `target_amount` (min 100000) wajib.
 
 Response:
 
@@ -232,12 +232,12 @@ Authorization: Bearer <token>
 PUT /api/campaigns/my/5
 Authorization: Bearer <token>
 {
-  "title": "Judul Baru",
-  "target_amount": 30000000
+  "title": "Judul Baru",         // opsional, 5-255 karakter
+  "target_amount": 30000000      // opsional, min 100000
 }
 ```
 
-Hanya bisa edit campaign dengan status `pending` atau `rejected`.
+Validasi Joi: minimal 1 field harus diisi. Hanya bisa edit campaign dengan status `pending` atau `rejected`.
 
 #### Resubmit Campaign
 
@@ -278,15 +278,17 @@ Authorization: Bearer <admin-token>
 POST /api/donations
 Authorization: Bearer <token>
 {
-  "campaign_id": 1,
-  "amount": 50000,           // minimum Rp 10.000
-  "message": "Semoga bermanfaat",
-  "is_anonymous": false,
-  "payment_method": "qris",  // "qris" atau "bank_transfer"
-  "bank_code": "BCA",        // wajib jika bank_transfer (BCA/BNI/BRI/MANDIRI/BSI)
-  "squad_id": 5              // optional: donasi via squad
+  "campaign_id": 1,                // wajib, integer positif
+  "amount": 50000,                 // wajib, min 10000
+  "message": "Semoga bermanfaat",  // opsional, max 500
+  "is_anonymous": false,           // opsional, boolean
+  "payment_method": "qris",        // opsional, "qris" | "bank_transfer"
+  "bank_code": "BCA",             // wajib jika bank_transfer: bca/bni/bri/mandiri/bsi
+  "squad_id": 5                    // opsional, integer positif
 }
 ```
+
+Validasi Joi: `campaign_id` (integer+), `amount` (min 10000) wajib. `bank_code` wajib jika `payment_method=bank_transfer`.
 
 Response:
 
@@ -366,11 +368,13 @@ Webhook dari Tripay. Signature diverifikasi menggunakan HMAC-SHA256 dengan priva
 POST /api/squads
 Authorization: Bearer <token>
 {
-  "name": "Squad Peduli",
-  "campaign_id": 1,
-  "target_amount": 5000000
+  "name": "Squad Peduli",      // wajib, 3-100 karakter
+  "campaign_id": 1,            // wajib, integer positif
+  "target_amount": 5000000     // opsional, min 10000
 }
 ```
+
+Validasi Joi: `name` (3-100), `campaign_id` (integer+) wajib.
 
 Response:
 
@@ -534,6 +538,8 @@ Mengaktifkan/menonaktifkan bypass mode. Saat aktif, semua donasi via `POST /api/
 POST /api/admin/test-mode
 Authorization: Bearer <admin-token>
 ```
+
+**Production guard:** Endpoint ini mengembalikan 403 jika `NODE_ENV=production`.
 
 Response:
 
@@ -734,4 +740,4 @@ Lihat [ADR-006](../decisions/006-payment-bypass-mode.md) untuk detail.
 
 ---
 
-*Last updated: 2026-05-30 (v0.6.0)*
+*Last updated: 2026-05-30 (v0.6.0 + security hardening)*

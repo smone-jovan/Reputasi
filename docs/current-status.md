@@ -64,7 +64,10 @@ D:\code_xI\Reputasi\
 │   │   │   ├── auth.js             # authenticate + isAdmin
 │   │   │   └── validate.js         # Joi validation middleware
 │   │   ├── validations/
-│   │   │   └── authValidation.js   # Register/Login schemas
+│   │   │   ├── authValidation.js       # Register/Login schemas
+│   │   │   ├── campaignValidation.js   # Submit/Update campaign schemas
+│   │   │   ├── donationValidation.js   # Create donation schema
+│   │   │   └── squadValidation.js      # Create squad schema
 │   │   └── seed.js                 # Seed: 8 categories + admin user
 │   ├── tests/                      # Jest + Supertest (101 test cases, 10 suites)
 │   ├── scripts/                    # Seed & update scripts
@@ -421,6 +424,17 @@ ALLOWED_ORIGINS=http://localhost:5500,http://127.0.0.1:5500
 | `isAdmin` | Role check (`req.user.role === 'admin'`) |
 | `validate(schema)` | Joi validation pada `req.body` |
 
+### Joi Validation Schemas
+
+| File | Schema | Endpoint | Rules |
+|------|--------|----------|-------|
+| `authValidation.js` | registerSchema | POST /auth/register | name 3-100, email, password 6-128, phone 10-15 |
+| `authValidation.js` | loginSchema | POST /auth/login | email, password required |
+| `campaignValidation.js` | submitCampaignSchema | POST /campaigns/submit | title 5-255, category_id, target_amount min 100k |
+| `campaignValidation.js` | updateMyCampaignSchema | PUT /campaigns/my/:id | min 1 field, same rules as submit |
+| `donationValidation.js` | createDonationSchema | POST /donations | campaign_id, amount min 10k, bank_code conditional |
+| `squadValidation.js` | createSquadSchema | POST /squads | name 3-100, campaign_id required |
+
 ---
 
 ## Checklist Status
@@ -434,8 +448,8 @@ ALLOWED_ORIGINS=http://localhost:5500,http://127.0.0.1:5500
 | Auth System | ✅ | JWT + bcrypt |
 | Payment Gateway | ✅ | Tripay (QRIS + VA) |
 | Squad Donasi | ✅ | Backend + Web + Flutter |
-| Security Hardening | ✅ | Helmet, rate limit, CORS |
-| Payment Bypass | ✅ | Toggle via admin |
+| Security Hardening | ✅ | Helmet, rate limit, CORS, Joi validation |
+| Payment Bypass | ✅ | Toggle via admin, production guard |
 | Test Mode | ✅ | Toggle via admin, bypass semua donasi |
 | User-Generated Campaigns | ✅ | Submit, edit, resubmit, approve/reject |
 | Admin Analytics | ✅ | Trend chart, top campaigns, top donors, CSV export |
@@ -458,12 +472,10 @@ ALLOWED_ORIGINS=http://localhost:5500,http://127.0.0.1:5500
 
 ### Prioritas Tinggi
 - [ ] Isi Tripay API key di `.env`
-- [ ] Hapus duplicate logic di `donationController` dan `transactionController` — gunakan `PaymentService`
 - [ ] Implement `Squad.incrementAmount()` di model
 
 ### Prioritas Medium
 - [ ] Integrasi `js/modules/` ke halaman website
-- [ ] Tambah Joi validation di campaign, donation, squad routes
 
 ### Deployment
 - [ ] Setup production MySQL
@@ -475,4 +487,4 @@ ALLOWED_ORIGINS=http://localhost:5500,http://127.0.0.1:5500
 ---
 
 *Dokumen ini adalah source of truth untuk status proyek.*
-*Terakhir diupdate: 30 Mei 2026 (v0.6.0)*
+*Terakhir diupdate: 30 Mei 2026 (v0.6.0 + security hardening)*
