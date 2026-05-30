@@ -269,6 +269,100 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
     return '${(diff.inDays / 30).floor()} bulan lalu';
   }
 }
+
+// --- Squad Section (embedded in campaign detail) ---
+class _SquadSection extends StatelessWidget {
+  final int campaignId;
+  final String campaignTitle;
+  final num campaignTarget;
+  final bool isActive;
+
+  const _SquadSection({
+    required this.campaignId,
+    required this.campaignTitle,
+    required this.campaignTarget,
+    required this.isActive,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<SquadProvider>(
+      builder: (_, squadProvider, __) {
+        final squads = squadProvider.campaignSquads;
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Row(
+                  children: [
+                    Icon(Icons.groups_rounded, size: 22, color: AppTheme.primaryDark),
+                    SizedBox(width: 8),
+                    Text('Squad Donasi', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
+                  ],
+                ),
+                if (isActive)
+                  TextButton.icon(
+                    onPressed: () {
+                      Navigator.pushNamed(context, '/create-squad', arguments: {
+                        'campaignId': campaignId,
+                        'campaignTitle': campaignTitle,
+                        'campaignTarget': campaignTarget,
+                      });
+                    },
+                    icon: const Icon(Icons.add_circle_outline, size: 18),
+                    label: const Text('Buat Squad'),
+                    style: TextButton.styleFrom(
+                      foregroundColor: AppTheme.primary,
+                      textStyle: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+                    ),
+                  ),
+              ],
+            ),
+            if (squads.isEmpty)
+              Container(
+                width: double.infinity,
+                margin: const EdgeInsets.only(top: 8),
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: AppTheme.gray50,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: AppTheme.gray200),
+                ),
+                child: Column(
+                  children: [
+                    Icon(Icons.groups_3_rounded, size: 36, color: AppTheme.gray300),
+                    const SizedBox(height: 8),
+                    Text('Belum ada squad', style: TextStyle(fontSize: 14, color: AppTheme.gray400, fontWeight: FontWeight.w600)),
+                    const SizedBox(height: 4),
+                    Text('Ajak teman donasi bareng!', style: TextStyle(fontSize: 12, color: AppTheme.gray400)),
+                  ],
+                ),
+              )
+            else
+              ...squads.take(3).map((squad) => SquadCard(
+                    squad: squad,
+                    onTap: () {
+                      Navigator.pushNamed(context, '/squad-detail', arguments: {
+                        'id': squad.id,
+                        'code': squad.inviteCode,
+                      });
+                    },
+                  )),
+            if (squads.length > 3)
+              Center(
+                child: TextButton(
+                  onPressed: () {},
+                  child: Text('Lihat ${squads.length - 3} squad lainnya →'),
+                ),
+              ),
+          ],
+        );
+      },
+    );
+  }
 }
 
 class _StatItem extends StatelessWidget {

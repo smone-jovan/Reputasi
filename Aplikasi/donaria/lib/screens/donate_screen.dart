@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import '../config/theme.dart';
 import '../config/api_config.dart';
 import '../models/campaign.dart';
-import '../models/transaction.dart';
 import '../providers/donation_provider.dart';
 import '../services/api_service.dart';
 import '../widgets/custom_button.dart';
