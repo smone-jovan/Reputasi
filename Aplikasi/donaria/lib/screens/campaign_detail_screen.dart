@@ -258,16 +258,15 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
       ),
     );
     }
-  }
 
-  String _formatTimeAgo(DateTime date) {
-    final diff = DateTime.now().difference(date);
-    if (diff.inMinutes < 1) return 'Baru saja';
-    if (diff.inMinutes < 60) return '${diff.inMinutes} menit lalu';
-    if (diff.inHours < 24) return '${diff.inHours} jam lalu';
-    if (diff.inDays < 30) return '${diff.inDays} hari lalu';
-    return '${(diff.inDays / 30).floor()} bulan lalu';
-  }
+    String _formatTimeAgo(DateTime date) {
+      final diff = DateTime.now().difference(date);
+      if (diff.inMinutes < 1) return 'Baru saja';
+      if (diff.inMinutes < 60) return '${diff.inMinutes} menit lalu';
+      if (diff.inHours < 24) return '${diff.inHours} jam lalu';
+      if (diff.inDays < 30) return '${diff.inDays} hari lalu';
+      return '${(diff.inDays / 30).floor()} bulan lalu';
+    }
 }
 
 // --- Squad Section (embedded in campaign detail) ---
