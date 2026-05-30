@@ -56,7 +56,7 @@ class SquadProvider extends ChangeNotifier {
   // Load squads for a campaign
   Future<void> loadCampaignSquads(int campaignId) async {
     _isLoading = true;
-    notifyListeners();
+    // notifyListeners(); // REMOVED to prevent build phase error
 
     try {
       final response = await _api.get(ApiConfig.campaignSquads(campaignId));
@@ -75,7 +75,7 @@ class SquadProvider extends ChangeNotifier {
     _isLoading = true;
     _selectedSquad = null;
     _leaderboard = [];
-    notifyListeners();
+    // notifyListeners(); // REMOVED to prevent build phase error
 
     try {
       final response = await _api.get(ApiConfig.squadByCode(code));
@@ -95,7 +95,7 @@ class SquadProvider extends ChangeNotifier {
     _isLoading = true;
     _selectedSquad = null;
     _leaderboard = [];
-    notifyListeners();
+    // notifyListeners(); // REMOVED to prevent build phase error
 
     try {
       final response = await _api.get(ApiConfig.squadDetail(id));
@@ -137,7 +137,7 @@ class SquadProvider extends ChangeNotifier {
   // Load my squads
   Future<void> loadMySquads() async {
     _isLoading = true;
-    notifyListeners();
+    // notifyListeners(); // REMOVED to prevent build phase error
 
     try {
       final response = await _api.get(ApiConfig.mySquads);

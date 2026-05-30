@@ -89,6 +89,9 @@
 
         <!-- Desktop Navigation -->
         <div class="hidden md:flex space-x-1 items-center">
+          <a href="index.html" class="px-2 py-2 rounded-lg hover:bg-gray-50 transition-colors" title="Kembali ke Dashboard">
+            <i data-lucide="arrow-left" class="w-5 h-5 text-gray-600"></i>
+          </a>
           <a href="index.html" class="px-3 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-colors">Dashboard</a>
           <a href="campaigns.html" class="px-3 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-colors">Kampanye</a>
           <a href="transactions.html" class="px-3 py-2 rounded-lg text-sm font-semibold bg-primary-50 text-primary-700">Transaksi</a>
@@ -129,12 +132,17 @@
     <!-- Header -->
     <div class="mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
       <div class="flex items-center gap-3">
-        <div class="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center flex-shrink-0">
-          <i data-lucide="credit-card" class="w-6 h-6 text-blue-600"></i>
-        </div>
-        <div>
-          <h1 class="text-2xl md:text-3xl font-bold text-gray-900 tracking-tight">Transaksi</h1>
-          <p class="text-gray-500 mt-0.5">Semua riwayat pembayaran donasi</p>
+        <a href="index.html" class="w-10 h-10 rounded-xl bg-white border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-colors" title="Kembali ke Dashboard">
+          <i data-lucide="arrow-left" class="w-5 h-5 text-gray-600"></i>
+        </a>
+        <div class="flex items-center gap-3">
+          <div class="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center flex-shrink-0">
+            <i data-lucide="credit-card" class="w-6 h-6 text-blue-600"></i>
+          </div>
+          <div>
+            <h1 class="text-2xl md:text-3xl font-bold text-gray-900 tracking-tight">Transaksi</h1>
+            <p class="text-gray-500 mt-0.5">Semua riwayat pembayaran donasi</p>
+          </div>
         </div>
       </div>
     </div>
@@ -171,7 +179,10 @@
             <span class="flex items-center gap-1.5"><i data-lucide="shield-check" class="w-4 h-4"></i> Real</span>
           </button>
           <button class="source-btn px-4 py-2 rounded-xl text-sm font-semibold transition-colors bg-white text-amber-600 border border-amber-200 hover:bg-amber-50" onclick="filterSource('demo', this)">
-            <span class="flex items-center gap-1.5"><i data-lucide="flask-conical" class="w-4 h-4"></i> Demo Test</span>
+            <span class="flex items-center gap-1.5"><i data-lucide="flask-conical" class="w-4 h-4"></i> Demo</span>
+          </button>
+          <button class="source-btn px-4 py-2 rounded-xl text-sm font-semibold transition-colors bg-white text-blue-600 border border-blue-200 hover:bg-blue-50" onclick="filterSource('test', this)">
+            <span class="flex items-center gap-1.5"><i data-lucide="test-tubes" class="w-4 h-4"></i> Test Mode</span>
           </button>
         </div>
       </div>
@@ -248,14 +259,21 @@
           tbody.innerHTML = res.data.transactions.map(t => {
             const donation = t.donation || {}, donatur = donation.donatur || {}, campaign = donation.campaign || {};
             const isDemo = t.order_id && t.order_id.startsWith('DEMO-');
+            const isTest = t.order_id && t.order_id.startsWith('TEST-');
             
-            const demoBadge = isDemo ? '<span class="ml-2 inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[0.65rem] font-bold bg-amber-100 text-amber-800"><i data-lucide="flask-conical" class="w-3 h-3"></i> DEMO</span>' : '';
+            const sourceBadge = isDemo 
+              ? '<span class="ml-2 inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[0.65rem] font-bold bg-amber-100 text-amber-800"><i data-lucide="flask-conical" class="w-3 h-3"></i> DEMO</span>'
+              : isTest
+                ? '<span class="ml-2 inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[0.65rem] font-bold bg-blue-100 text-blue-800"><i data-lucide="test-tubes" class="w-3 h-3"></i> TEST</span>'
+                : '';
             
             const methodHtml = isDemo 
               ? `<div class="flex items-center justify-center gap-1 text-amber-600"><i data-lucide="flask-conical" class="w-4 h-4"></i> Demo</div>`
-              : t.payment_method === 'qris' 
-                ? `<div class="flex items-center justify-center gap-1"><i data-lucide="qr-code" class="w-4 h-4"></i> QRIS</div>`
-                : `<div class="flex items-center justify-center gap-1"><i data-lucide="building-2" class="w-4 h-4"></i> ${(t.bank_code||'').toUpperCase()}</div>`;
+              : isTest
+                ? `<div class="flex items-center justify-center gap-1 text-blue-600"><i data-lucide="test-tubes" class="w-4 h-4"></i> Test</div>`
+                : t.payment_method === 'qris' 
+                  ? `<div class="flex items-center justify-center gap-1"><i data-lucide="qr-code" class="w-4 h-4"></i> QRIS</div>`
+                  : `<div class="flex items-center justify-center gap-1"><i data-lucide="building-2" class="w-4 h-4"></i> ${(t.bank_code||'').toUpperCase()}</div>`;
 
             let statusBadge = '';
             switch(t.status) {
@@ -268,11 +286,11 @@
             }
 
             return `
-              <tr class="hover:bg-gray-50/50 transition-colors ${isDemo ? 'bg-amber-50/30' : ''}">
+              <tr class="hover:bg-gray-50/50 transition-colors ${isDemo ? 'bg-amber-50/30' : isTest ? 'bg-blue-50/30' : ''}">
                 <td class="p-4 pl-6">
                   <div class="flex items-center">
                     <code class="text-xs font-mono bg-white border border-gray-200 px-2 py-1 rounded text-gray-600">${t.order_id}</code>
-                    ${demoBadge}
+                    ${sourceBadge}
                   </div>
                 </td>
                 <td class="p-4">
@@ -347,6 +365,8 @@
           b.className = 'source-btn px-4 py-2 rounded-xl text-sm font-semibold transition-colors bg-white text-emerald-600 border border-emerald-200 hover:bg-emerald-50';
         } else if(b.innerText.includes('Demo')) {
           b.className = 'source-btn px-4 py-2 rounded-xl text-sm font-semibold transition-colors bg-white text-amber-600 border border-amber-200 hover:bg-amber-50';
+        } else if(b.innerText.includes('Test Mode')) {
+          b.className = 'source-btn px-4 py-2 rounded-xl text-sm font-semibold transition-colors bg-white text-blue-600 border border-blue-200 hover:bg-blue-50';
         } else {
           b.className = 'source-btn active px-4 py-2 rounded-xl text-sm font-semibold transition-colors bg-white text-gray-600 border border-gray-200 hover:bg-gray-50';
         }
@@ -358,6 +378,8 @@
         el.className = 'source-btn px-4 py-2 rounded-xl text-sm font-semibold transition-colors bg-emerald-50 text-emerald-800 border border-emerald-300';
       } else if (source === 'demo') {
         el.className = 'source-btn px-4 py-2 rounded-xl text-sm font-semibold transition-colors bg-amber-50 text-amber-800 border border-amber-300';
+      } else if (source === 'test') {
+        el.className = 'source-btn px-4 py-2 rounded-xl text-sm font-semibold transition-colors bg-blue-50 text-blue-800 border border-blue-300';
       }
 
       loadTransactions();

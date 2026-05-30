@@ -12,12 +12,14 @@ class DonationProvider extends ChangeNotifier {
   TransactionData? _lastTransaction;
   bool _isLoading = false;
   String? _error;
+  bool _isLastTransactionBypass = false;
 
   List<Donation> get myDonations => _myDonations;
   List<Donation> get recentDonations => _recentDonations;
   TransactionData? get lastTransaction => _lastTransaction;
   bool get isLoading => _isLoading;
   String? get error => _error;
+  bool get isLastTransactionBypass => _isLastTransactionBypass;
 
   // Create donation
   Future<bool> createDonation({
@@ -49,6 +51,8 @@ class DonationProvider extends ChangeNotifier {
 
       if (resData['success'] == true) {
         _lastTransaction = TransactionData.fromJson(resData['data']['transaction']);
+        _isLastTransactionBypass = resData['data']['gatewayData']?['bypass'] == true ||
+            resData['data']['gatewayData']?['test_mode'] == true;
         _isLoading = false;
         notifyListeners();
         return true;
@@ -65,7 +69,7 @@ class DonationProvider extends ChangeNotifier {
   // Load my donation history
   Future<void> loadMyDonations() async {
     _isLoading = true;
-    notifyListeners();
+    // notifyListeners(); // REMOVED to prevent build phase error
 
     try {
       final response = await _api.get(ApiConfig.donations, queryParameters: {'limit': 50});

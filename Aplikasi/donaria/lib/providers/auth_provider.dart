@@ -20,7 +20,7 @@ class AuthProvider extends ChangeNotifier {
   // Initialize — check saved session
   Future<void> init() async {
     _isLoading = true;
-    notifyListeners();
+    // notifyListeners(); // REMOVED to prevent build phase error
 
     try {
       final loggedIn = await _authService.isLoggedIn();

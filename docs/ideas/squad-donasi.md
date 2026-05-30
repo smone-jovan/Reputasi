@@ -1,89 +1,90 @@
 # Squad Donasi (Circle of Kindness)
 
-> **Status:** Approved — Ready for Implementation  
-> **Disetujui:** 13 Mei 2026  
-> **Prioritas:** 🔴 Tinggi  
+> **Status:** Selesai (Implemented)
+> **Disetujui:** 13 Mei 2026
+> **Diimplementasikan:** 22 Mei 2026 (Backend), 30 Mei 2026 (Web + Flutter)
 
 ---
 
 ## Problem Statement
 
-**Bagaimana kita bisa memanfaatkan "tekanan sosial positif" dan rasa kebersamaan untuk mempercepat pencapaian target donasi sebuah kampanye?**
+Bagaimana memanfaatkan "tekanan sosial positif" dan rasa kebersamaan untuk mempercepat pencapaian target donasi sebuah kampanye?
 
-## Recommended Direction
+## Solusi
 
-**Squad Donasi — Private & Project-Based.** Fitur yang memungkinkan donatur menjadi "influencer" bagi lingkarannya sendiri dengan membuat sub-target donasi di dalam sebuah kampanye. Pengguna bisa membuat "Squad" untuk satu kampanye spesifik, mengundang teman/keluarga via link unik, dan bersama-sama mencapai target kelompok.
+**Squad Donasi — Private & Project-Based.** Donatur bisa membuat "Squad" untuk satu kampanye spesifik, mengundang teman/keluarga via link unik, dan bersama-sama mencapai target kelompok.
 
-Pendekatan ini dipilih karena:
-- **Viralitas tinggi.** Setiap squad yang dibuat adalah peluang untuk menarik donatur baru yang sebelumnya tidak mengenal Donaria.
-- **Tekanan sosial positif.** Orang cenderung lebih termotivasi saat tahu kontribusinya terlihat oleh kelompoknya ("Ayo dikit lagi target kita tercapai!").
-- **Low friction.** Tidak memerlukan teman untuk sudah terdaftar di Donaria terlebih dahulu — cukup klik link squad.
+Alasan pendekatan ini:
+- **Viralitas tinggi** — setiap squad adalah peluang tarik donatur baru
+- **Tekanan sosial positif** — donatur lebih termotivasi saat progres kelompok terlihat
+- **Low friction** — cukup klik link squad, tidak perlu sudah terdaftar
 
-## Key Assumptions to Validate
-
-- [ ] Pengguna mau membagikan link squad ke lingkaran pribadinya (WhatsApp/IG) — **Test:** Pasang tombol share di halaman squad dan lacak CTR.
-- [ ] Donatur merasa lebih termotivasi saat melihat bar progres kelompoknya sendiri vs progres total kampanye — **Test:** A/B test halaman detail kampanye dengan/tanpa widget squad.
-- [ ] Fitur ini tidak membuat orang merasa "terbebani" oleh persaingan di dalam grup — **Test:** Survey sederhana setelah 50 squad pertama terbentuk.
+---
 
 ## User Journey
 
-### 1. Inisiasi (Si Pembuat Squad)
-- Andi melihat kampanye "Bantu Renovasi Panti Asuhan".
-- Di halaman kampanye, ada tombol: **"Donasi Bareng Teman (Buat Squad)"**.
-- Andi klik, memasukkan nama squad: "Keluarga Besar Pak Mulyono" dan target squad: Rp 5.000.000.
-- Sistem memberikan **Link Unik / QR Code** khusus squad tersebut.
+### 1. Inisiasi
+Andi melihat kampanye "Bantu Renovasi Panti Asuhan" → klik "Buat Squad" → masukkan nama + target → dapat invite code unik.
 
-### 2. Penyebaran (Viral Loop)
-- Andi membagikan link ke grup WhatsApp keluarga.
-- Budi (sepupu Andi) klik linknya → halaman kampanye terbuka dengan overlay: *"Andi mengajakmu bergabung di Squad Keluarga Pak Mulyono."*
+### 2. Penyebaran
+Andi share link ke WhatsApp keluarga → Budi klik link → halaman squad terbuka.
 
-### 3. Partisipasi (Social Proof)
-- Budi donasi Rp 200.000 melalui link squad.
-- Donasi masuk ke total kampanye utama DAN tercatat di bar progres squad.
-- Ada mini leaderboard di dalam squad.
+### 3. Partisipasi
+Budi donasi via squad → donasi masuk ke total kampanye DAN progres squad → leaderboard update.
 
-### 4. Pencapaian (Reward & Legacy)
-- Target Rp 5jt tercapai → notifikasi selamat ke semua anggota.
-- Nama "Keluarga Besar Pak Mulyono" muncul di daftar donatur kampanye sebagai satu entitas.
+### 4. Pencapaian
+Target squad tercapai → notifikasi ke semua anggota → nama squad muncul di daftar donatur.
 
-## MVP Scope
+---
+
+## Implementasi
 
 ### Backend
-| Komponen | Detail |
-|:---|:---|
-| **Model `Squad`** | `id`, `name`, `campaign_id`, `creator_id`, `target_amount`, `current_amount`, `invite_code` (unique), `status`, `created_at` |
-| **Model `SquadMember`** | `id`, `squad_id`, `user_id`, `role` (creator/member), `joined_at` |
-| **Routes** | `POST /api/squads` (create), `GET /api/squads/:code` (join page), `POST /api/squads/:code/join`, `GET /api/squads/:id` (detail + leaderboard) |
-| **Logika Donasi** | Tambah field opsional `squad_id` di tabel `donations` agar donasi bisa di-track per squad |
+
+| Komponen | File | Detail |
+|----------|------|--------|
+| Model Squad | `src/models/Squad.js` | id, campaign_id, creator_id, name, target_amount, current_amount, invite_code (unique), status |
+| Model SquadMember | `src/models/SquadMember.js` | id, squad_id, user_id, role (creator/member) |
+| Routes | `src/routes/squadRoutes.js` | 6 endpoints (create, join, detail, list, by code, by campaign) |
+| Controller | `src/controllers/squadController.js` | HTTP handler |
+| Donation link | `src/models/Donation.js` | Field opsional `squad_id` |
 
 ### Website
-| Halaman | Detail |
-|:---|:---|
-| **Tombol "Buat Squad"** | Di halaman `campaign-detail.html` (di samping tombol Donasi) |
-| **Halaman Squad Detail** | `squad.html?code=XXXX` — bar progres squad, daftar anggota, leaderboard mini |
-| **Modal Invite** | Setelah buat squad, tampilkan link + tombol share ke WhatsApp/Copy |
 
-### Flutter App
-| Screen | Detail |
-|:---|:---|
-| **Squad Button** | Di `campaign_detail_screen.dart` |
-| **Squad Detail Screen** | `squad_detail_screen.dart` — bar progres, anggota, leaderboard |
-| **Deep Link Handler** | Buka squad page dari link yang di-share |
+| Komponen | File | Detail |
+|----------|------|--------|
+| Squad page | `website/squad.html` | Detail squad (by code) atau create flow (by campaign) |
+| Campaign detail | `website/campaign-detail.html` | Widget "Squad Aktif" + tombol "Buat Squad" |
 
-## Not Doing (dan Alasannya)
+### Flutter
 
-- **Grup Permanen (lintas kampanye)** — Fitur ini akan sangat kompleks. Kita validasi dulu apakah squad per-kampanye sudah cukup menarik.
-- **Chat di Dalam Squad** — Komunikasi cukup lewat WhatsApp. Membangun fitur chat akan sangat memperberat server dan scope.
-- **Hadiah Fisik / Merchandise** — Tidak ada budget. Fokus ke digital rewards (badge/e-certificate) di fase awal.
-- **Leaderboard Publik Antar Squad** — Bisa menimbulkan kompetisi tidak sehat. Leaderboard hanya internal squad.
-- **Squad untuk Non-Logged-In Users** — Untuk MVP, semua anggota squad harus terdaftar. Ini memastikan tracking donasi yang akurat.
+| Komponen | File | Detail |
+|----------|------|--------|
+| SquadDetailScreen | `lib/screens/squad_detail_screen.dart` | Info squad + leaderboard + join/share |
+| CreateSquadScreen | `lib/screens/create_squad_screen.dart` | Form buat squad + preset amounts |
+| SquadProvider | `lib/providers/squad_provider.dart` | State management |
+| SquadCard | `lib/widgets/squad_card.dart` | Reusable card widget |
+| Squad model | `lib/models/squad.dart` | Squad + SquadMemberInfo + SquadLeaderboardEntry |
+
+---
+
+## Not Doing
+
+- Grup permanen (lintas kampanye) — terlalu kompleks untuk MVP
+- Chat di dalam squad — komunikasi via WhatsApp
+- Hadiah fisik — fokus digital rewards
+- Leaderboard publik antar squad — hindari kompetisi tidak sehat
+- Squad untuk non-logged-in user — tracking akurat
+
+---
 
 ## Open Questions
 
-- Apakah perlu minimum target squad atau bebas?
-- Apakah squad otomatis ditutup setelah target tercapai, atau tetap buka sampai kampanye berakhir?
-- Bagaimana handle jika campaign sudah berakhir tapi squad belum tercapai targetnya?
+- Apakah perlu minimum target squad?
+- Squad otomatis ditutup setelah target tercapai?
+- Bagaimana handle campaign berakhir tapi squad belum tercapai?
 
 ---
 
 *Dokumen ini dihasilkan dari sesi Idea Refine pada 13 Mei 2026.*
+*Diimplementasikan: Mei 2026.*

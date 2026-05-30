@@ -131,10 +131,30 @@
         <h1 class="text-2xl md:text-3xl font-bold text-gray-900 tracking-tight">Ringkasan Sistem</h1>
         <p class="text-gray-500 mt-1">Pantau performa kampanye dan donasi platform Anda.</p>
       </div>
-      <div class="flex gap-3">
+      <div class="flex gap-3 items-center">
+        <!-- Test Mode Toggle -->
+        <div id="testModeContainer" class="flex items-center gap-3 px-4 py-2.5 rounded-xl border border-gray-200 bg-white">
+          <div class="flex items-center gap-2">
+            <i data-lucide="test-tubes" class="w-4 h-4 text-gray-500"></i>
+            <span class="text-sm font-semibold text-gray-700">Test Mode</span>
+          </div>
+          <button id="testModeToggle" onclick="toggleTestMode()" class="relative inline-flex h-6 w-11 items-center rounded-full bg-gray-200 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2" role="switch" aria-checked="false">
+            <span id="testModeDot" class="inline-block h-4 w-4 translate-x-1 rounded-full bg-white shadow transition-transform"></span>
+          </button>
+          <span id="testModeLabel" class="text-xs font-medium text-gray-500">Nonaktif</span>
+        </div>
         <button onclick="openDemoModal()" class="flex-1 md:flex-none justify-center px-4 py-2.5 bg-amber-500 hover:bg-amber-600 text-white rounded-xl text-sm font-semibold transition-colors flex items-center gap-2 shadow-sm">
           <i data-lucide="flask-conical" class="w-4 h-4"></i> Demo Test
         </button>
+      </div>
+    </div>
+
+    <!-- Test Mode Banner -->
+    <div id="testModeBanner" class="hidden mb-6 p-4 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center gap-3">
+      <i data-lucide="alert-triangle" class="w-5 h-5 text-emerald-600 flex-shrink-0"></i>
+      <div class="flex-1">
+        <p class="text-sm font-semibold text-emerald-800">Test Mode Aktif</p>
+        <p class="text-xs text-emerald-600 mt-0.5">Semua donasi dari user biasa akan langsung bypass tanpa pembayaran.</p>
       </div>
     </div>
 
@@ -314,6 +334,58 @@
       }
     }
 
+    async function loadTestModeStatus(){
+      try{
+        const res = await apiFetch('/admin/test-mode');
+        updateTestModeUI(res.data.enabled);
+      }catch(err){
+        console.error('Gagal load test mode status:', err);
+      }
+    }
+
+    function updateTestModeUI(enabled){
+      const toggle = document.getElementById('testModeToggle');
+      const dot = document.getElementById('testModeDot');
+      const label = document.getElementById('testModeLabel');
+      const banner = document.getElementById('testModeBanner');
+
+      if(enabled){
+        toggle.classList.remove('bg-gray-200');
+        toggle.classList.add('bg-emerald-500');
+        toggle.setAttribute('aria-checked', 'true');
+        dot.classList.add('translate-x-6');
+        dot.classList.remove('translate-x-1');
+        label.textContent = 'Aktif';
+        label.classList.remove('text-gray-500');
+        label.classList.add('text-emerald-600');
+        banner.classList.remove('hidden');
+      }else{
+        toggle.classList.add('bg-gray-200');
+        toggle.classList.remove('bg-emerald-500');
+        toggle.setAttribute('aria-checked', 'false');
+        dot.classList.remove('translate-x-6');
+        dot.classList.add('translate-x-1');
+        label.textContent = 'Nonaktif';
+        label.classList.add('text-gray-500');
+        label.classList.remove('text-emerald-600');
+        banner.classList.add('hidden');
+      }
+    }
+
+    async function toggleTestMode(){
+      const toggle = document.getElementById('testModeToggle');
+      toggle.disabled = true;
+      try{
+        const res = await apiFetch('/admin/test-mode', { method: 'POST' });
+        updateTestModeUI(res.data.enabled);
+        showToast(res.message, res.data.enabled ? 'warning' : 'success');
+      }catch(err){
+        showToast('Gagal toggle test mode: ' + (err.message || 'Error'), 'error');
+      }finally{
+        toggle.disabled = false;
+      }
+    }
+
     async function openDemoModal(){
       const modal = document.getElementById('demoModal');
       modal.classList.remove('hidden');
@@ -385,7 +457,10 @@
       }
     }
 
-    document.addEventListener('DOMContentLoaded', loadDashboard);
+    document.addEventListener('DOMContentLoaded', () => {
+      loadDashboard();
+      loadTestModeStatus();
+    });
   </script>
 </body>
 </html>

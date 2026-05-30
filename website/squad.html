@@ -7,6 +7,7 @@
   <title>Squad Donasi — Donaria</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="css/21st-premium.css">
   <link rel="stylesheet" href="css/style.css">
   <style>
     .squad-page{padding-top:calc(var(--header-height)+32px);padding-bottom:80px;}
@@ -44,7 +45,12 @@
   <a href="#main-content" class="skip-link">Langsung ke konten utama</a>
   <nav class="navbar" id="navbar">
     <div class="container">
-      <a href="index.html" class="navbar-brand"><span class="logo-icon"><i data-lucide="heart-handshake" style="color:white;width:20px;height:20px;"></i></span><span>Donaria</span></a>
+      <div class="flex items-center gap-4">
+        <a href="javascript:history.back()" class="btn-back" title="Kembali">
+          <i data-lucide="arrow-left" class="icon-md"></i>
+        </a>
+        <a href="index.html" class="navbar-brand"><span class="logo-icon"><i data-lucide="heart-handshake" style="color:white;width:20px;height:20px;"></i></span><span>Donaria</span></a>
+      </div>
       <div class="navbar-nav" id="navbarNav">
         <a href="index.html">Beranda</a><a href="campaigns.html">Kampanye</a><a href="dashboard.html">Dashboard</a>
         <div class="mobile-auth"><a href="login.html" class="btn btn-sm btn-outline">Masuk</a><a href="register.html" class="btn btn-sm btn-primary">Daftar</a></div>
@@ -56,6 +62,11 @@
 
   <div class="squad-page" id="main-content">
     <div class="container">
+      <div style="margin-bottom:16px;">
+        <a href="campaigns.html" class="btn btn-sm btn-outline" style="display:inline-flex;align-items:center;gap:6px;">
+          <i data-lucide="arrow-left" style="width:16px;height:16px;"></i> Kembali ke Kampanye
+        </a>
+      </div>
       <div id="squadContent">
         <div class="squad-hero"><div class="skeleton" style="height:200px;border-radius:var(--radius-lg);"></div></div>
       </div>

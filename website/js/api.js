@@ -171,6 +171,15 @@ const API = {
     return apiFetch('/stats');
   },
 
+  // Test Mode (admin)
+  async getTestModeStatus() {
+    return apiFetch('/admin/test-mode');
+  },
+
+  async toggleTestMode() {
+    return apiFetch('/admin/test-mode', { method: 'POST' });
+  },
+
   // Notifications
   async getNotifications() {
     return apiFetch('/notifications');

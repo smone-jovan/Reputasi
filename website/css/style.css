@@ -172,6 +172,26 @@ textarea:focus:not(:focus-visible) {
   top: 16px;
 }
 
+.btn-back {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-sm);
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  color: var(--text-secondary);
+  transition: var(--transition-fast);
+}
+
+.btn-back:hover {
+  background: var(--primary-50);
+  color: var(--primary-dark);
+  border-color: var(--primary);
+  transform: translateX(-2px);
+}
+
 /* ── Lucide Icon Base ── */
 .lucide,
 [data-lucide] svg {

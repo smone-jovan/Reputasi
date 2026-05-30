@@ -1,10 +1,15 @@
 {
-  "mcpServers": {
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
     "stitch": {
       "serverUrl": "https://stitch.googleapis.com/mcp",
       "headers": {
         "X-Goog-Api-Key": "AQ.Ab8RN6K23Bdkwt_vZKfSJCyewzmZgYg5eetzTv9rUvhLkKTZ_Q"
       }
+    },
+    "chrome-devtools": {
+      "type": "local",
+      "command": ["npx", "-y", "chrome-devtools-mcp@latest"]
     }
   }
 }

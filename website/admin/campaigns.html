@@ -102,6 +102,9 @@
 
         <!-- Desktop Navigation -->
         <div class="hidden md:flex space-x-1 items-center">
+          <a href="index.html" class="px-2 py-2 rounded-lg hover:bg-gray-50 transition-colors" title="Kembali ke Dashboard">
+            <i data-lucide="arrow-left" class="w-5 h-5 text-gray-600"></i>
+          </a>
           <a href="index.html" class="px-3 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-colors">Dashboard</a>
           <a href="campaigns.html" class="px-3 py-2 rounded-lg text-sm font-semibold bg-primary-50 text-primary-700">Kampanye</a>
           <a href="transactions.html" class="px-3 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-colors">Transaksi</a>
@@ -142,9 +145,14 @@
     <!-- Header -->
     <div class="mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
       <div class="flex items-center gap-3">
-        <div class="w-12 h-12 rounded-xl bg-primary-100 flex items-center justify-center flex-shrink-0">
-          <i data-lucide="clipboard-list" class="w-6 h-6 text-primary-600"></i>
+        <a href="index.html" class="w-10 h-10 rounded-xl bg-white border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-colors" title="Kembali ke Dashboard">
+          <i data-lucide="arrow-left" class="w-5 h-5 text-gray-600"></i>
+        </a>
+        <div>
+          <h1 class="text-2xl md:text-3xl font-bold text-gray-900 tracking-tight">Kelola Kampanye</h1>
+          <p class="text-gray-500 mt-0.5">Buat, edit, dan kelola kampanye donasi</p>
         </div>
+      </div>
         <div>
           <h1 class="text-2xl md:text-3xl font-bold text-gray-900 tracking-tight">Kelola Kampanye</h1>
           <p class="text-gray-500 mt-0.5">Buat, edit, dan kelola program donasi</p>
@@ -314,11 +322,14 @@
       try{
         const res = await API.getCampaigns({limit:100});
         const tbody = document.getElementById('campaignsTableBody');
-        
+
         if(res?.data?.campaigns?.length > 0){
-          res.data.campaigns.forEach(c => { campaignsStore[c.id] = c; });
-          
-          tbody.innerHTML = res.data.campaigns.map(c => {
+          // Sort by ID ascending
+          const sortedCampaigns = res.data.campaigns.sort((a, b) => a.id - b.id);
+
+          sortedCampaigns.forEach(c => { campaignsStore[c.id] = c; });
+
+          tbody.innerHTML = sortedCampaigns.map(c => {
             // Helper for progress calculation
             const cur = parseFloat(c.current_amount) || 0;
             const tgt = parseFloat(c.target_amount) || 1;
@@ -374,8 +385,9 @@
       document.getElementById('campaignForm').reset();
       document.getElementById('statusGroup').classList.add('hidden');
       document.getElementById('modalError').classList.add('hidden');
-      
+
       const modal = document.getElementById('campaignModal');
+      modal.classList.remove('hidden');
       modal.classList.add('active');
     }
 
@@ -390,16 +402,19 @@
       document.getElementById('campBanner').value = campaign.banner_image || '';
       document.getElementById('campDeadline').value = campaign.deadline ? campaign.deadline.split('T')[0] : '';
       document.getElementById('campStatus').value = campaign.status || 'active';
-      
+
       document.getElementById('statusGroup').classList.remove('hidden');
       document.getElementById('modalError').classList.add('hidden');
-      
+
       const modal = document.getElementById('campaignModal');
+      modal.classList.remove('hidden');
       modal.classList.add('active');
     }
 
     function closeModal(){
-      document.getElementById('campaignModal').classList.remove('active');
+      const modal = document.getElementById('campaignModal');
+      modal.classList.remove('active');
+      modal.classList.add('hidden');
     }
 
     async function saveCampaign(e){

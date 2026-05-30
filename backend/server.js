@@ -19,6 +19,7 @@ const withdrawalRoutes = require('./src/routes/withdrawalRoutes');
 const notificationRoutes = require('./src/routes/notificationRoutes');
 const squadRoutes = require('./src/routes/squadRoutes');
 const demoRoutes = require('./src/routes/demoRoutes');
+const adminRoutes = require('./src/routes/adminRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -46,7 +47,9 @@ const authLimiter = rateLimit({
 
 // Configure CORS
 app.use(cors({
-  origin: process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS.split(',') : 'http://localhost:3000',
+  origin: process.env.NODE_ENV === 'development'
+    ? true  // Allow all origins in development
+    : (process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS.split(',') : 'http://localhost:3000'),
   credentials: true,
 }));
 
@@ -70,6 +73,7 @@ app.use('/api/withdrawals', withdrawalRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/squads', squadRoutes);
 app.use('/api/demo', demoRoutes);
+app.use('/api/admin', adminRoutes);
 
 // Dashboard stats endpoint
 app.get('/api/stats', async (req, res) => {
@@ -98,6 +102,17 @@ app.get('/api/stats', async (req, res) => {
 // Health check
 app.get('/api/health', (req, res) => {
   res.json({ status: 'OK', message: 'Donaria API is running 🚀', timestamp: new Date().toISOString() });
+});
+
+// Public test mode status
+app.get('/api/settings/test-mode', async (req, res) => {
+  try {
+    const { Setting } = require('./src/models');
+    const enabled = await Setting.getValue('test_mode', false);
+    res.json({ success: true, data: { enabled } });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
 });
 
 // 404 handler

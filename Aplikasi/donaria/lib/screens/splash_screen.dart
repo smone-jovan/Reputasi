@@ -44,16 +44,18 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
   }
 
   Future<void> _initApp() async {
-    final authProvider = context.read<AuthProvider>();
-    await authProvider.init();
-    await Future.delayed(const Duration(milliseconds: 1800));
-    if (!mounted) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final authProvider = context.read<AuthProvider>();
+      await authProvider.init();
+      await Future.delayed(const Duration(milliseconds: 1800));
+      if (!mounted) return;
 
-    if (authProvider.isLoggedIn) {
-      Navigator.pushReplacementNamed(context, '/home');
-    } else {
-      Navigator.pushReplacementNamed(context, '/login');
-    }
+      if (authProvider.isLoggedIn) {
+        Navigator.pushReplacementNamed(context, '/home');
+      } else {
+        Navigator.pushReplacementNamed(context, '/login');
+      }
+    });
   }
 
   @override

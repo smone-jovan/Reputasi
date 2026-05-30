@@ -118,11 +118,13 @@ exports.getAll = async (req, res) => {
     const where = {};
     if (status) where.status = status;
 
-    // Filter by source: demo or real
+    // Filter by source: demo, test, or real
     if (source === 'demo') {
       where.order_id = { [Op.like]: 'DEMO-%' };
+    } else if (source === 'test') {
+      where.order_id = { [Op.like]: 'TEST-%' };
     } else if (source === 'real') {
-      where.order_id = { [Op.notLike]: 'DEMO-%' };
+      where.order_id = { [Op.and]: [{ [Op.notLike]: 'DEMO-%' }, { [Op.notLike]: 'TEST-%' }] };
     }
 
     const { count, rows: transactions } = await Transaction.findAndCountAll({

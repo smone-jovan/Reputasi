@@ -16,12 +16,17 @@ class AdminDashboardScreen extends StatefulWidget {
 class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
   Map<String, dynamic> _stats = {};
   bool _isLoading = true;
+  bool _isTestMode = false;
+  bool _isTogglingTestMode = false;
 
   @override
   void initState() {
     super.initState();
-    _loadStats();
-    context.read<CampaignProvider>().loadCampaigns(refresh: true);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadStats();
+      _loadTestModeStatus();
+      context.read<CampaignProvider>().loadCampaigns(refresh: true);
+    });
   }
 
   Future<void> _loadStats() async {
@@ -35,6 +40,47 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
       }
     } catch (e) {
       setState(() => _isLoading = false);
+    }
+  }
+
+  Future<void> _loadTestModeStatus() async {
+    try {
+      final res = await ApiService().get(ApiConfig.testMode);
+      if (res.data['success']) {
+        setState(() {
+          _isTestMode = res.data['data']['enabled'] ?? false;
+        });
+      }
+    } catch (e) {
+      // ignore
+    }
+  }
+
+  Future<void> _toggleTestMode() async {
+    setState(() => _isTogglingTestMode = true);
+    try {
+      final res = await ApiService().post(ApiConfig.testMode);
+      if (res.data['success']) {
+        setState(() {
+          _isTestMode = res.data['data']['enabled'] ?? false;
+        });
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(res.data['message']),
+              backgroundColor: _isTestMode ? Colors.orange : Colors.green,
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Gagal: ${ApiService.getErrorMessage(e)}'), backgroundColor: Colors.red),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isTogglingTestMode = false);
     }
   }
 
@@ -72,6 +118,64 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                   ],
                 ),
                 const SizedBox(height: 32),
+                // Test Mode Toggle
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: _isTestMode ? Colors.orange.shade50 : Colors.white,
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: _isTestMode ? Colors.orange : AppTheme.gray200),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(Icons.science, color: _isTestMode ? Colors.orange : AppTheme.gray500),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text('Test Mode', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+                            Text(
+                              _isTestMode ? 'Semua donasi langsung bypass' : 'Nonaktif — donasi via Tripay',
+                              style: TextStyle(fontSize: 12, color: _isTestMode ? Colors.orange.shade700 : AppTheme.gray500),
+                            ),
+                          ],
+                        ),
+                      ),
+                      _isTogglingTestMode
+                          ? const SizedBox(width: 24, height: 24, child: CircularProgressIndicator(strokeWidth: 2))
+                          : Switch(
+                              value: _isTestMode,
+                              onChanged: (_) => _toggleTestMode(),
+                              activeColor: Colors.orange,
+                            ),
+                    ],
+                  ),
+                ),
+                if (_isTestMode) ...[
+                  const SizedBox(height: 8),
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.orange.shade50,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: Colors.orange.shade200),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(Icons.warning_amber, color: Colors.orange.shade700, size: 18),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            'Test Mode aktif! Semua donasi user akan langsung berhasil tanpa pembayaran.',
+                            style: TextStyle(fontSize: 12, color: Colors.orange.shade700),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+                const SizedBox(height: 24),
                 const Text('Menu Admin', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 16),
                 ElevatedButton.icon(
@@ -236,7 +340,7 @@ class _DemoTestModalState extends State<DemoTestModal> {
               contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             ),
             hint: const Text('Pilih Kampanye'),
-            value: _selectedCampaignId,
+            initialValue: _selectedCampaignId,
             items: campaigns.map((c) {
               return DropdownMenuItem<int>(
                 value: c.id,

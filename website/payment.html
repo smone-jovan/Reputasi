@@ -39,7 +39,12 @@
     function renderPayment(){
       const tx=paymentData.transaction,isQris=tx.payment_method==='qris',expDate=new Date(tx.expired_at);
       document.getElementById('paymentContent').innerHTML=`
-        <div style="margin-bottom:24px;"><a href="index.html" style="font-size:1.3rem;font-weight:800;color:var(--primary-dark);display:inline-flex;align-items:center;gap:8px;"><i data-lucide="heart-handshake" class="icon-lg"></i> Donaria</a></div>
+      <div style="margin-bottom:24px;display:flex;align-items:center;gap:12px;">
+        <a href="javascript:history.back()" class="btn-back" title="Kembali" style="width:36px;height:36px;border-radius:8px;background:var(--glass-bg);border:1px solid var(--glass-border);display:flex;align-items:center;justify-content:center;color:var(--text-secondary);transition:var(--transition-fast);">
+          <i data-lucide="arrow-left" style="width:18px;height:18px;"></i>
+        </a>
+        <a href="index.html" style="font-size:1.3rem;font-weight:800;color:var(--primary-dark);display:inline-flex;align-items:center;gap:8px;"><i data-lucide="heart-handshake" class="icon-lg"></i> Donaria</a>
+      </div>
         <h2>Selesaikan Pembayaran</h2><p class="subtitle">Order ID: ${tx.order_id}</p>
         <div class="payment-amount">${formatCurrency(tx.amount)}</div>
         <div class="payment-timer" id="paymentTimer"><i data-lucide="clock" class="icon-md"></i> Bayar sebelum: <span id="timerCountdown">${expDate.toLocaleString('id-ID')}</span></div>

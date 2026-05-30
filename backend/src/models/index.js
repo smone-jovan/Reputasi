@@ -9,6 +9,7 @@ const Withdrawal = require('./Withdrawal');
 const Notification = require('./Notification');
 const Squad = require('./Squad');
 const SquadMember = require('./SquadMember');
+const Setting = require('./Setting');
 
 // ── Add squad_id to Donation (optional FK) ──
 Donation.belongsTo(Squad, { foreignKey: { name: 'squad_id', allowNull: true }, as: 'squad' });
@@ -82,5 +83,6 @@ module.exports = {
   Notification,
   Squad,
   SquadMember,
+  Setting,
 };
 

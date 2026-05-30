@@ -2,17 +2,11 @@ import 'dart:io' show Platform;
 import 'package:flutter/foundation.dart' show kIsWeb;
 
 class ApiConfig {
-  // Otomatis pilih URL berdasarkan platform
-  // - Web / Desktop / iOS Simulator → localhost
-  // - Android Emulator → 10.0.2.2 (alias ke host localhost)
-  // - Device fisik → ganti _physicalDeviceIp dengan IP komputer Anda
-  static const String _physicalDeviceIp = '10.210.43.159';
-
   static String get baseUrl {
     if (kIsWeb) return 'http://localhost:3000/api';
     if (Platform.isAndroid) {
-      // Jika di emulator pakai 10.0.2.2, jika HP fisik pakai IP PC
-      return 'http://$_physicalDeviceIp:3000/api';
+      // Gunakan 10.0.2.2 untuk emulator, $_physicalDeviceIp untuk device fisik
+      return 'http://10.0.2.2:3000/api';
     }
     return 'http://localhost:3000/api';
   }
@@ -53,4 +47,6 @@ class ApiConfig {
   // Admin Endpoints
   static const String adminStats = '/admin/stats';
   static const String simulatePayment = '/demo/simulate-payment';
+  static const String testMode = '/admin/test-mode';
+  static const String testModeStatus = '/settings/test-mode';
 }

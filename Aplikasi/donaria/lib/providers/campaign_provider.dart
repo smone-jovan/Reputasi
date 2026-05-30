@@ -38,7 +38,7 @@ class CampaignProvider extends ChangeNotifier {
     }
 
     _isLoading = true;
-    notifyListeners();
+    // notifyListeners(); // REMOVED to prevent build phase error
 
     try {
       final params = <String, dynamic>{
