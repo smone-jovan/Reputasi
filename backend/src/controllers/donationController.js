@@ -1,6 +1,5 @@
 const { Donation, Transaction, Campaign, User, Notification, Squad, Setting } = require('../models');
-const tripayService = require('../services/tripayService');
-const TripayService = require('../services/tripayService').constructor;
+const PaymentService = require('../services/PaymentService');
 
 // POST /api/donations
 exports.create = async (req, res) => {
@@ -104,98 +103,38 @@ exports.create = async (req, res) => {
       });
     }
 
-    // Normal payment flow (test mode OFF)
-    const donation = await Donation.create({
-      user_id: req.user.id,
+    // Normal payment flow (test mode OFF) — delegate to PaymentService
+    const result = await PaymentService.createPayment({
       campaign_id,
       amount,
       message,
-      is_anonymous: is_anonymous || false,
-      squad_id: squad_id || null,
-      status: 'pending',
-    });
-
-    // Generate unique order ID
-    const orderId = `DNR-${Date.now()}-${donation.id}`;
-
-    // Determine Tripay payment method code
-    let tripayMethod = 'QRIS';
-    if (payment_method === 'bank_transfer' && bank_code) {
-      const bankMap = {
-        bca: 'BCAVA',
-        bni: 'BNIVA',
-        bri: 'BRIVA',
-        mandiri: 'MANDIRIVA',
-        bsi: 'BSIVA',
-        permata: 'PERMATAVA',
-        cimb: 'CIMBVA',
-      };
-      tripayMethod = bankMap[bank_code.toLowerCase()] || 'BCAVA';
-    }
-
-    // Create Tripay transaction
-    const callbackUrl = `${req.protocol}://${req.get('host')}/api/transactions/callback`;
-    const returnUrl = process.env.FRONTEND_URL || 'http://localhost:5500';
-
-    const tripayResponse = await tripayService.createTransaction({
-      method: tripayMethod,
-      merchantRef: orderId,
-      amount,
-      customerName: req.user.name,
-      customerEmail: req.user.email,
-      customerPhone: req.user.phone || '',
-      orderItems: [{
-        name: `Donasi: ${campaign.title}`,
-        price: amount,
-        quantity: 1,
-      }],
-      callbackUrl,
-      returnUrl: `${returnUrl}/payment-status.html?order_id=${orderId}`,
-    });
-
-    if (!tripayResponse.success) {
-      await donation.update({ status: 'failed' });
-      return res.status(400).json({ success: false, message: 'Gagal membuat pembayaran.', error: tripayResponse.message });
-    }
-
-    const tripayData = tripayResponse.data;
-
-    // Create transaction record
-    const transaction = await Transaction.create({
-      donation_id: donation.id,
-      order_id: orderId,
-      payment_gateway: 'tripay',
-      payment_method: payment_method || 'qris',
-      bank_code: bank_code || null,
-      qris_url: tripayData.qr_url || null,
-      va_number: tripayData.pay_code || null,
-      gross_amount: amount,
-      fee_amount: tripayData.total_fee || 0,
-      net_amount: amount - (tripayData.total_fee || 0),
-      status: 'pending',
-      gateway_reference_id: tripayData.reference,
-      gateway_response_raw: JSON.stringify(tripayData),
-      expired_at: new Date(tripayData.expired_time * 1000),
+      is_anonymous,
+      payment_method,
+      bank_code,
+      squad_id,
+      user: req.user,
+      host: req.get('host'),
+      protocol: req.protocol,
     });
 
     res.status(201).json({
       success: true,
       message: 'Donasi berhasil dibuat. Silakan lakukan pembayaran.',
       data: {
-        donation,
+        donation: result.donation,
         transaction: {
-          order_id: orderId,
-          payment_method: payment_method || 'qris',
-          bank_code,
-          qris_url: tripayData.qr_url || null,
-          qr_string: tripayData.qr_string || null,
-          va_number: tripayData.pay_code || null,
-          amount,
-          fee: tripayData.total_fee || 0,
-          total: tripayData.amount || amount,
-          expired_at: new Date(tripayData.expired_time * 1000),
-          checkout_url: tripayData.checkout_url,
-          instructions: tripayData.instructions || [],
+          order_id: result.transaction.order_id,
+          payment_method: result.transaction.payment_method || 'qris',
+          bank_code: result.transaction.bank_code || null,
+          qris_url: result.transaction.qris_url || null,
+          qr_string: result.gatewayData?.qr_string || null,
+          va_number: result.transaction.va_number || null,
+          amount: result.transaction.gross_amount || amount,
+          fee: result.transaction.fee_amount || 0,
+          total: result.transaction.net_amount || amount,
+          expired_at: result.transaction.expired_at || null,
+          checkout_url: result.gatewayData?.checkout_url || null,
+          instructions: result.gatewayData?.instructions || [],
         },
       },
     });

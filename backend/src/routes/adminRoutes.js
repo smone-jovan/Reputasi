@@ -5,6 +5,11 @@ const { Setting } = require('../models');
 // POST /api/admin/test-mode — toggle test mode (admin only)
 router.post('/test-mode', authenticate, isAdmin, async (req, res) => {
   try {
+    // Production guard: prevent enabling test mode in production
+    if (process.env.NODE_ENV === 'production') {
+      return res.status(403).json({ success: false, message: 'Test Mode tidak bisa diaktifkan di production.' });
+    }
+
     const current = await Setting.getValue('test_mode', false);
     const newValue = !current;
 

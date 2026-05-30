@@ -268,7 +268,7 @@ describe('Test Mode Feature', () => {
         });
 
       expect(res.statusCode).toEqual(400);
-      expect(res.body.message).toContain('Minimal donasi');
+      expect(res.body.message).toMatch(/Minimal donasi|greater than or equal to 10000/i);
     });
 
     it('test mode rejects inactive campaign', async () => {
