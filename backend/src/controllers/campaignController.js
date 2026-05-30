@@ -23,7 +23,71 @@ exports.create = async (req, res) => {
       data: { campaign },
     });
   } catch (error) {
-    res.status(500).json({ success: false, message: 'Gagal membuat kampanye.', error: error.message });
+    res.status(500).json({ success: false, message: 'Gagal mengambil data kampanye.', error: error.message });
+  }
+};
+
+// PUT /api/campaigns/my/:id — user edits own pending/rejected campaign
+exports.updateMy = async (req, res) => {
+  try {
+    const campaign = await Campaign.findOne({
+      where: { id: req.params.id, user_id: req.user.id },
+    });
+
+    if (!campaign) {
+      return res.status(404).json({ success: false, message: 'Kampanye tidak ditemukan.' });
+    }
+
+    if (campaign.status !== 'pending' && campaign.status !== 'rejected') {
+      return res.status(400).json({ success: false, message: 'Hanya kampanye pending atau ditolak yang bisa diedit.' });
+    }
+
+    const { title, short_description, description, target_amount, category_id, banner_image, deadline } = req.body;
+
+    await campaign.update({
+      ...(title !== undefined && { title }),
+      ...(short_description !== undefined && { short_description }),
+      ...(description !== undefined && { description }),
+      ...(target_amount !== undefined && { target_amount }),
+      ...(category_id !== undefined && { category_id }),
+      ...(banner_image !== undefined && { banner_image }),
+      ...(deadline !== undefined && { deadline }),
+    });
+
+    res.json({
+      success: true,
+      message: 'Kampanye berhasil diperbarui.',
+      data: { campaign },
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Gagal memperbarui kampanye.', error: error.message });
+  }
+};
+
+// POST /api/campaigns/:id/resubmit — user resubmits rejected campaign
+exports.resubmit = async (req, res) => {
+  try {
+    const campaign = await Campaign.findOne({
+      where: { id: req.params.id, user_id: req.user.id },
+    });
+
+    if (!campaign) {
+      return res.status(404).json({ success: false, message: 'Kampanye tidak ditemukan.' });
+    }
+
+    if (campaign.status !== 'rejected') {
+      return res.status(400).json({ success: false, message: 'Hanya kampanye yang ditolak yang bisa diajukan ulang.' });
+    }
+
+    await campaign.update({ status: 'pending' });
+
+    res.json({
+      success: true,
+      message: 'Kampanye berhasil diajukan ulang. Menunggu review admin.',
+      data: { campaign },
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Gagal mengajukan ulang kampanye.', error: error.message });
   }
 };
 
@@ -34,7 +98,12 @@ exports.getAll = async (req, res) => {
     const offset = (page - 1) * limit;
 
     const where = {};
-    if (status) where.status = status;
+    if (status) {
+      where.status = status;
+    } else {
+      // Default: only show active and completed (hide pending, rejected, cancelled)
+      where.status = { [Op.in]: ['active', 'completed'] };
+    }
     if (category_id) where.category_id = category_id;
     if (search) {
       where.title = { [Op.like]: `%${search}%` };

@@ -159,6 +159,17 @@ const API = {
     return apiFetch(`/campaigns/${id}/reject`, { method: 'PUT' });
   },
 
+  async updateMyCampaign(id, data) {
+    return apiFetch(`/campaigns/my/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+  },
+
+  async resubmitCampaign(id) {
+    return apiFetch(`/campaigns/${id}/resubmit`, { method: 'POST' });
+  },
+
   // Donations
   async createDonation(data) {
     return apiFetch('/donations', {
