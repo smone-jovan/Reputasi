@@ -204,6 +204,13 @@ Lihat [API Documentation](docs/api/README.md) untuk detail lengkap.
 | [Brand Guidelines](docs/brand-guidelines.md) | Design tokens, warna, tipografi |
 | [CHANGELOG](CHANGELOG.md) | Riwayat versi |
 | [Contributing](CONTRIBUTING.md) | Panduan kontribusi |
+| [LICENSE](LICENSE) | Lisensi proyek |
+
+### GitHub Templates
+
+- [Bug Report Template](.github/ISSUE_TEMPLATE/bug_report.md) — Laporkan bug
+- [Feature Request Template](.github/ISSUE_TEMPLATE/feature_request.md) — Ajukan fitur baru
+- [PR Template](.github/PULL_REQUEST_TEMPLATE.md) — Template pull request dengan checklist
 
 ---
 

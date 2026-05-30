@@ -8,6 +8,17 @@ Format berdasarkan [Keep a Changelog](https://keepachangelog.com/ID/1.0.0/).
 
 ### Added
 - MCP: chrome-devtools dan context7 terkonfigurasi
+- GitHub repository templates
+  - `.github/ISSUE_TEMPLATE/bug_report.md` — template laporan bug
+  - `.github/ISSUE_TEMPLATE/feature_request.md` — template request fitur
+  - `.github/PULL_REQUEST_TEMPLATE.md` — template PR dengan checklist
+- `LICENSE` file
+
+### Fixed
+- Flutter: `_formatTimeAgo` method dipindah ke dalam `_CampaignDetailScreenState` (scope error)
+- Flutter: restore `_SquadSection` class yang hilang di `campaign_detail_screen.dart`
+- Flutter: hapus unused import di `donate_screen.dart`
+- Flutter: skip splash sound di web platform (`kIsWeb` check) — asset tidak tersedia di web
 
 ### Security
 - Joi validation schemas untuk campaign, donation, dan squad endpoints
@@ -207,4 +218,4 @@ Lihat [docs/decisions/](docs/decisions/) untuk detail lengkap setiap ADR.
 
 ---
 
-*Last updated: 2026-05-30*
+*Last updated: 2026-05-30 (post-release fixes)*

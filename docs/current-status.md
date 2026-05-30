@@ -1,7 +1,7 @@
 # Donaria — Status Saat Ini
 
 > **Diperbarui:** 30 Mei 2026
-> **Versi:** 0.6.0
+> **Versi:** 0.6.0+ (post-release fixes)
 > **Status:** Siap testing & deployment
 
 ---
@@ -16,6 +16,11 @@ Semua komponen inti sudah diimplementasikan: Backend API (37+ endpoint), Website
 
 ```
 D:\code_xI\Reputasi\
+├── .github/                        # GitHub templates
+│   ├── ISSUE_TEMPLATE/
+│   │   ├── bug_report.md           # Template laporan bug
+│   │   └── feature_request.md      # Template request fitur
+│   └── PULL_REQUEST_TEMPLATE.md    # Template PR
 ├── backend/                        # Express.js API Server
 │   ├── server.js                   # Entry point (middleware, sync, seed)
 │   ├── src/
@@ -464,7 +469,7 @@ ALLOWED_ORIGINS=http://localhost:5500,http://127.0.0.1:5500
 | # | Issue | Severity | Lokasi |
 |---|-------|----------|--------|
 | 1 | `js/modules/` (IIFE) tidak dipakai halaman manapun | Low | `website/js/modules/` |
-| 2 | `assets/sounds/` kosong — splash sound fail silently | Low | `Aplikasi/donaria/assets/sounds/` |
+| 2 | `assets/sounds/` kosong — splash sound fail silently (non-web) | Low | `Aplikasi/donaria/assets/sounds/` |
 
 ---
 
@@ -487,4 +492,4 @@ ALLOWED_ORIGINS=http://localhost:5500,http://127.0.0.1:5500
 ---
 
 *Dokumen ini adalah source of truth untuk status proyek.*
-*Terakhir diupdate: 30 Mei 2026 (v0.6.0 + security hardening)*
+*Terakhir diupdate: 30 Mei 2026 (v0.6.0 + post-release fixes)*
