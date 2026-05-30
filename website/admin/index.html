@@ -11,6 +11,7 @@
   <link rel="stylesheet" href="../css/21st-premium.css">
   <link rel="stylesheet" href="../css/style.css">
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
   <script>
     tailwind.config = {
       theme: {
@@ -255,6 +256,55 @@
         </div>
       </div>
 
+      <!-- Analytics Section -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <!-- Trend Donasi Chart -->
+        <div class="glass-card rounded-2xl overflow-hidden lg:col-span-2">
+          <div class="px-6 py-5 border-b border-gray-100 bg-white/50 flex items-center justify-between">
+            <h3 class="text-lg font-bold text-gray-900 flex items-center gap-2">
+              <i data-lucide="trending-up" class="w-5 h-5 text-primary-600"></i> Trend Donasi (7 Hari)
+            </h3>
+            <button onclick="exportCSV('donations')" class="px-3 py-1.5 text-xs font-semibold text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50 flex items-center gap-1.5">
+              <i data-lucide="download" class="w-3.5 h-3.5"></i> Export CSV
+            </button>
+          </div>
+          <div class="p-6">
+            <canvas id="trendChart" height="80"></canvas>
+          </div>
+        </div>
+
+        <!-- Top Campaigns -->
+        <div class="glass-card rounded-2xl overflow-hidden">
+          <div class="px-6 py-5 border-b border-gray-100 bg-white/50">
+            <h3 class="text-lg font-bold text-gray-900 flex items-center gap-2">
+              <i data-lucide="trophy" class="w-5 h-5 text-amber-500"></i> Performa Kampanye
+            </h3>
+          </div>
+          <div class="p-4">
+            <div id="topCampaigns" class="space-y-3">
+              <div class="text-center text-gray-500 py-8">Memuat...</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Top Donors -->
+        <div class="glass-card rounded-2xl overflow-hidden">
+          <div class="px-6 py-5 border-b border-gray-100 bg-white/50 flex items-center justify-between">
+            <h3 class="text-lg font-bold text-gray-900 flex items-center gap-2">
+              <i data-lucide="heart" class="w-5 h-5 text-rose-500"></i> Top Donatur
+            </h3>
+            <button onclick="exportCSV('campaigns')" class="px-3 py-1.5 text-xs font-semibold text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50 flex items-center gap-1.5">
+              <i data-lucide="download" class="w-3.5 h-3.5"></i> Export CSV
+            </button>
+          </div>
+          <div class="p-4">
+            <div id="topDonors" class="space-y-3">
+              <div class="text-center text-gray-500 py-8">Memuat...</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- Quick Actions -->
       <div class="glass-card rounded-2xl overflow-hidden mb-8">
         <div class="px-6 py-5 border-b border-gray-100 bg-white/50">
@@ -481,9 +531,143 @@
       }
     }
 
+    // ── Analytics ──
+
+    async function loadAnalytics(){
+      await Promise.all([loadTrend(), loadTopCampaigns(), loadTopDonors()]);
+    }
+
+    async function loadTrend(){
+      try{
+        const res = await apiFetch('/admin/analytics/trend');
+        const data = res.data.trend;
+        const ctx = document.getElementById('trendChart').getContext('2d');
+        new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: data.map(d => {
+              const dt = new Date(d.date);
+              return dt.toLocaleDateString('id-ID', {day:'numeric', month:'short'});
+            }),
+            datasets: [{
+              label: 'Donasi (Rp)',
+              data: data.map(d => d.total),
+              borderColor: '#10b981',
+              backgroundColor: 'rgba(16,185,129,0.1)',
+              fill: true,
+              tension: 0.4,
+              pointBackgroundColor: '#10b981',
+              pointRadius: 4,
+              pointHoverRadius: 6,
+            }]
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              legend: { display: false },
+              tooltip: {
+                callbacks: {
+                  label: ctx => 'Rp ' + ctx.parsed.y.toLocaleString('id-ID')
+                }
+              }
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+                ticks: {
+                  callback: v => v >= 1000000 ? (v/1000000).toFixed(0)+'jt' : v >= 1000 ? (v/1000).toFixed(0)+'rb' : v
+                }
+              }
+            }
+          }
+        });
+      }catch(e){ console.error('Trend error:', e); }
+    }
+
+    async function loadTopCampaigns(){
+      try{
+        const res = await apiFetch('/admin/analytics/top-campaigns');
+        const campaigns = res.data.campaigns;
+        const container = document.getElementById('topCampaigns');
+        if(campaigns.length === 0){
+          container.innerHTML = '<div class="text-center text-gray-500 py-8">Belum ada data</div>';
+          return;
+        }
+        container.innerHTML = campaigns.map((c, i) => `
+          <div class="flex items-center gap-3 p-3 rounded-xl ${i < 3 ? 'bg-amber-50/50' : 'bg-gray-50'}">
+            <div class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${i===0?'bg-amber-100 text-amber-700':i===1?'bg-gray-200 text-gray-600':i===2?'bg-orange-100 text-orange-700':'bg-gray-100 text-gray-500'}">
+              ${i+1}
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="font-semibold text-sm text-gray-900 truncate">${c.title}</div>
+              <div class="text-xs text-gray-500">${c.category}</div>
+              <div class="mt-1 w-full bg-gray-200 rounded-full h-1.5">
+                <div class="bg-primary-500 h-1.5 rounded-full" style="width:${c.progress}%"></div>
+              </div>
+            </div>
+            <div class="text-right">
+              <div class="text-sm font-bold text-primary-700">${c.progress}%</div>
+              <div class="text-xs text-gray-500">${formatMoney(c.current_amount)}</div>
+            </div>
+          </div>
+        `).join('');
+      }catch(e){ console.error('Top campaigns error:', e); }
+    }
+
+    async function loadTopDonors(){
+      try{
+        const res = await apiFetch('/admin/analytics/top-donors');
+        const donors = res.data.donors;
+        const container = document.getElementById('topDonors');
+        if(donors.length === 0){
+          container.innerHTML = '<div class="text-center text-gray-500 py-8">Belum ada data</div>';
+          return;
+        }
+        container.innerHTML = donors.map((d, i) => `
+          <div class="flex items-center gap-3 p-3 rounded-xl ${i < 3 ? 'bg-rose-50/50' : 'bg-gray-50'}">
+            <div class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${i===0?'bg-amber-100 text-amber-700':i===1?'bg-gray-200 text-gray-600':i===2?'bg-orange-100 text-orange-700':'bg-gray-100 text-gray-500'}">
+              ${i+1}
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="font-semibold text-sm text-gray-900">${d.name}</div>
+              <div class="text-xs text-gray-500">${d.donation_count}x donasi</div>
+            </div>
+            <div class="text-right font-bold text-sm text-primary-700">Rp ${formatMoney(d.total_amount)}</div>
+          </div>
+        `).join('');
+      }catch(e){ console.error('Top donors error:', e); }
+    }
+
+    async function exportCSV(type){
+      try{
+        let csv = '';
+        let filename = '';
+        if(type === 'donations'){
+          const res = await apiFetch('/admin/analytics/trend?days=30');
+          csv = 'Tanggal,Total Donasi,Jumlah Transaksi\n';
+          res.data.trend.forEach(d => { csv += `${d.date},${d.total},${d.count}\n`; });
+          filename = 'trend-donasi.csv';
+        } else {
+          const res = await apiFetch('/admin/analytics/top-campaigns?limit=50');
+          csv = 'Judul,Kategori,Target,Terkumpul,Progress,Status\n';
+          res.data.campaigns.forEach(c => {
+            csv += `"${c.title}","${c.category}",${c.target_amount},${c.current_amount},${c.progress}%,${c.status}\n`;
+          });
+          filename = 'performa-kampanye.csv';
+        }
+        const blob = new Blob([csv], {type:'text/csv'});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url; a.download = filename; a.click();
+        URL.revokeObjectURL(url);
+        showToast('CSV berhasil diunduh!');
+      }catch(e){ showToast('Gagal export CSV', 'error'); }
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
       loadDashboard();
       loadTestModeStatus();
+      loadAnalytics();
     });
   </script>
 </body>

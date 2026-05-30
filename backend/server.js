@@ -20,6 +20,7 @@ const notificationRoutes = require('./src/routes/notificationRoutes');
 const squadRoutes = require('./src/routes/squadRoutes');
 const demoRoutes = require('./src/routes/demoRoutes');
 const adminRoutes = require('./src/routes/adminRoutes');
+const analyticsRoutes = require('./src/routes/analyticsRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -74,6 +75,7 @@ app.use('/api/notifications', notificationRoutes);
 app.use('/api/squads', squadRoutes);
 app.use('/api/demo', demoRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/admin/analytics', analyticsRoutes);
 
 // Dashboard stats endpoint
 app.get('/api/stats', async (req, res) => {
