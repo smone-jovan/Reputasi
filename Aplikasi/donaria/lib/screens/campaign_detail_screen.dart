@@ -162,6 +162,68 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
                           color: AppTheme.gray700,
                         ),
                       ),
+                      const SizedBox(height: 24),
+
+                      // --- Pesan Donatur Section ---
+                      if (campaign.donations.isNotEmpty) ...[
+                        Row(
+                          children: [
+                            const Icon(Icons.chat_bubble_outline, size: 20, color: AppTheme.primaryDark),
+                            const SizedBox(width: 8),
+                            Text(
+                              'Pesan Donatur (${campaign.donations.length})',
+                              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 12),
+                        ...campaign.donations.map((d) => Container(
+                          margin: const EdgeInsets.only(bottom: 12),
+                          padding: const EdgeInsets.all(14),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(14),
+                            border: Border.all(color: AppTheme.gray200),
+                          ),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              CircleAvatar(
+                                radius: 18,
+                                backgroundColor: AppTheme.primary50,
+                                child: Text(
+                                  d.donorName[0].toUpperCase(),
+                                  style: const TextStyle(fontWeight: FontWeight.w700, color: AppTheme.primaryDark, fontSize: 14),
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(d.donorName, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
+                                        Text(formatCompactCurrency(d.amount), style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppTheme.primaryDark)),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 6),
+                                    Text(d.message!, style: TextStyle(fontSize: 14, color: AppTheme.gray600, height: 1.5)),
+                                    if (d.createdAt != null) ...[
+                                      const SizedBox(height: 6),
+                                      Text(
+                                        _formatTimeAgo(d.createdAt!),
+                                        style: const TextStyle(fontSize: 11, color: AppTheme.gray400),
+                                      ),
+                                    ],
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        )),
+                      ],
                       const SizedBox(height: 100), // spacing for bottom bar
                     ],
                   ),
@@ -195,116 +257,18 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
         },
       ),
     );
+    }
+  }
+
+  String _formatTimeAgo(DateTime date) {
+    final diff = DateTime.now().difference(date);
+    if (diff.inMinutes < 1) return 'Baru saja';
+    if (diff.inMinutes < 60) return '${diff.inMinutes} menit lalu';
+    if (diff.inHours < 24) return '${diff.inHours} jam lalu';
+    if (diff.inDays < 30) return '${diff.inDays} hari lalu';
+    return '${(diff.inDays / 30).floor()} bulan lalu';
   }
 }
-
-// --- Squad Section (embedded in campaign detail) ---
-class _SquadSection extends StatelessWidget {
-  final int campaignId;
-  final String campaignTitle;
-  final num campaignTarget;
-  final bool isActive;
-
-  const _SquadSection({
-    required this.campaignId,
-    required this.campaignTitle,
-    required this.campaignTarget,
-    required this.isActive,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Consumer<SquadProvider>(
-      builder: (_, squadProvider, __) {
-        final squads = squadProvider.campaignSquads;
-
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Header row
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Row(
-                  children: [
-                    Icon(Icons.groups_rounded, size: 22, color: AppTheme.primaryDark),
-                    SizedBox(width: 8),
-                    Text(
-                      'Squad Donasi',
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
-                    ),
-                  ],
-                ),
-                if (isActive)
-                  TextButton.icon(
-                    onPressed: () {
-                      Navigator.pushNamed(context, '/create-squad', arguments: {
-                        'campaignId': campaignId,
-                        'campaignTitle': campaignTitle,
-                        'campaignTarget': campaignTarget,
-                      });
-                    },
-                    icon: const Icon(Icons.add_circle_outline, size: 18),
-                    label: const Text('Buat Squad'),
-                    style: TextButton.styleFrom(
-                      foregroundColor: AppTheme.primary,
-                      textStyle: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
-                    ),
-                  ),
-              ],
-            ),
-
-            if (squads.isEmpty)
-              Container(
-                width: double.infinity,
-                margin: const EdgeInsets.only(top: 8),
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  color: AppTheme.gray50,
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: AppTheme.gray200),
-                ),
-                child: Column(
-                  children: [
-                    Icon(Icons.groups_3_rounded, size: 36, color: AppTheme.gray300),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Belum ada squad',
-                      style: TextStyle(fontSize: 14, color: AppTheme.gray400, fontWeight: FontWeight.w600),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      'Ajak teman donasi bareng!',
-                      style: TextStyle(fontSize: 12, color: AppTheme.gray400),
-                    ),
-                  ],
-                ),
-              )
-            else
-              ...squads.take(3).map((squad) => SquadCard(
-                    squad: squad,
-                    onTap: () {
-                      Navigator.pushNamed(context, '/squad-detail', arguments: {
-                        'id': squad.id,
-                        'code': squad.inviteCode,
-                      });
-                    },
-                  )),
-
-            if (squads.length > 3)
-              Center(
-                child: TextButton(
-                  onPressed: () {
-                    // Could navigate to full list, for now show all inline
-                  },
-                  child: Text('Lihat ${squads.length - 3} squad lainnya →'),
-                ),
-              ),
-          ],
-        );
-      },
-    );
-  }
 }
 
 class _StatItem extends StatelessWidget {

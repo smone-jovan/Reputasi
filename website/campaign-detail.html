@@ -35,6 +35,16 @@
     .share-buttons{display:flex;gap:8px;margin-top:16px;}
     .share-btn{flex:1;padding:10px;border-radius:var(--radius-sm);text-align:center;font-size:0.85rem;font-weight:600;cursor:pointer;transition:var(--transition);display:flex;align-items:center;justify-content:center;gap:6px;}
     .share-btn:hover{transform:translateY(-1px);}.share-wa{background:#DCFCE7;color:#16A34A;}.share-copy{background:var(--gray-100);color:var(--gray-600);}
+    .comments-section{margin-top:32px;}
+    .comments-section h3{font-size:1.2rem;margin-bottom:20px;display:flex;align-items:center;gap:8px;}
+    .comment-card{display:flex;gap:12px;padding:16px;background:var(--glass-bg);backdrop-filter:var(--glass-blur);border:1px solid var(--glass-border);border-radius:var(--radius-md);margin-bottom:12px;}
+    .comment-avatar{width:40px;height:40px;border-radius:50%;background:var(--primary-50);display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--primary-dark);font-size:0.85rem;flex-shrink:0;}
+    .comment-body{flex:1;}
+    .comment-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
+    .comment-name{font-weight:600;font-size:0.9rem;}
+    .comment-amount{font-size:0.8rem;color:var(--primary-dark);font-weight:600;}
+    .comment-message{font-size:0.9rem;color:var(--gray-600);line-height:1.6;}
+    .comment-time{font-size:0.75rem;color:var(--text-muted);margin-top:6px;}
     @media(max-width:768px){.detail-grid{grid-template-columns:1fr;}.detail-banner{height:220px;}.detail-sidebar{position:static;}}
   </style>
 </head>
@@ -81,6 +91,11 @@
         document.title=`${c.title} — Donaria`;
         document.getElementById('breadcrumbTitle').textContent=c.title;
         const donorsHtml=(c.donations||[]).map(d=>`<div class="donor-row"><div class="donor-avatar">${getInitials(d.is_anonymous?'A':(d.donatur?.name||'A'))}</div><div style="flex:1;"><div class="donor-name">${d.is_anonymous?'Anonim':(d.donatur?.name||'Anonim')}</div><div class="donor-time">${formatTimeAgo(d.created_at)}</div></div><div class="donor-amount">${formatCompactCurrency(d.amount)}</div></div>`).join('');
+        const commentsWithMessage=(c.donations||[]).filter(d=>d.message&&d.message.trim());
+        const commentsHtml=commentsWithMessage.length?commentsWithMessage.map(d=>{
+          const name=d.is_anonymous?'Anonim':(d.donatur?.name||'Anonim');
+          return `<div class="comment-card"><div class="comment-avatar">${getInitials(name)}</div><div class="comment-body"><div class="comment-header"><span class="comment-name">${escapeHTML(name)}</span><span class="comment-amount">${formatCompactCurrency(d.amount)}</span></div><div class="comment-message">${escapeHTML(d.message)}</div><div class="comment-time">${formatTimeAgo(d.created_at)}</div></div></div>`;
+        }).join(''):'<p style="color:var(--text-muted);text-align:center;padding:20px;">Belum ada pesan dari donatur.</p>';
         document.getElementById('detailContent').innerHTML=`
           <div>
             <img class="detail-banner" src="${c.banner_image||'https://placehold.co/800x400/10B981/white?text=Donaria'}" alt="${c.title}" loading="lazy" onerror="this.src='https://placehold.co/800x400/10B981/white?text=Donaria'">
@@ -89,6 +104,10 @@
             <h1 class="detail-title">${c.title}</h1>
             ${c.short_description?`<p style="font-size:1.05rem;color:var(--gray-600);margin-bottom:24px;">${c.short_description}</p>`:''}
             <div class="detail-desc">${c.description||'Belum ada deskripsi.'}</div>
+            <div class="comments-section">
+              <h3><i data-lucide="message-circle" class="icon-md" style="color:var(--primary);"></i> Pesan Donatur (${commentsWithMessage.length})</h3>
+              ${commentsHtml}
+            </div>
           </div>
           <div class="detail-sidebar">
             <div class="sidebar-card">
