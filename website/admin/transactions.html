@@ -71,79 +71,70 @@
       -ms-overflow-style: none;
       scrollbar-width: none;
     }
+    /* Sidebar */
+    .admin-sidebar {
+      width: 260px; min-height: 100vh; background: rgba(255,255,255,0.95); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+      border-right: 1px solid rgba(229,231,235,0.8); position: fixed; top: 0; left: 0; z-index: 50; display: flex; flex-direction: column; transition: transform 0.3s ease;
+    }
+    .admin-sidebar .nav-link {
+      display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 12px; font-size: 0.9rem; font-weight: 500; color: #6b7280; transition: all 0.2s; text-decoration: none;
+    }
+    .admin-sidebar .nav-link:hover { background: #f9fafb; color: #111827; }
+    .admin-sidebar .nav-link.active { background: #ecfdf5; color: #059669; font-weight: 600; }
+    .admin-sidebar .nav-link i { width: 20px; height: 20px; }
+    .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.3); z-index: 40; }
+    .sidebar-overlay.show { display: block; }
+    @media (max-width: 768px) {
+      .admin-sidebar { transform: translateX(-100%); }
+      .admin-sidebar.open { transform: translateX(0); }
+      .admin-main { margin-left: 0 !important; }
+    }
+    @media (min-width: 769px) { .sidebar-overlay { display: none !important; } }
   </style>
 </head>
-<body class="premium-mesh-bg text-gray-800 antialiased min-h-screen flex flex-col">
+<body class="premium-mesh-bg text-gray-800 antialiased">
 
-  <!-- Navbar -->
-  <nav class="glass-nav sticky top-0 z-40 w-full">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex justify-between h-16 items-center">
-        <!-- Logo -->
-        <a href="../index.html" class="flex items-center gap-2 text-xl font-bold tracking-tight text-gray-900 group">
-          <div class="w-8 h-8 bg-primary-600 text-white rounded-lg flex items-center justify-center shadow-md group-hover:bg-primary-700 transition-colors">
-            <i data-lucide="heart-handshake" class="w-5 h-5"></i>
-          </div>
-          Donaria <span class="text-[0.65rem] font-bold text-primary-600 tracking-wider bg-primary-50 px-2 py-0.5 rounded-full ml-1">ADMIN</span>
-        </a>
+  <!-- Sidebar Overlay (mobile) -->
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
 
-        <!-- Desktop Navigation -->
-        <div class="hidden md:flex space-x-1 items-center">
-          <a href="index.html" class="px-2 py-2 rounded-lg hover:bg-gray-50 transition-colors" title="Kembali ke Dashboard">
-            <i data-lucide="arrow-left" class="w-5 h-5 text-gray-600"></i>
-          </a>
-          <a href="index.html" class="px-3 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-colors">Dashboard</a>
-          <a href="campaigns.html" class="px-3 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-colors">Kampanye</a>
-          <a href="transactions.html" class="px-3 py-2 rounded-lg text-sm font-semibold bg-primary-50 text-primary-700">Transaksi</a>
-          <a href="../index.html" class="px-3 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-colors">Website</a>
+  <!-- Sidebar -->
+  <aside class="admin-sidebar" id="adminSidebar">
+    <div class="px-6 py-5 border-b border-gray-100">
+      <a href="../index.html" class="flex items-center gap-3 text-lg font-bold tracking-tight text-gray-900">
+        <div class="w-9 h-9 bg-primary-600 text-white rounded-xl flex items-center justify-center shadow-md">
+          <i data-lucide="heart-handshake" class="w-5 h-5"></i>
         </div>
-
-        <!-- Desktop Actions -->
-        <div class="hidden md:flex items-center gap-4">
-          <button onclick="Auth.logout()" class="px-4 py-2 border border-gray-200 rounded-xl text-sm font-semibold text-gray-700 hover:bg-gray-50 hover:text-gray-900 transition-colors flex items-center gap-2">
-            <i data-lucide="log-out" class="w-4 h-4"></i> Keluar
-          </button>
-        </div>
-
-        <!-- Mobile Menu Button -->
-        <div class="md:hidden flex items-center">
-          <button id="mobileMenuBtn" class="p-2 rounded-lg text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors" aria-label="Menu navigasi">
-            <i data-lucide="menu" class="w-6 h-6"></i>
-          </button>
-        </div>
-      </div>
+        <div>Donaria<span class="block text-[0.6rem] font-bold text-primary-600 tracking-wider uppercase">Admin Panel</span></div>
+      </a>
     </div>
-
-    <!-- Mobile Navigation -->
-    <div id="mobile-menu" class="md:hidden flex-col bg-white border-t border-gray-100 px-4 pt-2 pb-4 space-y-1 shadow-xl absolute w-full left-0">
-      <a href="index.html" class="block px-3 py-3 rounded-lg text-base font-medium text-gray-600 hover:bg-gray-50">Dashboard</a>
-      <a href="campaigns.html" class="block px-3 py-3 rounded-lg text-base font-medium text-gray-600 hover:bg-gray-50">Kampanye</a>
-      <a href="transactions.html" class="block px-3 py-3 rounded-lg text-base font-semibold bg-primary-50 text-primary-700">Transaksi</a>
-      <a href="../index.html" class="block px-3 py-3 rounded-lg text-base font-medium text-gray-600 hover:bg-gray-50">Kembali ke Website</a>
-      <button onclick="Auth.logout()" class="mt-4 w-full flex justify-center items-center gap-2 px-3 py-3 border border-gray-200 rounded-lg text-base font-semibold text-gray-700 hover:bg-gray-50">
+    <nav class="flex-1 px-4 py-4 space-y-1 overflow-y-auto">
+      <a href="index.html" class="nav-link"><i data-lucide="layout-dashboard"></i> Dashboard</a>
+      <a href="campaigns.html" class="nav-link"><i data-lucide="clipboard-list"></i> Kelola Kampanye</a>
+      <a href="transactions.html" class="nav-link active"><i data-lucide="credit-card"></i> Transaksi</a>
+      <a href="../index.html" class="nav-link"><i data-lucide="globe"></i> Lihat Website</a>
+    </nav>
+    <div class="px-4 py-4 border-t border-gray-100">
+      <button onclick="Auth.logout()" class="w-full flex items-center justify-center gap-2 px-4 py-2.5 border border-gray-200 rounded-xl text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-colors">
         <i data-lucide="log-out" class="w-4 h-4"></i> Keluar
       </button>
     </div>
-  </nav>
+  </aside>
 
   <!-- Main Content -->
-  <main class="flex-grow w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-fade-in-up">
+  <div class="admin-main md:ml-[260px] min-h-screen">
+    <div class="md:hidden sticky top-0 z-30 bg-white/90 backdrop-blur-md border-b border-gray-100 px-4 py-3 flex items-center justify-between">
+      <button onclick="toggleSidebar()" class="p-2 rounded-lg text-gray-600 hover:bg-gray-100"><i data-lucide="menu" class="w-6 h-6"></i></button>
+      <span class="font-bold text-gray-900">Transaksi</span>
+      <div class="w-10"></div>
+    </div>
+
+    <main class="px-4 sm:px-6 lg:px-8 py-6 md:py-8 animate-fade-in-up max-w-7xl">
     
     <!-- Header -->
     <div class="mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-      <div class="flex items-center gap-3">
-        <a href="index.html" class="w-10 h-10 rounded-xl bg-white border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-colors" title="Kembali ke Dashboard">
-          <i data-lucide="arrow-left" class="w-5 h-5 text-gray-600"></i>
-        </a>
-        <div class="flex items-center gap-3">
-          <div class="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center flex-shrink-0">
-            <i data-lucide="credit-card" class="w-6 h-6 text-blue-600"></i>
-          </div>
-          <div>
-            <h1 class="text-2xl md:text-3xl font-bold text-gray-900 tracking-tight">Transaksi</h1>
-            <p class="text-gray-500 mt-0.5">Semua riwayat pembayaran donasi</p>
-          </div>
-        </div>
+      <div>
+        <h1 class="text-2xl md:text-3xl font-bold text-gray-900 tracking-tight">Transaksi</h1>
+        <p class="text-gray-500 mt-0.5">Semua riwayat pembayaran donasi</p>
       </div>
     </div>
 
@@ -220,25 +211,24 @@
         <div class="flex gap-2" id="paginationButtons"></div>
       </div>
     </div>
-  </main>
+    </main>
+  </div>
 
   <script src="https://unpkg.com/lucide@latest"></script>
   <script src="../js/api.js"></script>
   <script src="../js/auth.js"></script>
   <script>
     lucide.createIcons();
-    
-    // Mobile menu toggle
-    const menuBtn = document.getElementById('mobileMenuBtn');
-    const mobileMenu = document.getElementById('mobile-menu');
-    menuBtn.addEventListener('click', () => {
-      mobileMenu.classList.toggle('open');
-    });
 
-    let currentPage = 1, currentStatus = null, currentSource = null;
+    if(!Auth.isLoggedIn() || !Auth.isAdmin()){
+      window.location.href = '../login.html';
+    }
 
-    function formatMoney(num) {
-      return num.toLocaleString('id-ID');
+    function toggleSidebar(){
+      const sidebar = document.getElementById('adminSidebar');
+      const overlay = document.getElementById('sidebarOverlay');
+      sidebar.classList.toggle('open');
+      overlay.classList.toggle('show');
     }
 
     function formatDateIndo(dateStr) {
