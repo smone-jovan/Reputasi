@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:provider/provider.dart';
 
 import 'package:audioplayers/audioplayers.dart';
@@ -35,8 +36,8 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
   }
 
   Future<void> _playSplashSound() async {
+    if (kIsWeb) return; // Skip sound on web (asset not available)
     try {
-      // Pastikan ada file splash.mp3 di folder assets/sounds/
       await _audioPlayer.play(AssetSource('sounds/splash.mp3'));
     } catch (e) {
       debugPrint('Error playing sound: $e');
