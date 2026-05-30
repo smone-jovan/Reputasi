@@ -40,7 +40,7 @@ const Campaign = sequelize.define('Campaign', {
     allowNull: true,
   },
   status: {
-    type: DataTypes.ENUM('active', 'completed', 'cancelled'),
+    type: DataTypes.ENUM('pending', 'active', 'completed', 'cancelled', 'rejected'),
     defaultValue: 'active',
   },
   deadline: {

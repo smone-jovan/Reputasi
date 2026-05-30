@@ -140,6 +140,25 @@ const API = {
     return apiFetch(`/campaigns/${id}`, { method: 'DELETE' });
   },
 
+  async submitCampaign(data) {
+    return apiFetch('/campaigns/submit', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  },
+
+  async getMyCampaigns(params = {}) {
+    return apiFetch(`/campaigns/my?${new URLSearchParams(params)}`);
+  },
+
+  async approveCampaign(id) {
+    return apiFetch(`/campaigns/${id}/approve`, { method: 'PUT' });
+  },
+
+  async rejectCampaign(id) {
+    return apiFetch(`/campaigns/${id}/reject`, { method: 'PUT' });
+  },
+
   // Donations
   async createDonation(data) {
     return apiFetch('/donations', {

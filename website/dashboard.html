@@ -59,6 +59,19 @@
         </div>
       </div>
 
+      <div class="table-container mt-4">
+        <div class="table-header">
+          <h3><i data-lucide="megaphone" class="icon-md"></i> Kampanye Saya</h3>
+          <a href="submit-campaign.html" class="btn btn-sm btn-primary"><i data-lucide="plus" class="icon-sm"></i> Ajukan Kampanye</a>
+        </div>
+        <div style="overflow-x: auto;">
+          <table>
+            <thead><tr><th>Judul</th><th>Kategori</th><th>Target</th><th>Status</th><th>Tanggal</th><th>Aksi</th></tr></thead>
+            <tbody id="myCampaigns"><tr><td colspan="6" class="text-center" style="padding:40px;"><div class="spinner" style="margin:0 auto 12px;"></div>Memuat kampanye...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
       <div class="table-container mt-4" style="margin-bottom: 60px;">
         <div class="table-header">
           <h3><i data-lucide="bell" class="icon-md"></i> Notifikasi</h3>
@@ -98,6 +111,24 @@
         }else{tbody.innerHTML=`<tr><td colspan="6" class="text-center" style="padding:60px;"><div style="margin-bottom:12px;"><i data-lucide="inbox" style="width:32px;height:32px;color:var(--gray-300);"></i></div><p>Belum ada riwayat donasi.</p><a href="campaigns.html" class="btn btn-primary btn-sm mt-2">Mulai Donasi</a></td></tr>`;}
         refreshIcons();
       }catch(e){console.log('Failed to load donations');}
+      // Load Kampanye Saya
+      try{
+        const res=await API.getMyCampaigns();const tbody=document.getElementById('myCampaigns');
+        if(res?.data?.campaigns?.length>0){
+          tbody.innerHTML=res.data.campaigns.map(c=>{
+            const statusBadge={
+              pending:'<span class="badge badge-warning">Menunggu Review</span>',
+              active:'<span class="badge badge-success">Aktif</span>',
+              completed:'<span class="badge badge-info">Selesai</span>',
+              cancelled:'<span class="badge badge-danger">Dibatalkan</span>',
+              rejected:'<span class="badge badge-danger">Ditolak</span>',
+            };
+            const canEdit=c.status==='pending'||c.status==='rejected';
+            return `<tr><td><div style="font-weight:600;font-size:0.85rem;">${escapeHTML(c.title)}</div></td><td style="font-size:0.85rem;">${c.category?.name||'-'}</td><td style="font-weight:600;font-size:0.85rem;">${formatCurrency(c.target_amount)}</td><td>${statusBadge[c.status]||c.status}</td><td style="font-size:0.85rem;color:var(--text-muted);">${formatDate(c.created_at)}</td><td>${canEdit?`<a href="submit-campaign.html?edit=${c.id}" class="btn btn-sm btn-outline">Edit</a>`:''}</td></tr>`;
+          }).join('');
+        }else{tbody.innerHTML=`<tr><td colspan="6" class="text-center" style="padding:60px;"><div style="margin-bottom:12px;"><i data-lucide="megaphone" style="width:32px;height:32px;color:var(--gray-300);"></i></div><p>Belum mengajukan kampanye.</p><a href="submit-campaign.html" class="btn btn-primary btn-sm mt-2">Ajukan Kampanye</a></td></tr>`;}
+        refreshIcons();
+      }catch(e){console.log('Failed to load my campaigns');}
       try{
         const res=await API.getNotifications();const container=document.getElementById('notificationsList');
         if(res?.data?.notifications?.length>0){

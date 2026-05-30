@@ -177,3 +177,115 @@ exports.getDonors = async (req, res) => {
     res.status(500).json({ success: false, message: 'Gagal mengambil data donatur.', error: error.message });
   }
 };
+
+// POST /api/campaigns/submit — user submits campaign for review
+exports.submit = async (req, res) => {
+  try {
+    const { title, short_description, description, target_amount, category_id, banner_image, deadline } = req.body;
+
+    if (!title || !category_id || !target_amount) {
+      return res.status(400).json({ success: false, message: 'Judul, kategori, dan target dana wajib diisi.' });
+    }
+
+    if (target_amount < 100000) {
+      return res.status(400).json({ success: false, message: 'Minimal target dana Rp 100.000.' });
+    }
+
+    const campaign = await Campaign.create({
+      user_id: req.user.id,
+      category_id,
+      title,
+      short_description,
+      description,
+      target_amount,
+      banner_image,
+      deadline,
+      status: 'pending',
+    });
+
+    res.status(201).json({
+      success: true,
+      message: 'Kampanye berhasil diajukan. Menunggu persetujuan admin.',
+      data: { campaign },
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Gagal mengajukan kampanye.', error: error.message });
+  }
+};
+
+// PUT /api/campaigns/:id/approve — admin approves campaign
+exports.approve = async (req, res) => {
+  try {
+    const campaign = await Campaign.findByPk(req.params.id);
+    if (!campaign) {
+      return res.status(404).json({ success: false, message: 'Kampanye tidak ditemukan.' });
+    }
+
+    if (campaign.status !== 'pending') {
+      return res.status(400).json({ success: false, message: 'Hanya kampanye dengan status pending yang bisa disetujui.' });
+    }
+
+    await campaign.update({ status: 'active' });
+
+    res.json({ success: true, message: 'Kampanye berhasil disetujui.', data: { campaign } });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Gagal menyetujui kampanye.', error: error.message });
+  }
+};
+
+// PUT /api/campaigns/:id/reject — admin rejects campaign
+exports.reject = async (req, res) => {
+  try {
+    const campaign = await Campaign.findByPk(req.params.id);
+    if (!campaign) {
+      return res.status(404).json({ success: false, message: 'Kampanye tidak ditemukan.' });
+    }
+
+    if (campaign.status !== 'pending') {
+      return res.status(400).json({ success: false, message: 'Hanya kampanye dengan status pending yang bisa ditolak.' });
+    }
+
+    const { reason } = req.body;
+    await campaign.update({ status: 'rejected' });
+
+    res.json({ success: true, message: 'Kampanye berhasil ditolak.', data: { campaign, reason } });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Gagal menolak kampanye.', error: error.message });
+  }
+};
+
+// GET /api/campaigns/my — user gets their own campaigns
+exports.getMy = async (req, res) => {
+  try {
+    const { status, page = 1, limit = 20 } = req.query;
+    const offset = (page - 1) * limit;
+
+    const where = { user_id: req.user.id };
+    if (status) where.status = status;
+
+    const { count, rows: campaigns } = await Campaign.findAndCountAll({
+      where,
+      include: [
+        { model: Category, as: 'category', attributes: ['id', 'name', 'slug', 'icon'] },
+      ],
+      order: [['created_at', 'DESC']],
+      limit: parseInt(limit),
+      offset: parseInt(offset),
+    });
+
+    res.json({
+      success: true,
+      data: {
+        campaigns,
+        pagination: {
+          total: count,
+          page: parseInt(page),
+          limit: parseInt(limit),
+          totalPages: Math.ceil(count / limit),
+        },
+      },
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Gagal mengambil data kampanye.', error: error.message });
+  }
+};

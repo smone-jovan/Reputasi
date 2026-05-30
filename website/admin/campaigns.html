@@ -156,6 +156,25 @@
       </div>
     </div>
 
+    <!-- Status Filter -->
+    <div class="glass-card p-4 rounded-2xl mb-6">
+      <div class="flex gap-2 flex-wrap" id="statusFilters">
+        <button class="status-btn active px-4 py-2 rounded-xl text-sm font-semibold transition-colors bg-gray-100 text-gray-900 border border-gray-200" onclick="filterStatus(null, this)">Semua</button>
+        <button class="status-btn px-4 py-2 rounded-xl text-sm font-semibold transition-colors bg-white text-amber-600 border border-amber-200 hover:bg-amber-50" onclick="filterStatus('pending', this)">
+          <span class="flex items-center gap-1.5"><i data-lucide="hourglass" class="w-4 h-4"></i> Pending</span>
+        </button>
+        <button class="status-btn px-4 py-2 rounded-xl text-sm font-semibold transition-colors bg-white text-emerald-600 border border-emerald-200 hover:bg-emerald-50" onclick="filterStatus('active', this)">
+          <span class="flex items-center gap-1.5"><i data-lucide="check-circle" class="w-4 h-4"></i> Active</span>
+        </button>
+        <button class="status-btn px-4 py-2 rounded-xl text-sm font-semibold transition-colors bg-white text-blue-600 border border-blue-200 hover:bg-blue-50" onclick="filterStatus('completed', this)">
+          <span class="flex items-center gap-1.5"><i data-lucide="trophy" class="w-4 h-4"></i> Completed</span>
+        </button>
+        <button class="status-btn px-4 py-2 rounded-xl text-sm font-semibold transition-colors bg-white text-red-600 border border-red-200 hover:bg-red-50" onclick="filterStatus('rejected', this)">
+          <span class="flex items-center gap-1.5"><i data-lucide="x-circle" class="w-4 h-4"></i> Rejected</span>
+        </button>
+      </div>
+    </div>
+
     <!-- Table Container -->
     <div class="glass-card rounded-2xl overflow-hidden mb-8">
       <div class="overflow-x-auto no-scrollbar">
@@ -299,7 +318,15 @@
       return num.toString();
     }
 
-    let categoriesData=[], campaignsStore={};
+    let categoriesData=[], campaignsStore={}, currentStatusFilter=null;
+
+    function filterStatus(status, el){
+      currentStatusFilter = status;
+      const buttons = document.querySelectorAll('.status-btn');
+      buttons.forEach(b => b.className = 'status-btn px-4 py-2 rounded-xl text-sm font-semibold transition-colors bg-white text-gray-600 border border-gray-200 hover:bg-gray-50');
+      el.className = 'status-btn active px-4 py-2 rounded-xl text-sm font-semibold transition-colors bg-gray-100 text-gray-900 border border-gray-200';
+      loadCampaigns();
+    }
 
     async function loadCategories(){
       try{
@@ -312,34 +339,42 @@
 
     async function loadCampaigns(){
       try{
-        const res = await API.getCampaigns({limit:100});
+        const params = {limit:100};
+        if(currentStatusFilter) params.status = currentStatusFilter;
+        const res = await API.getCampaigns(params);
         const tbody = document.getElementById('campaignsTableBody');
 
         if(res?.data?.campaigns?.length > 0){
-          // Sort by ID ascending
           const sortedCampaigns = res.data.campaigns.sort((a, b) => a.id - b.id);
-
           sortedCampaigns.forEach(c => { campaignsStore[c.id] = c; });
 
           tbody.innerHTML = sortedCampaigns.map(c => {
-            // Helper for progress calculation
             const cur = parseFloat(c.current_amount) || 0;
             const tgt = parseFloat(c.target_amount) || 1;
             const progress = Math.min(Math.round((cur / tgt) * 100), 100);
             
             let statusBadge = '';
             switch(c.status) {
+              case 'pending': statusBadge = '<span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-800">Pending</span>'; break;
               case 'active': statusBadge = '<span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800">Aktif</span>'; break;
               case 'completed': statusBadge = '<span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-800">Selesai</span>'; break;
               case 'cancelled': statusBadge = '<span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-800">Batal</span>'; break;
+              case 'rejected': statusBadge = '<span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-800">Ditolak</span>'; break;
               default: statusBadge = `<span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-800">${c.status}</span>`;
             }
 
+            const actionButtons = c.status === 'pending'
+              ? `<button class="p-2 bg-emerald-50 border border-emerald-200 rounded-lg text-emerald-600 hover:bg-emerald-100 transition-colors" onclick="approveCampaign(${c.id})" title="Setujui"><i data-lucide="check" class="w-4 h-4"></i></button>
+                 <button class="p-2 bg-red-50 border border-red-200 rounded-lg text-red-600 hover:bg-red-100 transition-colors" onclick="rejectCampaign(${c.id})" title="Tolak"><i data-lucide="x" class="w-4 h-4"></i></button>`
+              : `<button class="p-2 bg-gray-50 border border-gray-200 rounded-lg text-gray-600 hover:text-blue-600 hover:bg-blue-50 transition-colors" onclick="openEditModal(campaignsStore[${c.id}])" aria-label="Edit"><i data-lucide="pencil" class="w-4 h-4"></i></button>
+                 <button class="p-2 bg-gray-50 border border-gray-200 rounded-lg text-gray-600 hover:text-red-600 hover:bg-red-50 transition-colors" onclick="deleteCampaign(${c.id})" aria-label="Hapus"><i data-lucide="trash-2" class="w-4 h-4"></i></button>`;
+
             return `
-              <tr class="hover:bg-gray-50/50 transition-colors">
+              <tr class="hover:bg-gray-50/50 transition-colors ${c.status==='pending'?'bg-amber-50/30':''}">
                 <td class="p-4 pl-6 text-sm text-gray-500">${c.id}</td>
                 <td class="p-4">
                   <div class="font-bold text-gray-900 truncate max-w-[200px]" title="${c.title}">${c.title}</div>
+                  <div class="text-xs text-gray-500 mt-0.5">oleh ${c.creator?.name || '-'}</div>
                 </td>
                 <td class="p-4 text-sm text-gray-600">${c.category?.name || '-'}</td>
                 <td class="p-4 text-right font-medium text-gray-900">${formatMoney(c.target_amount)}</td>
@@ -350,12 +385,7 @@
                 <td class="p-4 text-center">${statusBadge}</td>
                 <td class="p-4 pr-6">
                   <div class="flex items-center justify-center gap-2">
-                    <button class="p-2 bg-gray-50 border border-gray-200 rounded-lg text-gray-600 hover:text-blue-600 hover:bg-blue-50 transition-colors" onclick="openEditModal(campaignsStore[${c.id}])" aria-label="Edit">
-                      <i data-lucide="pencil" class="w-4 h-4"></i>
-                    </button>
-                    <button class="p-2 bg-gray-50 border border-gray-200 rounded-lg text-gray-600 hover:text-red-600 hover:bg-red-50 transition-colors" onclick="deleteCampaign(${c.id})" aria-label="Hapus">
-                      <i data-lucide="trash-2" class="w-4 h-4"></i>
-                    </button>
+                    ${actionButtons}
                   </div>
                 </td>
               </tr>
@@ -363,12 +393,30 @@
           }).join('');
           lucide.createIcons();
         } else {
-          tbody.innerHTML = '<tr><td colspan="7" class="p-12 text-center text-gray-500">Belum ada kampanye. Klik "Buat Kampanye" untuk mulai.</td></tr>';
+          tbody.innerHTML = '<tr><td colspan="7" class="p-12 text-center text-gray-500">Tidak ada kampanye ditemukan.</td></tr>';
         }
       }catch(e){
         console.error('Failed loading campaigns:',e);
         document.getElementById('campaignsTableBody').innerHTML = '<tr><td colspan="7" class="p-12 text-center text-red-500">Gagal memuat kampanye.</td></tr>';
       }
+    }
+
+    async function approveCampaign(id){
+      if(!confirm('Setujui kampanye ini?')) return;
+      try{
+        await API.approveCampaign(id);
+        showToast('Kampanye berhasil disetujui!');
+        loadCampaigns();
+      }catch(e){ showToast(e.message || 'Gagal menyetujui', 'error'); }
+    }
+
+    async function rejectCampaign(id){
+      if(!confirm('Tolak kampanye ini?')) return;
+      try{
+        await API.rejectCampaign(id);
+        showToast('Kampanye berhasil ditolak.');
+        loadCampaigns();
+      }catch(e){ showToast(e.message || 'Gagal menolak', 'error'); }
     }
 
     function openCreateModal(){
