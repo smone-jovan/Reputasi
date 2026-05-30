@@ -6,7 +6,7 @@ exports.trend = async (req, res) => {
   try {
     const days = parseInt(req.query.days) || 7;
     const startDate = new Date();
-    startDate.setDate(startDate.getDate() - days);
+    startDate.setDate(startDate.getDate() - (days - 1));
     startDate.setHours(0, 0, 0, 0);
 
     const donations = await Donation.findAll({
@@ -89,20 +89,27 @@ exports.topDonors = async (req, res) => {
         [fn('SUM', col('amount')), 'total_amount'],
         [fn('COUNT', col('id')), 'donation_count'],
       ],
-      include: [
-        { model: User, as: 'donatur', attributes: ['name', 'email'] },
-      ],
-      group: ['user_id', 'donatur.id', 'donatur.name', 'donatur.email'],
+      group: ['user_id'],
       order: [[literal('SUM(amount)'), 'DESC']],
       limit,
       raw: true,
-      nest: true,
     });
+
+    // Fetch user names separately
+    const userIds = donors.map(d => d.user_id);
+    const users = await User.findAll({
+      where: { id: { [Op.in]: userIds } },
+      attributes: ['id', 'name', 'email'],
+      raw: true,
+    });
+
+    const userMap = {};
+    users.forEach(u => { userMap[u.id] = u; });
 
     const result = donors.map(d => ({
       user_id: d.user_id,
-      name: d.donatur?.name || 'Anonim',
-      email: d.donatur?.email || '-',
+      name: userMap[d.user_id]?.name || 'Anonim',
+      email: userMap[d.user_id]?.email || '-',
       total_amount: parseInt(d.total_amount),
       donation_count: parseInt(d.donation_count),
     }));
