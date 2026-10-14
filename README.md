@@ -1,6 +1,9 @@
-# Donaria
+# Donaria (Project Code-Name: Reputasi)
 
 **Platform donasi online Indonesia dengan fitur Squad Donasi, User-Generated Campaigns, Admin Analytics, dan Testing Mode.**
+
+> **ℹ️ Catatan Penamaan & Branding:**
+> **"Reputasi"** adalah nama kode internal (*repository name*) dari proyek ini, sedangkan **"Donaria"** adalah nama produk dan merek resmi yang ditampilkan ke publik (*public brand name*).
 
 [![Node.js](https://img.shields.io/badge/Node.js-18+-339933?style=flat&logo=node.js&logoColor=white)](https://nodejs.org)
 [![Flutter](https://img.shields.io/badge/Flutter-3.9+-02569B?style=flat&logo=flutter&logoColor=white)](https://flutter.dev)
@@ -80,6 +83,41 @@ Flutter App (Dart/Provider) ──┘         │
                                        ├──▶ Tripay API (Payment)
                                        └──▶ Security Layer (Helmet, Rate Limit, CORS)
 ```
+
+### Alur Transaksi Donasi (Sequence Flow)
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor User as Donatur (Web/Mobile)
+    participant API as Express.js Backend
+    participant Tripay as Tripay Payment Gateway
+    participant DB as MySQL Database
+
+    User->>API: POST /api/donations (Pilih Kampanye & Nominal)
+    API->>Tripay: Buat Transaksi Tertutup (Closed VA / QRIS)
+    Tripay-->>API: Data Transaksi (Pay Code / QR URL, Reference)
+    API->>DB: Catat Donasi (Status: UNPAID)
+    API-->>User: Tampilkan QRIS / Nomor Virtual Account
+    User->>Tripay: Lakukan Pembayaran
+    Tripay->>API: Webhook Callback (Verifikasi HMAC-SHA256)
+    API->>DB: Update Status Donasi (PAID) & Akumulasi Dana
+    API-->>Tripay: Respon OK 200
+    User->>API: Polling / Redirect
+    API-->>User: Notifikasi Donasi Berhasil
+```
+
+---
+
+## Dokumentasi & Deployment
+
+Untuk panduan konfigurasi produksi, keamanan, dan deployment server, silakan baca:
+- 📖 [Panduan Deployment & Security Hardening](docs/DEPLOYMENT.md)
+- 📖 [Dokumentasi API Lengkap](docs/api/)
+- 📖 [Brand Guidelines](docs/brand-guidelines.md)
+- 📖 [Status Proyek](docs/current-status.md)
+
+---
 
 ### Backend
 
